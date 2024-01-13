@@ -6,12 +6,13 @@ edition = "2021"
 
 [dependencies]
 ink = { version = "4.3.0", default-features = false }
+openbrush = "3.2.0"
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
 [lib]
-path = "lib.rs"
+path = "zkdex.rs"
 
 [features]
 default = ["std"]
