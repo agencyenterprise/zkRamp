@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono&display=swap');
 
 @layer base {
   :root {
@@ -74,7 +76,7 @@
     @apply scroll-smooth antialiased;
   }
   body {
-    @apply bg-background font-sans text-foreground;
+    @apply bg-gradient font-manrope text-foreground;
     @apply flex h-screen min-h-screen flex-col;
   }
 }
