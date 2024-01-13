@@ -54,7 +54,7 @@ export const HeroHexagons: FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center gap-2 md:flex-row">
+    <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
       {HEXAGONS.map((hexagon, i) => (
         <>
           <Hexagon key={hexagon.title} {...hexagon} step={i + 1} />

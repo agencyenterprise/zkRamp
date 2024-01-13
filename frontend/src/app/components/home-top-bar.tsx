@@ -18,7 +18,7 @@ export const HomeTopBar: FC = () => {
   return (
     <header className="absolute inset-x-0 top-0 z-50 inline-flex h-16 w-full items-center justify-between bg-zinc-900 px-4 shadow md:px-32">
       <div className="flex items-center gap-6">
-        <Bars3Icon className="h-6 w-6 text-zinc-400" />
+        <Bars3Icon className="h-6 w-6 text-zinc-400 md:hidden" />
         <img src="/vectors/logo.svg" alt="logo" className="h-8 w-auto" />
         <nav className="hidden gap-6 md:flex">
           {navigation.map(({ name, href }) => (
