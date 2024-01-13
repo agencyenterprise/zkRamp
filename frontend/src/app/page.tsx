@@ -23,11 +23,11 @@ export default function HomePage() {
 
   const HeroText = () => {
     return (
-      <div className="flex flex-col items-center gap-6">
-        <h1 className="max-w-2xl text-center text-5xl font-extrabold leading-[60px] text-white">
+      <div className="mt-16 flex flex-col items-center gap-6 md:mt-0">
+        <h1 className="max-w-2xl text-center text-3xl font-extrabold leading-9 text-white md:text-5xl md:leading-[60px]">
           Lightning-fast BRL to AZERO Transaction with the highest level of security
         </h1>
-        <h2 className="max-w-2xl text-center text-xl font-normal leading-7 text-zinc-300">
+        <h2 className="max-w-2xl text-center text-xl font-normal leading-normal text-zinc-300 md:leading-7">
           zkDex leverages zero-knowledge proofs to ensure your transactions remain private while
           providing unmatched efficiency in onramp/offramp solutions.
         </h2>
@@ -39,12 +39,16 @@ export default function HomePage() {
     <>
       <HomeTopBar />
 
-      <div className="container relative flex grow flex-col items-center justify-center py-10">
+      <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">
         <main className="flex flex-col gap-8">
           <HeroText />
-          <div className="flex items-center justify-center gap-6">
-            <Button variant="outline">Add Liquidity</Button>
-            <Button variant="default">Buy AZERO</Button>
+          <div className="mb-6 flex items-center justify-center gap-6 px-2 md:mb-0">
+            <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="outline">
+              Add Liquidity
+            </Button>
+            <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="default">
+              Buy AZERO
+            </Button>
           </div>
           <HeroHexagons />
         </main>
