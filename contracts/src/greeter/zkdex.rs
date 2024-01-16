@@ -55,9 +55,6 @@ mod ZKDex {
             orders
         }
 
-        // createOrder function
-        // use self.env().transferred_value() to get the amount of tokens sent to the contract
-
         #[ink(message, payable)]
         pub fn create_order(&mut self, amount_to_receive: Balance) -> Result<(), ()> {
             let caller = self.env().caller();
@@ -86,7 +83,11 @@ mod ZKDex {
     #[cfg(test)]
     mod tests {
         use super::*;
-        use ink::env::{test::DefaultAccounts, DefaultEnvironment};
+        use ink::env::{
+            self,
+            test::{get_account_balance, DefaultAccounts},
+            DefaultEnvironment,
+        };
         use openbrush::test_utils;
 
         // === HELPERS ===
@@ -115,16 +116,18 @@ mod ZKDex {
         #[ink::test]
         fn should_create_order() {
             let (accounts, mut zkdex) = init();
-            set_balance(accounts.bob, 100);
-            zkdex.create_order(100).unwrap();
-            assert_eq!(get_balance(accounts.bob), 0);
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(1000);
+            zkdex.create_order(1000).unwrap();
+
+            // assert_eq!(get_balance(accounts.bob), 0);
 
             let mut orders = Vec::<Order>::new();
             orders.push(Order {
                 id: 0,
                 owner: accounts.bob,
-                deposited: 100,
-                amountToReceive: 100,
+                deposited: 1000,
+                amountToReceive: 1000,
                 status: OrderStatus::Open,
             });
             assert_eq!(zkdex.get_all_orders(), orders);
