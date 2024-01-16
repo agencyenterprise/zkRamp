@@ -2,6 +2,8 @@
 
 #[ink::contract]
 mod ZKDex {
+    use core::fmt::Error;
+
     use ink::prelude::{vec, vec::Vec};
     use ink::storage::Mapping;
 
@@ -15,6 +17,22 @@ mod ZKDex {
         Open,
         Filled,
         Canceled,
+    }
+
+    #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+    pub enum EscrowError {
+        AmountUnavailable,
+        InsufficientFunds,
+        ListingCanOnlyBeCreatedByAVendor,
+        ListingLimitReached,
+        ListingNotFound,
+        StatusCanNotBeChanged,
+        OrderCancelled,
+        OrderFinalised,
+        OrderNotFound,
+        VendorAlreadyExists,
+        Unauthorised,
     }
 
     #[derive(PartialEq, Debug, Clone, scale::Encode, scale::Decode)]
@@ -37,7 +55,6 @@ mod ZKDex {
     }
 
     impl ZKDex {
-        /// Creates a new greeter contract initialized to 'Hello ink!'.
         #[ink(constructor)]
         pub fn default() -> Self {
             ZKDex {
@@ -77,7 +94,32 @@ mod ZKDex {
             Ok(())
         }
 
-        // updateStatusOrder function
+        #[ink(message)]
+        pub fn cancel_order(&mut self, index: u32) -> Result<(), EscrowError> {
+            let caller = self.env().caller();
+
+            if !self.orders.contains(&index) {
+                return Err(EscrowError::OrderNotFound);
+            }
+            if self.orders.get(&index).unwrap().owner != caller {
+                return Err(EscrowError::Unauthorised);
+            }
+            if self.orders.get(&index).unwrap().status != OrderStatus::Open {
+                return Err(EscrowError::StatusCanNotBeChanged);
+            }
+
+            let mut order = self.orders.get(index).unwrap();
+            order.status = OrderStatus::Canceled;
+            self.orders.insert(index, &order);
+
+            Ok(())
+        }
+
+        // fill_order
+
+        // withdraw
+
+        // get_order
     }
 
     #[cfg(test)]
@@ -132,6 +174,35 @@ mod ZKDex {
                 status: OrderStatus::Open,
             });
             assert_eq!(zkdex.get_all_orders(), orders);
+        }
+
+        #[ink::test]
+        fn should_cancel_order() {
+            let (accounts, mut zkdex) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkdex.create_order(100).unwrap();
+            zkdex.cancel_order(0).unwrap();
+
+            let mut orders = Vec::<Order>::new();
+            orders.push(Order {
+                id: 0,
+                owner: accounts.bob,
+                deposited: 100,
+                amountToReceive: 100,
+                status: OrderStatus::Canceled,
+            });
+            assert_eq!(zkdex.get_all_orders(), orders);
+        }
+
+        #[ink::test]
+        fn should_not_cancel_order() {
+            let (accounts, mut zkdex) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkdex.create_order(100).unwrap();
+            let result = zkdex.cancel_order(1);
+            assert!(!result.is_ok());
         }
     }
 }
