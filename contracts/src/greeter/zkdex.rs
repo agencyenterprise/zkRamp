@@ -109,6 +109,11 @@ mod zkdex {
             self.orders.get(index).unwrap()
         }
 
+        #[ink(message)]
+        pub fn get_time(&self) -> u128 {
+            self.env().block_timestamp() as u128
+        }
+
         #[ink(message, payable)]
         pub fn create_order(
             &mut self,
@@ -330,6 +335,7 @@ mod zkdex {
             let (accounts, mut zkdex) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+
             zkdex
                 .create_order(100, String::from(""), String::from(""), 0)
                 .unwrap();
