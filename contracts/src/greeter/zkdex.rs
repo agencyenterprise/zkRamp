@@ -24,10 +24,10 @@ mod zkdex {
         derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
     )]
     enum ClaimStatus {
-        Unsubmitted,
-        Submitted,
+        WaitingForBuyerProof,
+        WaitingForSellerProof,
         Used,
-        Clawback,
+        Canceled,
     }
 
     #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
@@ -114,6 +114,9 @@ mod zkdex {
             self.env().block_timestamp() as u128
         }
 
+        /// Create a new liquidity pool order, which will be filled by a buyer.
+        /// The order is created by the seller, who deposits the amount of tokens
+        /// they want to sell into the contract.
         #[ink(message, payable)]
         pub fn create_order(
             &mut self,
@@ -145,6 +148,9 @@ mod zkdex {
             Ok(())
         }
 
+        /// Cancel an order that has not been filled yet.
+        /// The seller can cancel an order at any time, and the tokens they deposited
+        /// will be returned to them.
         #[ink(message)]
         pub fn cancel_order(&mut self, index: u32) -> Result<(), EscrowError> {
             let caller = self.env().caller();
@@ -158,6 +164,9 @@ mod zkdex {
             if self.orders.get(&index).unwrap().status != OrderStatus::Open {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
+
+            // TODO check status of order_claim, it should contain index, should be different than Canceled, and claim_expiration_time should be in the future
+            // TODO create a method to check if order_claim is valid
             if self.orders_claim.contains(&index)
                 && self.orders_claim.get(&index).unwrap().claim_expiration_time
                     > self.env().block_timestamp() as u128
@@ -169,9 +178,15 @@ mod zkdex {
             order.status = OrderStatus::Canceled;
             self.orders.insert(index, &order);
 
+            // release funds
+            let owner = self.orders.get(index).unwrap().owner;
+            let deposited = self.orders.get(index).unwrap().deposited;
+            self.env().transfer(owner, deposited).unwrap();
+
             Ok(())
         }
 
+        /// Claim an order that has not been filled yet.
         #[ink(message)]
         pub fn claim_order(
             &mut self,
@@ -188,6 +203,8 @@ mod zkdex {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
 
+            // TODO check status of order_claim, it should contain index, should be different than Canceled, and claim_expiration_time should be in the future
+            // TODO create a method to check if order_claim is valid
             if self.orders_claim.contains(&index)
                 && self.orders_claim.get(&index).unwrap().claim_expiration_time
                     > self.env().block_timestamp() as u128
@@ -200,7 +217,7 @@ mod zkdex {
                 &OrderClaim {
                     buyer: caller,
                     order_index: index,
-                    status: ClaimStatus::Unsubmitted,
+                    status: ClaimStatus::WaitingForBuyerProof,
                     claim_expiration_time: claim_expiration_time,
                 },
             );
@@ -208,7 +225,31 @@ mod zkdex {
             Ok(())
         }
 
-        // TODO cancel_claim_order
+        /// Cancel a claimed order that has not been filled yet.
+        /// The buyer can cancel an order at any time, and it will be removed from the
+        /// order book.
+        #[ink(message)]
+        pub fn cancel_claim_order(&mut self, index: u32) -> Result<(), EscrowError> {
+            let caller = self.env().caller();
+
+            if !self.orders_claim.contains(&index) {
+                return Err(EscrowError::OrderClaimed);
+            }
+
+            if self.orders_claim.get(&index).unwrap().buyer != caller {
+                return Err(EscrowError::Unauthorised);
+            }
+
+            if self.orders_claim.get(&index).unwrap().status != ClaimStatus::WaitingForBuyerProof {
+                return Err(EscrowError::StatusCanNotBeChanged);
+            }
+
+            let mut order_claim = self.orders_claim.get(index).unwrap();
+            order_claim.status = ClaimStatus::Canceled;
+            self.orders_claim.insert(index, &order_claim);
+
+            Ok(())
+        }
 
         // TODO Submit BUYER proof
 
@@ -324,7 +365,7 @@ mod zkdex {
             orders_claim.push(OrderClaim {
                 buyer: accounts.bob,
                 order_index: 0,
-                status: ClaimStatus::Unsubmitted,
+                status: ClaimStatus::WaitingForBuyerProof,
                 claim_expiration_time: 100,
             });
             assert_eq!(zkdex.get_all_orders_claim(), orders_claim);
@@ -349,5 +390,7 @@ mod zkdex {
 
         // TODO check all validation for cancel_order
         // TODO check all validation for claim_order
+
+        // TODO check funds return after cancel_order
     }
 }
