@@ -178,7 +178,6 @@ mod zkdex {
             order.status = OrderStatus::Canceled;
             self.orders.insert(index, &order);
 
-            // release funds
             let owner = self.orders.get(index).unwrap().owner;
             let deposited = self.orders.get(index).unwrap().deposited;
             self.env().transfer(owner, deposited).unwrap();

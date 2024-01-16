@@ -1,7 +1,7 @@
 [package]
-name = "greeter"
+name = "zkdex"
 version = "0.0.1"
-authors = ["Scio Labs <hello@scio.xyz>"]
+authors = ["AE Studio<hello@scio.xyz>"]
 edition = "2021"
 
 [dependencies]
