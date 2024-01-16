@@ -19,12 +19,12 @@ const main = async () => {
   const { api, chain, account } = initParams
 
   // Deploy greeter contract
-  const { abi, wasm } = await getDeploymentData('greeter')
-  const greeter = await deployContract(api, account, abi, wasm, 'default', [])
+  const { abi, wasm } = await getDeploymentData('zkdex')
+  const zkdex = await deployContract(api, account, abi, wasm, 'default', [])
 
   // Write contract addresses to `{contract}/{network}.ts` file(s)
   await writeContractAddresses(chain.network, {
-    greeter,
+    zkdex,
   })
 }
 
