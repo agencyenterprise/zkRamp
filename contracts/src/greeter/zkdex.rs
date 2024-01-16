@@ -1,11 +1,10 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 #[ink::contract]
-mod ZKDex {
-    use core::fmt::Error;
-
-    use ink::prelude::{vec, vec::Vec};
+mod zkdex {
+    use ink::prelude::vec::Vec;
     use ink::storage::Mapping;
+    use ink_prelude::string::String;
 
     #[derive(Debug, Clone, scale::Encode, scale::Decode, PartialEq)]
     #[cfg_attr(
@@ -19,19 +18,26 @@ mod ZKDex {
         Canceled,
     }
 
+    #[derive(Debug, Clone, scale::Encode, scale::Decode, PartialEq)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    enum ClaimStatus {
+        Unsubmitted,
+        Submitted,
+        Used,
+        Clawback,
+    }
+
     #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum EscrowError {
-        AmountUnavailable,
-        InsufficientFunds,
-        ListingCanOnlyBeCreatedByAVendor,
-        ListingLimitReached,
-        ListingNotFound,
         StatusCanNotBeChanged,
         OrderCancelled,
         OrderFinalised,
+        OrderClaimed,
         OrderNotFound,
-        VendorAlreadyExists,
         Unauthorised,
     }
 
@@ -44,14 +50,30 @@ mod ZKDex {
         id: u32,
         owner: AccountId,
         deposited: Balance,
-        amountToReceive: Balance,
+        amount_to_receive: Balance,
         status: OrderStatus,
+        payment_key: String,
+        hash_name: String,
+        name_length: u32,
+    }
+
+    #[derive(PartialEq, Debug, Clone, scale::Encode, scale::Decode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub struct OrderClaim {
+        buyer: AccountId,
+        order_index: u32,
+        status: ClaimStatus,
+        claim_expiration_time: u128,
     }
 
     #[ink(storage)]
     pub struct ZKDex {
         orders: Mapping<u32, Order>,
-        nextOrderNonce: u32,
+        orders_claim: Mapping<u32, OrderClaim>,
+        next_order_nonce: u32,
     }
 
     impl ZKDex {
@@ -59,21 +81,42 @@ mod ZKDex {
         pub fn default() -> Self {
             ZKDex {
                 orders: Mapping::default(),
-                nextOrderNonce: 0,
+                orders_claim: Mapping::default(),
+                next_order_nonce: 0,
             }
         }
 
         #[ink(message)]
         pub fn get_all_orders(&self) -> Vec<Order> {
             let mut orders: Vec<Order> = Vec::new();
-            for i in 0..self.nextOrderNonce {
+            for i in 0..self.next_order_nonce {
                 orders.push(self.orders.get(&i).unwrap());
             }
             orders
         }
 
+        #[ink(message)]
+        pub fn get_all_orders_claim(&self) -> Vec<OrderClaim> {
+            let mut orders_claim: Vec<OrderClaim> = Vec::new();
+            for i in 0..self.next_order_nonce {
+                orders_claim.push(self.orders_claim.get(&i).unwrap());
+            }
+            orders_claim
+        }
+
+        #[ink(message)]
+        pub fn get_order(&self, index: u32) -> Order {
+            self.orders.get(index).unwrap()
+        }
+
         #[ink(message, payable)]
-        pub fn create_order(&mut self, amount_to_receive: Balance) -> Result<(), ()> {
+        pub fn create_order(
+            &mut self,
+            amount_to_receive: Balance,
+            payment_key: String,
+            hash_name: String,
+            name_length: u32,
+        ) -> Result<(), ()> {
             let caller = self.env().caller();
             let transferred_value = self.env().transferred_value();
             ink::env::debug_println!(
@@ -83,14 +126,17 @@ mod ZKDex {
             );
 
             let order = Order {
-                id: self.nextOrderNonce,
+                id: self.next_order_nonce,
                 owner: caller,
                 deposited: transferred_value,
-                amountToReceive: amount_to_receive,
+                amount_to_receive: amount_to_receive,
                 status: OrderStatus::Open,
+                payment_key: payment_key,
+                hash_name: hash_name,
+                name_length: name_length,
             };
-            self.orders.insert(self.nextOrderNonce, &order);
-            self.nextOrderNonce += 1;
+            self.orders.insert(self.next_order_nonce, &order);
+            self.next_order_nonce += 1;
             Ok(())
         }
 
@@ -107,6 +153,12 @@ mod ZKDex {
             if self.orders.get(&index).unwrap().status != OrderStatus::Open {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
+            if self.orders_claim.contains(&index)
+                && self.orders_claim.get(&index).unwrap().claim_expiration_time
+                    > self.env().block_timestamp() as u128
+            {
+                return Err(EscrowError::OrderClaimed);
+            }
 
             let mut order = self.orders.get(index).unwrap();
             order.status = OrderStatus::Canceled;
@@ -115,11 +167,47 @@ mod ZKDex {
             Ok(())
         }
 
-        // fill_order
+        #[ink(message)]
+        pub fn claim_order(
+            &mut self,
+            index: u32,
+            claim_expiration_time: u128,
+        ) -> Result<(), EscrowError> {
+            let caller = self.env().caller();
 
-        // withdraw
+            if !self.orders.contains(&index) {
+                return Err(EscrowError::OrderNotFound);
+            }
 
-        // get_order
+            if self.orders.get(&index).unwrap().status != OrderStatus::Open {
+                return Err(EscrowError::StatusCanNotBeChanged);
+            }
+
+            if self.orders_claim.contains(&index)
+                && self.orders_claim.get(&index).unwrap().claim_expiration_time
+                    > self.env().block_timestamp() as u128
+            {
+                return Err(EscrowError::OrderClaimed);
+            }
+
+            self.orders_claim.insert(
+                index,
+                &OrderClaim {
+                    buyer: caller,
+                    order_index: index,
+                    status: ClaimStatus::Unsubmitted,
+                    claim_expiration_time: claim_expiration_time,
+                },
+            );
+
+            Ok(())
+        }
+
+        // TODO cancel_claim_order
+
+        // TODO Submit BUYER proof
+
+        // TODO Submit SELLER proof
     }
 
     #[cfg(test)]
@@ -160,7 +248,9 @@ mod ZKDex {
             let (accounts, mut zkdex) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
-            zkdex.create_order(100).unwrap();
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
 
             // didn't work on test env
             // assert_eq!(get_balance(accounts.bob), 0);
@@ -170,8 +260,11 @@ mod ZKDex {
                 id: 0,
                 owner: accounts.bob,
                 deposited: 100,
-                amountToReceive: 100,
+                amount_to_receive: 100,
                 status: OrderStatus::Open,
+                payment_key: String::from(""),
+                hash_name: String::from(""),
+                name_length: 0,
             });
             assert_eq!(zkdex.get_all_orders(), orders);
         }
@@ -181,7 +274,9 @@ mod ZKDex {
             let (accounts, mut zkdex) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
-            zkdex.create_order(100).unwrap();
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
             zkdex.cancel_order(0).unwrap();
 
             let mut orders = Vec::<Order>::new();
@@ -189,8 +284,11 @@ mod ZKDex {
                 id: 0,
                 owner: accounts.bob,
                 deposited: 100,
-                amountToReceive: 100,
+                amount_to_receive: 100,
                 status: OrderStatus::Canceled,
+                payment_key: String::from(""),
+                hash_name: String::from(""),
+                name_length: 0,
             });
             assert_eq!(zkdex.get_all_orders(), orders);
         }
@@ -200,9 +298,50 @@ mod ZKDex {
             let (accounts, mut zkdex) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
-            zkdex.create_order(100).unwrap();
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
             let result = zkdex.cancel_order(1);
             assert!(!result.is_ok());
         }
+
+        #[ink::test]
+        fn should_claim_order() {
+            let (accounts, mut zkdex) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(0, 100).unwrap();
+
+            let mut orders_claim = Vec::<OrderClaim>::new();
+            orders_claim.push(OrderClaim {
+                buyer: accounts.bob,
+                order_index: 0,
+                status: ClaimStatus::Unsubmitted,
+                claim_expiration_time: 100,
+            });
+            assert_eq!(zkdex.get_all_orders_claim(), orders_claim);
+        }
+
+        #[ink::test]
+        fn should_not_claim_order() {
+            let (accounts, mut zkdex) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(0, 100).unwrap();
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            let error = zkdex.claim_order(0, 100);
+
+            assert_eq!(error, Err(EscrowError::OrderClaimed));
+        }
+
+        // TODO check all validation for cancel_order
+        // TODO check all validation for claim_order
     }
 }
