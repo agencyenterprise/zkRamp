@@ -117,17 +117,18 @@ mod ZKDex {
         fn should_create_order() {
             let (accounts, mut zkdex) = init();
 
-            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(1000);
-            zkdex.create_order(1000).unwrap();
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkdex.create_order(100).unwrap();
 
+            // didn't work on test env
             // assert_eq!(get_balance(accounts.bob), 0);
 
             let mut orders = Vec::<Order>::new();
             orders.push(Order {
                 id: 0,
                 owner: accounts.bob,
-                deposited: 1000,
-                amountToReceive: 1000,
+                deposited: 100,
+                amountToReceive: 100,
                 status: OrderStatus::Open,
             });
             assert_eq!(zkdex.get_all_orders(), orders);
