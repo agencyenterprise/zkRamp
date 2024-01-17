@@ -23,7 +23,7 @@ export default function HomePage() {
 
   const HeroText = () => {
     return (
-      <div className="mt-16 flex flex-col items-center gap-6 md:mt-0">
+      <div className="mt-16 flex flex-col items-center gap-6">
         <h1 className="max-w-2xl text-center text-3xl font-extrabold leading-9 text-white md:text-5xl md:leading-[60px]">
           Lightning-fast BRL to AZERO Transaction with the highest level of security
         </h1>
