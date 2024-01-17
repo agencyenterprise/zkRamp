@@ -174,13 +174,7 @@ mod zkdex {
             if self.orders.get(&index).unwrap().status != OrderStatus::Open {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
-
-            // TODO check status of order_claim, it should contain index, should be different than Canceled, and claim_expiration_time should be in the future
-            // TODO create a method to check if order_claim is valid
-            if self.orders_claim.contains(&index)
-                && self.orders_claim.get(&index).unwrap().claim_expiration_time
-                    > self.env().block_timestamp() as u128
-            {
+            if self.check_order_claim(index).is_err() {
                 return Err(EscrowError::OrderClaimed);
             }
 
@@ -207,17 +201,10 @@ mod zkdex {
             if !self.orders.contains(&index) {
                 return Err(EscrowError::OrderNotFound);
             }
-
             if self.orders.get(&index).unwrap().status != OrderStatus::Open {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
-
-            // TODO check status of order_claim, it should contain index, should be different than Canceled, and claim_expiration_time should be in the future
-            // TODO create a method to check if order_claim is valid
-            if self.orders_claim.contains(&index)
-                && self.orders_claim.get(&index).unwrap().claim_expiration_time
-                    > self.env().block_timestamp() as u128
-            {
+            if self.check_order_claim(index).is_err() {
                 return Err(EscrowError::OrderClaimed);
             }
 
@@ -295,6 +282,18 @@ mod zkdex {
                 let mut order = self.orders.get(order_claim.order_index).unwrap();
                 order.status = OrderStatus::Filled;
                 self.orders.insert(order_claim.order_index, &order);
+            }
+
+            Ok(())
+        }
+
+        fn check_order_claim(&self, index: u32) -> Result<(), EscrowError> {
+            if self.orders_claim.contains(&index)
+                && (self.orders_claim.get(&index).unwrap().status != ClaimStatus::Canceled
+                    && self.orders_claim.get(&index).unwrap().claim_expiration_time
+                        > self.env().block_timestamp() as u128)
+            {
+                return Err(EscrowError::OrderClaimed);
             }
 
             Ok(())
