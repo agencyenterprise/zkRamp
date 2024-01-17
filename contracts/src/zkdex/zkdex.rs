@@ -2,7 +2,6 @@
 
 #[ink::contract]
 mod zkdex {
-    use ink::env::call;
     use ink::prelude::vec::Vec;
     use ink::storage::Mapping;
     use ink_prelude::string::String;
@@ -229,7 +228,7 @@ mod zkdex {
             let caller = self.env().caller();
 
             if !self.orders_claim.contains(&index) {
-                return Err(EscrowError::OrderClaimed);
+                return Err(EscrowError::OrderNotFound);
             }
 
             if self.orders_claim.get(&index).unwrap().buyer != caller {
@@ -263,12 +262,12 @@ mod zkdex {
             }
 
             if !self.orders_claim.contains(&index_claim_order) {
-                return Err(EscrowError::OrderClaimed);
+                return Err(EscrowError::OrderNotFound);
             }
 
             if self.orders_claim.get(&index_claim_order).unwrap().status
                 != ClaimStatus::WaitingForBuyerProof
-                || self.orders_claim.get(&index_claim_order).unwrap().status
+                && self.orders_claim.get(&index_claim_order).unwrap().status
                     != ClaimStatus::WaitingForSellerProof
             {
                 return Err(EscrowError::StatusCanNotBeChanged);
@@ -393,6 +392,25 @@ mod zkdex {
                 .unwrap();
             let result = zkdex.cancel_order(1);
             assert!(!result.is_ok());
+
+            // diff order owner
+            test_utils::change_caller(accounts.alice);
+            let result = zkdex.cancel_order(0);
+            assert!(!result.is_ok());
+
+            // order status is not open
+            test_utils::change_caller(accounts.bob);
+            zkdex.cancel_order(0).unwrap();
+            let result: Result<(), EscrowError> = zkdex.cancel_order(0);
+            assert!(!result.is_ok());
+
+            // order claim status is not canceled
+            zkdex
+                .create_order(10, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(1, 100).unwrap();
+            let result: Result<(), EscrowError> = zkdex.cancel_order(1);
+            assert!(!result.is_ok());
         }
 
         #[ink::test]
@@ -413,6 +431,20 @@ mod zkdex {
                 claim_expiration_time: 100,
             });
             assert_eq!(zkdex.get_all_orders_claim(), orders_claim);
+
+            zkdex.cancel_claim_order(0).unwrap();
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            zkdex.claim_order(0, 1000).unwrap();
+
+            let mut orders_claim = Vec::<OrderClaim>::new();
+            orders_claim.push(OrderClaim {
+                buyer: accounts.alice,
+                order_index: 0,
+                status: ClaimStatus::WaitingForBuyerProof,
+                claim_expiration_time: 1000,
+            });
+            assert_eq!(zkdex.get_all_orders_claim(), orders_claim);
         }
 
         #[ink::test]
@@ -430,11 +462,126 @@ mod zkdex {
             let error = zkdex.claim_order(0, 100);
 
             assert_eq!(error, Err(EscrowError::OrderClaimed));
+
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.cancel_order(1).unwrap();
+
+            let error = zkdex.claim_order(1, 100);
+
+            assert_eq!(error, Err(EscrowError::StatusCanNotBeChanged));
+
+            let error = zkdex.claim_order(3, 100);
+            assert_eq!(error, Err(EscrowError::OrderNotFound));
         }
 
-        // TODO check all validation for cancel_order
-        // TODO check all validation for claim_order
+        #[ink::test]
+        fn should_cancel_claim_order() {
+            let (accounts, mut zkdex) = init();
 
-        // TODO check funds return after cancel_order
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(0, 100).unwrap();
+            zkdex.cancel_claim_order(0).unwrap();
+
+            let mut orders_claim = Vec::<OrderClaim>::new();
+            orders_claim.push(OrderClaim {
+                buyer: accounts.bob,
+                order_index: 0,
+                status: ClaimStatus::Canceled,
+                claim_expiration_time: 100,
+            });
+            assert_eq!(zkdex.get_all_orders_claim(), orders_claim);
+        }
+
+        #[ink::test]
+        fn should_not_cancel_claim_order() {
+            let (accounts, mut zkdex) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(0, 100).unwrap();
+
+            let error = zkdex.cancel_claim_order(1);
+
+            assert_eq!(error, Err(EscrowError::OrderNotFound));
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            let error = zkdex.cancel_claim_order(0);
+
+            assert_eq!(error, Err(EscrowError::Unauthorised));
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(1, 10000).unwrap();
+            zkdex
+                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof)
+                .unwrap();
+
+            let error = zkdex.cancel_claim_order(0);
+            assert_eq!(error, Err(EscrowError::StatusCanNotBeChanged));
+        }
+
+        #[ink::test]
+        fn should_update_claim_order_status() {
+            let (accounts, mut zkdex) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(0, 100).unwrap();
+            zkdex
+                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof)
+                .unwrap();
+
+            let mut orders_claim = Vec::<OrderClaim>::new();
+            orders_claim.push(OrderClaim {
+                buyer: accounts.bob,
+                order_index: 0,
+                status: ClaimStatus::WaitingForSellerProof,
+                claim_expiration_time: 100,
+            });
+            assert_eq!(zkdex.get_all_orders_claim(), orders_claim);
+        }
+
+        #[ink::test]
+        fn should_not_update_claim_order_status() {
+            let (accounts, mut zkdex) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(0, 100).unwrap();
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            let error = zkdex.update_claim_order_status(0, ClaimStatus::Filled);
+
+            assert_eq!(error, Err(EscrowError::Unauthorised));
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
+            let error = zkdex.update_claim_order_status(1, ClaimStatus::WaitingForSellerProof);
+            assert_eq!(error, Err(EscrowError::OrderNotFound));
+
+            zkdex
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkdex.claim_order(1, 100).unwrap();
+            zkdex
+                .update_claim_order_status(1, ClaimStatus::Filled)
+                .unwrap();
+            let error = zkdex.update_claim_order_status(1, ClaimStatus::WaitingForSellerProof);
+            assert_eq!(error, Err(EscrowError::StatusCanNotBeChanged));
+        }
     }
 }
