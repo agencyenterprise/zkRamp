@@ -105,7 +105,10 @@ mod zkdex {
         pub fn get_all_orders_claim(&self) -> Vec<OrderClaim> {
             let mut orders_claim: Vec<OrderClaim> = Vec::new();
             for i in 0..self.next_order_nonce {
-                orders_claim.push(self.orders_claim.get(&i).unwrap());
+                let order_claim = self.orders_claim.get(&i);
+                if let Some(claim) = order_claim {
+                    orders_claim.push(claim);
+                }
             }
             orders_claim
         }
