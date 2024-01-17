@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x7ba759d6e522cb8b4c54f20cbc0b4a1a476365618e0abeca3aa0383d626eef84",
+    "hash": "0x74395e1245f243a1137bda4c9a4a55b95ad9f79797baca83a1541bd805aa267c",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.75.0",
     "build_info": {
@@ -349,7 +349,11 @@
           }
         ],
         "default": false,
-        "docs": [],
+        "docs": [
+          " Update the status of a claimed order.",
+          " Only the owner of the contract can update the status of a claimed order.",
+          " It will be responsible for updating the status of the order to Filled"
+        ],
         "label": "update_claim_order_status",
         "mutates": true,
         "payable": false,
@@ -547,6 +551,15 @@
                 }
               },
               "name": "next_order_nonce"
+            },
+            {
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 1
+                }
+              },
+              "name": "owner"
             }
           ],
           "name": "ZKDex"
