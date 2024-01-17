@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
 import {
@@ -9,69 +9,80 @@ import {
   useInkathon,
   useRegisteredContract,
 } from '@scio-labs/use-inkathon'
-import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
-
-type UpdateGreetingValues = { newMessage: string }
 
 export const ZKDexContractInteractions: FC = () => {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract, address: contractAddress } = useRegisteredContract(ContractIds.zkdex)
-  const [greeterMessage, setGreeterMessage] = useState<any>()
-  const [fetchIsLoading, setFetchIsLoading] = useState<boolean>()
-  const [updateIsLoading, setUpdateIsLoading] = useState<boolean>()
-  const form = useForm<UpdateGreetingValues>()
 
-  const { register, reset, handleSubmit } = form
-
-  // Fetch Greeting
-  const fetchGreeting = async () => {
+  const fetchAllOrders = async () => {
     if (!contract || !api) return
 
-    setFetchIsLoading(true)
-    try {
-      const result = await contractQuery(api, '', contract, 'get_all_orders')
-      const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get_all_orders')
-      if (isError) throw new Error(decodedOutput)
-      setGreeterMessage(JSON.stringify(output))
-    } catch (e) {
-      console.error(e)
-      toast.error('Error while fetching greeting. Try again…')
-      setGreeterMessage(undefined)
-    } finally {
-      setFetchIsLoading(false)
-    }
+    const result = await contractQuery(api, '', contract, 'get_all_orders')
+    const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get_all_orders')
+    if (isError) throw new Error(decodedOutput)
+    console.log('Get All Orders')
+    console.log(decodedOutput)
   }
-  useEffect(() => {
-    fetchGreeting()
-  }, [contract])
 
-  // Update Greeting
-  const updateGreeting = async ({ newMessage }: UpdateGreetingValues) => {
+  const fetchAllClaimOrders = async () => {
+    if (!contract || !api) return
+
+    const result = await contractQuery(api, '', contract, 'get_all_orders_claim')
+    const { output, isError, decodedOutput } = decodeOutput(
+      result,
+      contract,
+      'get_all_orders_claim',
+    )
+    if (isError) throw new Error(decodedOutput)
+    console.log('Get All Claim Orders')
+    console.log(decodedOutput)
+  }
+
+  const fetchOrder = async () => {
+    if (!activeAccount || !contract || !api) return
+
+    const result = await contractQuery(api, activeAccount.address, contract, 'get_order', {}, [0])
+    const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get_order')
+    if (isError) throw new Error(decodedOutput)
+    console.log('Get Order')
+    console.log(decodedOutput)
+  }
+
+  const createOrder = async () => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       toast.error('Wallet not connected. Try again…')
       return
     }
 
-    // Send transaction
-    setUpdateIsLoading(true)
-    try {
-      await contractTxWithToast(api, activeAccount.address, contract, 'setMessage', {}, [
-        newMessage,
-      ])
-      reset()
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setUpdateIsLoading(false)
-      fetchGreeting()
+    await contractTxWithToast(
+      api,
+      activeAccount.address,
+      contract,
+      'create_order',
+      {
+        value: 11,
+      },
+      [1, 'test', 'test', 1],
+    )
+  }
+
+  const createClaimOrder = async () => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
     }
+
+    await contractTxWithToast(
+      api,
+      activeAccount.address,
+      contract,
+      'claim_order',
+      {},
+      [0, 1705475714000],
+    )
   }
 
   if (!api) return null
@@ -81,48 +92,21 @@ export const ZKDexContractInteractions: FC = () => {
       <div className="flex max-w-[22rem] grow flex-col gap-4">
         <h2 className="text-center font-mono text-gray-400">ZKDex Smart Contract</h2>
 
-        <Form {...form}>
-          {/* Fetched Greeting */}
-          <Card>
-            <CardContent className="pt-6">
-              <FormItem>
-                <FormLabel className="text-base">Fetched Orders</FormLabel>
-                <FormControl>
-                  <textarea
-                    value={fetchIsLoading || !contract ? 'Loading…' : greeterMessage}
-                  ></textarea>
-                </FormControl>
-              </FormItem>
-            </CardContent>
-          </Card>
-
-          {/* Update Greeting */}
-          <Card>
-            <CardContent className="pt-6">
-              <form
-                onSubmit={handleSubmit(updateGreeting)}
-                className="flex flex-col justify-end gap-2"
-              >
-                <FormItem>
-                  <FormLabel className="text-base">Update Greeting</FormLabel>
-                  <FormControl>
-                    <div className="flex gap-2">
-                      <Input disabled={updateIsLoading} {...register('newMessage')} />
-                      <Button
-                        type="submit"
-                        className="bg-primary font-bold"
-                        disabled={fetchIsLoading || updateIsLoading}
-                        isLoading={updateIsLoading}
-                      >
-                        Submit
-                      </Button>
-                    </div>
-                  </FormControl>
-                </FormItem>
-              </form>
-            </CardContent>
-          </Card>
-        </Form>
+        <button className="w-sm rounded bg-slate-800" onClick={fetchAllOrders}>
+          Get All Orders
+        </button>
+        <button className="w-sm rounded bg-slate-800" onClick={fetchAllClaimOrders}>
+          Get All Claim Orders
+        </button>
+        <button className="w-sm rounded bg-slate-800" onClick={fetchOrder}>
+          Get Order
+        </button>
+        <button className="w-sm rounded bg-slate-800" onClick={createOrder}>
+          Create Liquidity Pool
+        </button>
+        <button className="w-sm rounded bg-slate-800" onClick={createClaimOrder}>
+          Claim Liquidity Pool
+        </button>
 
         {/* Contract Address */}
         <p className="text-center font-mono text-xs text-gray-600">
