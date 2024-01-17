@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xb5507dc45727cb1f9b58efe4674f4bf32084b07314cabcfa398afa758c7a6d78",
+    "hash": "0x7ba759d6e522cb8b4c54f20cbc0b4a1a476365618e0abeca3aa0383d626eef84",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.75.0",
     "build_info": {
@@ -25,7 +25,9 @@
       {
         "args": [],
         "default": false,
-        "docs": [],
+        "docs": [
+          "Create new instance of ZKDex contract."
+        ],
         "label": "default",
         "payable": false,
         "returnType": {
@@ -90,7 +92,10 @@
       {
         "args": [],
         "default": false,
-        "docs": [],
+        "docs": [
+          " Get all orders.",
+          " Returns an empty vector if there are no orders."
+        ],
         "label": "get_all_orders",
         "mutates": false,
         "payable": false,
@@ -106,7 +111,9 @@
       {
         "args": [],
         "default": false,
-        "docs": [],
+        "docs": [
+          " Get all orders claim."
+        ],
         "label": "get_all_orders_claim",
         "mutates": false,
         "payable": false,
@@ -132,7 +139,10 @@
           }
         ],
         "default": false,
-        "docs": [],
+        "docs": [
+          " Get an order by its index.",
+          " Returns an error if the order does not exist."
+        ],
         "label": "get_order",
         "mutates": false,
         "payable": false,
@@ -148,7 +158,9 @@
       {
         "args": [],
         "default": false,
-        "docs": [],
+        "docs": [
+          " Get the current block timestamp."
+        ],
         "label": "get_time",
         "mutates": false,
         "payable": false,
@@ -314,6 +326,41 @@
           "type": 21
         },
         "selector": "0x1dba7214"
+      },
+      {
+        "args": [
+          {
+            "label": "index_claim_order",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "status",
+            "type": {
+              "displayName": [
+                "ClaimStatus"
+              ],
+              "type": 16
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "update_claim_order_status",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0xd8590569"
       }
     ]
   },
@@ -372,17 +419,13 @@
                               "variants": {
                                 "0": {
                                   "fields": [],
-                                  "name": "Unopened"
+                                  "name": "Open"
                                 },
                                 "1": {
                                   "fields": [],
-                                  "name": "Open"
-                                },
-                                "2": {
-                                  "fields": [],
                                   "name": "Filled"
                                 },
-                                "3": {
+                                "2": {
                                   "fields": [],
                                   "name": "Canceled"
                                 }
@@ -467,7 +510,7 @@
                                 },
                                 "2": {
                                   "fields": [],
-                                  "name": "Used"
+                                  "name": "Filled"
                                 },
                                 "3": {
                                   "fields": [],
@@ -761,18 +804,14 @@
             "variants": [
               {
                 "index": 0,
-                "name": "Unopened"
-              },
-              {
-                "index": 1,
                 "name": "Open"
               },
               {
-                "index": 2,
+                "index": 1,
                 "name": "Filled"
               },
               {
-                "index": 3,
+                "index": 2,
                 "name": "Canceled"
               }
             ]
@@ -889,7 +928,7 @@
               },
               {
                 "index": 2,
-                "name": "Used"
+                "name": "Filled"
               },
               {
                 "index": 3,

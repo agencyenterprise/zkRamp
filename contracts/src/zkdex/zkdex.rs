@@ -2,6 +2,7 @@
 
 #[ink::contract]
 mod zkdex {
+    use ink::env::call;
     use ink::prelude::vec::Vec;
     use ink::storage::Mapping;
     use ink_prelude::string::String;
@@ -12,7 +13,6 @@ mod zkdex {
         derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
     )]
     enum OrderStatus {
-        Unopened,
         Open,
         Filled,
         Canceled,
@@ -23,10 +23,10 @@ mod zkdex {
         feature = "std",
         derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
     )]
-    enum ClaimStatus {
+    pub enum ClaimStatus {
         WaitingForBuyerProof,
         WaitingForSellerProof,
-        Used,
+        Filled,
         Canceled,
     }
 
@@ -74,18 +74,24 @@ mod zkdex {
         orders: Mapping<u32, Order>,
         orders_claim: Mapping<u32, OrderClaim>,
         next_order_nonce: u32,
+        owner: AccountId,
     }
 
     impl ZKDex {
+        /// Create new instance of ZKDex contract.
         #[ink(constructor)]
         pub fn default() -> Self {
-            ZKDex {
+            let mut instance = ZKDex {
                 orders: Mapping::default(),
                 orders_claim: Mapping::default(),
                 next_order_nonce: 0,
-            }
+                owner: Self::env().caller(),
+            };
+            instance
         }
 
+        /// Get all orders.
+        /// Returns an empty vector if there are no orders.
         #[ink(message)]
         pub fn get_all_orders(&self) -> Vec<Order> {
             let mut orders: Vec<Order> = Vec::new();
@@ -95,6 +101,7 @@ mod zkdex {
             orders
         }
 
+        /// Get all orders claim.
         #[ink(message)]
         pub fn get_all_orders_claim(&self) -> Vec<OrderClaim> {
             let mut orders_claim: Vec<OrderClaim> = Vec::new();
@@ -104,11 +111,14 @@ mod zkdex {
             orders_claim
         }
 
+        /// Get an order by its index.
+        /// Returns an error if the order does not exist.
         #[ink(message)]
         pub fn get_order(&self, index: u32) -> Order {
             self.orders.get(index).unwrap()
         }
 
+        /// Get the current block timestamp.
         #[ink(message)]
         pub fn get_time(&self) -> u128 {
             self.env().block_timestamp() as u128
@@ -250,9 +260,45 @@ mod zkdex {
             Ok(())
         }
 
-        // TODO Submit BUYER proof
+        /// Update the status of a claimed order.
+        /// Only the owner of the contract can update the status of a claimed order.
+        /// It will be responsible for updating the status of the order to Filled
+        #[ink(message)]
+        pub fn update_claim_order_status(
+            &mut self,
+            index_claim_order: u32,
+            status: ClaimStatus,
+        ) -> Result<(), EscrowError> {
+            let caller = self.env().caller();
 
-        // TODO Submit SELLER proof
+            if caller != self.owner {
+                return Err(EscrowError::Unauthorised);
+            }
+
+            if !self.orders_claim.contains(&index_claim_order) {
+                return Err(EscrowError::OrderClaimed);
+            }
+
+            if self.orders_claim.get(&index_claim_order).unwrap().status
+                != ClaimStatus::WaitingForBuyerProof
+                || self.orders_claim.get(&index_claim_order).unwrap().status
+                    != ClaimStatus::WaitingForSellerProof
+            {
+                return Err(EscrowError::StatusCanNotBeChanged);
+            }
+
+            let mut order_claim = self.orders_claim.get(index_claim_order).unwrap();
+            order_claim.status = status.clone();
+            self.orders_claim.insert(index_claim_order, &order_claim);
+
+            if status == ClaimStatus::Filled {
+                let mut order = self.orders.get(order_claim.order_index).unwrap();
+                order.status = OrderStatus::Filled;
+                self.orders.insert(order_claim.order_index, &order);
+            }
+
+            Ok(())
+        }
     }
 
     #[cfg(test)]
