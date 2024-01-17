@@ -20,6 +20,7 @@
     "react/jsx-no-target-blank": "off",
     "no-extra-boolean-cast": "off",
     "prefer-const": "warn",
+    "@next/next/no-img-element": "off",
     "no-restricted-imports": ["warn", { "patterns": ["process"] }]
   }
 }

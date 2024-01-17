@@ -18,6 +18,7 @@
   "dependencies": {
     "@azns/resolver-core": "^1.6.0",
     "@azns/resolver-react": "^1.6.0",
+    "@heroicons/react": "^2.1.1",
     "@hookform/resolvers": "^3.3.2",
     "@inkathon/contracts": "workspace:*",
     "@polkadot/api": "^10.11.2",

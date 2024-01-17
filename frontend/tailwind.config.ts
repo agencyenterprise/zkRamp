@@ -15,18 +15,24 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)', ...defaultTheme.fontFamily.sans],
-        mono: ['var(--font-geist-mono)', ...defaultTheme.fontFamily.mono],
+        manrope: ['Manrope', ...defaultTheme.fontFamily.sans],
+        azaretMono: ['Azaret Mono', ...defaultTheme.fontFamily.mono],
+      },
+      backgroundImage: {
+        gradient:
+          'linear-gradient(180deg, #161616 0%, rgba(22, 22, 22, 0.00) 39.72%, rgba(22, 22, 22, 0.00) 88.69%, #161616 100%)',
       },
       colors: {
         border: 'hsl(var(--border) / <alpha-value>)',
-        input: 'hsl(var(--input) / <alpha-value>)',
+        outlineBorder: 'white',
+        outlineText: 'white',
+        outlineBackground: '#18181B',
         ring: 'hsl(var(--ring) / <alpha-value>)',
         background: 'hsl(var(--background) / <alpha-value>)',
         foreground: 'hsl(var(--foreground) / <alpha-value>)',
         primary: {
-          DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
-          foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
+          DEFAULT: '#BEF264',
+          foreground: '#09090B',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
