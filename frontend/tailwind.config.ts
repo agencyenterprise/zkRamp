@@ -27,6 +27,8 @@ const config: Config = {
         outlineBorder: 'white',
         outlineText: 'white',
         outlineBackground: '#18181B',
+        surface2: '#09090B',
+        subtlest: '#A1A1AA',
         ring: 'hsl(var(--ring) / <alpha-value>)',
         background: 'hsl(var(--background) / <alpha-value>)',
         foreground: 'hsl(var(--foreground) / <alpha-value>)',
