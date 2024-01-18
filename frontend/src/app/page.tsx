@@ -5,9 +5,7 @@ import { useEffect } from 'react'
 import { useInkathon } from '@scio-labs/use-inkathon'
 import { toast } from 'react-hot-toast'
 
-import { ChainInfo } from '@/components/web3/chain-info'
-import { ConnectButton } from '@/components/web3/connect-button'
-import { ZKDexContractInteractions } from '@/components/web3/zkdex-contract-interactions'
+import { ZKRampContractInteractions } from '@/components/web3/zkramp-contract-interactions'
 
 import { Button } from '../components/ui/button'
 import { Background } from './components/background'
@@ -28,7 +26,7 @@ export default function HomePage() {
           Lightning-fast BRL to AZERO Transaction with the highest level of security
         </h1>
         <h2 className="max-w-2xl text-center text-xl font-normal leading-normal text-zinc-300 md:leading-7">
-          zkDex leverages zero-knowledge proofs to ensure your transactions remain private while
+          ZKRamp leverages zero-knowledge proofs to ensure your transactions remain private while
           providing unmatched efficiency in onramp/offramp solutions.
         </h2>
       </div>
@@ -51,7 +49,7 @@ export default function HomePage() {
             </Button>
           </div>
           <HeroHexagons />
-          <ZKDexContractInteractions />
+          <ZKRampContractInteractions />
         </main>
       </div>
       <Background />

@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x074d82affe64989a4853b3c7f6f674bc6f13efe2d0aa5124d9ea7a2397f06b55",
+    "hash": "0x8ac5ee87923de4d9da794ecbe4410b2b12e42bcb8e45ef156ba3658f6b252d0d",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.75.0",
     "build_info": {
@@ -14,10 +14,10 @@
     }
   },
   "contract": {
-    "name": "zkdex",
+    "name": "zkramp",
     "version": "0.0.1",
     "authors": [
-      "AE Studio<hello@scio.xyz>"
+      "AE Studio<hello@ae.studio>"
     ]
   },
   "spec": {
@@ -26,7 +26,7 @@
         "args": [],
         "default": false,
         "docs": [
-          "Create new instance of ZKDex contract."
+          "Create new instance of ZKRamp contract."
         ],
         "label": "default",
         "payable": false,
@@ -382,7 +382,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x73f77d47",
+                              "key": "0xa4ec08fe",
                               "ty": 0
                             }
                           },
@@ -391,7 +391,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x73f77d47",
+                              "key": "0xa4ec08fe",
                               "ty": 1
                             }
                           },
@@ -400,7 +400,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x73f77d47",
+                              "key": "0xa4ec08fe",
                               "ty": 4
                             }
                           },
@@ -409,7 +409,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x73f77d47",
+                              "key": "0xa4ec08fe",
                               "ty": 4
                             }
                           },
@@ -418,7 +418,7 @@
                         {
                           "layout": {
                             "enum": {
-                              "dispatchKey": "0x73f77d47",
+                              "dispatchKey": "0xa4ec08fe",
                               "name": "OrderStatus",
                               "variants": {
                                 "0": {
@@ -441,7 +441,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x73f77d47",
+                              "key": "0xa4ec08fe",
                               "ty": 5
                             }
                           },
@@ -450,7 +450,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x73f77d47",
+                              "key": "0xa4ec08fe",
                               "ty": 5
                             }
                           },
@@ -459,7 +459,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x73f77d47",
+                              "key": "0xa4ec08fe",
                               "ty": 0
                             }
                           },
@@ -469,7 +469,7 @@
                       "name": "Order"
                     }
                   },
-                  "root_key": "0x73f77d47"
+                  "root_key": "0xa4ec08fe"
                 }
               },
               "name": "orders"
@@ -483,7 +483,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x4b32d86a",
+                              "key": "0x6126ac8a",
                               "ty": 1
                             }
                           },
@@ -492,7 +492,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x4b32d86a",
+                              "key": "0x6126ac8a",
                               "ty": 0
                             }
                           },
@@ -501,7 +501,7 @@
                         {
                           "layout": {
                             "enum": {
-                              "dispatchKey": "0x4b32d86a",
+                              "dispatchKey": "0x6126ac8a",
                               "name": "ClaimStatus",
                               "variants": {
                                 "0": {
@@ -528,7 +528,7 @@
                         {
                           "layout": {
                             "leaf": {
-                              "key": "0x4b32d86a",
+                              "key": "0x6126ac8a",
                               "ty": 4
                             }
                           },
@@ -538,7 +538,7 @@
                       "name": "OrderClaim"
                     }
                   },
-                  "root_key": "0x4b32d86a"
+                  "root_key": "0x6126ac8a"
                 }
               },
               "name": "orders_claim"
@@ -562,7 +562,7 @@
               "name": "owner"
             }
           ],
-          "name": "ZKDex"
+          "name": "ZKRamp"
         }
       },
       "root_key": "0x00000000"
@@ -803,8 +803,8 @@
           }
         },
         "path": [
-          "zkdex",
-          "zkdex",
+          "zkramp",
+          "zkramp",
           "Order"
         ]
       }
@@ -831,8 +831,8 @@
           }
         },
         "path": [
-          "zkdex",
-          "zkdex",
+          "zkramp",
+          "zkramp",
           "OrderStatus"
         ]
       }
@@ -919,8 +919,8 @@
           }
         },
         "path": [
-          "zkdex",
-          "zkdex",
+          "zkramp",
+          "zkramp",
           "OrderClaim"
         ]
       }
@@ -951,8 +951,8 @@
           }
         },
         "path": [
-          "zkdex",
-          "zkdex",
+          "zkramp",
+          "zkramp",
           "ClaimStatus"
         ]
       }
@@ -1243,8 +1243,8 @@
           }
         },
         "path": [
-          "zkdex",
-          "zkdex",
+          "zkramp",
+          "zkramp",
           "EscrowError"
         ]
       }

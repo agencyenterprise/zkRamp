@@ -7,8 +7,7 @@ import { env } from '@/config/environment'
  * DOCS: https://github.com/scio-labs/inkathon#2-custom-contracts
  */
 export enum ContractIds {
-  zkdex = 'zkdex',
-  // Greeter = 'greeter',
+  zkramp = 'zkramp',
 }
 
 export const getDeployments = async (): Promise<SubstrateDeployment[]> => {
