@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast'
 
 import { ChainInfo } from '@/components/web3/chain-info'
 import { ConnectButton } from '@/components/web3/connect-button'
-import { GreeterContractInteractions } from '@/components/web3/greeter-contract-interactions'
+import { ZKDexContractInteractions } from '@/components/web3/zkdex-contract-interactions'
 
 import { Button } from '../components/ui/button'
 import { Background } from './components/background'
@@ -51,6 +51,7 @@ export default function HomePage() {
             </Button>
           </div>
           <HeroHexagons />
+          <ZKDexContractInteractions />
         </main>
       </div>
       <Background />

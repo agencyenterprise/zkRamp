@@ -1,19 +1,21 @@
 [package]
-name = "greeter"
+name = "zkdex"
 version = "0.0.1"
-authors = ["Scio Labs <hello@scio.xyz>"]
+authors = ["AE Studio<hello@scio.xyz>"]
 edition = "2021"
 
 [dependencies]
 ink = { version = "4.3.0", default-features = false }
+ink_prelude = { version = "4.3.0", default-features = false }
+openbrush = { version = "4.0.0-beta", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
 [lib]
-path = "lib.rs"
+path = "zkdex.rs"
 
 [features]
 default = ["std"]
-std = ["ink/std", "scale/std", "scale-info/std"]
+std = ["ink/std", "scale/std", "scale-info/std", "openbrush/std", "ink_prelude/std"]
 ink-as-dependency = []
