@@ -85,6 +85,40 @@ export const ZKDexContractInteractions: FC = () => {
     )
   }
 
+  const cancelOrder = async () => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(api, activeAccount.address, contract, 'cancel_order', {}, [0])
+  }
+
+  const cancelClaimOrder = async () => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(api, activeAccount.address, contract, 'cancel_claim_order', {}, [0])
+  }
+
+  const updateClaimOrderStatus = async () => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(
+      api,
+      activeAccount.address,
+      contract,
+      'update_claim_order_status',
+      {},
+      [0, 'Filled'],
+    )
+  }
+
   if (!api) return null
 
   return (
@@ -104,8 +138,17 @@ export const ZKDexContractInteractions: FC = () => {
         <button className="w-sm rounded bg-slate-800" onClick={createOrder}>
           Create Liquidity Pool
         </button>
+        <button className="w-sm rounded bg-slate-800" onClick={cancelOrder}>
+          Cancel Liquidity Pool
+        </button>
         <button className="w-sm rounded bg-slate-800" onClick={createClaimOrder}>
           Claim Liquidity Pool
+        </button>
+        <button className="w-sm rounded bg-slate-800" onClick={cancelClaimOrder}>
+          Cancel Claim Liquidity Pool
+        </button>
+        <button className="w-sm rounded bg-slate-800" onClick={updateClaimOrderStatus}>
+          Update Claim Liquidity Pool
         </button>
 
         {/* Contract Address */}
