@@ -43,6 +43,12 @@ export const initPolkadotJs = async (): Promise<InitParams> => {
   // Initialize account & set signer
   const keyring = new Keyring({ type: 'sr25519' })
   const account = keyring.addFromUri(accountUti)
+  // const mnemonic = mnemonicGenerate(24)
+  // console.log(`Generated mnemonic: ${mnemonic}`)
+
+  // const account = keyring.addFromUri(
+  //   `X`,
+  // )
   const balance = await getBalance(api, account.address)
   console.log(`Initialized Account: ${account.address} (${balance.balanceFormatted})\n`)
 

@@ -10,6 +10,8 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { env } from '@/config/environment'
 import { cn } from '@/utils/cn'
 
+import { Background } from './components/background'
+import { HomeTopBar } from './components/home-top-bar'
 import './globals.css'
 import ClientProviders from './providers'
 
@@ -48,8 +50,12 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" className={cn('dark', GeistSans.variable, GeistMono.variable)}>
       <body>
         <ClientProviders>
-          <TooltipProvider>{children}</TooltipProvider>
+          <TooltipProvider>
+            <HomeTopBar />
+            {children}
+          </TooltipProvider>
           <ToastConfig />
+          <Background />
         </ClientProviders>
 
         {!!env.isProduction && <Analytics />}
