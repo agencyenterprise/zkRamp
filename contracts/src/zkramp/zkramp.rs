@@ -284,6 +284,9 @@ mod zkramp {
                 let mut order = self.orders.get(order_claim.order_index).unwrap();
                 order.status = OrderStatus::Filled;
                 self.orders.insert(order_claim.order_index, &order);
+
+                // Transfer the funds to the buyer
+                // Release the funds to the seller
             }
 
             Ok(())
