@@ -1,7 +1,7 @@
 [package]
-name = "zkdex"
+name = "zkramp"
 version = "0.0.1"
-authors = ["AE Studio<hello@scio.xyz>"]
+authors = ["AE Studio<hello@ae.studio>"]
 edition = "2021"
 
 [dependencies]
@@ -13,7 +13,7 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
 [lib]
-path = "zkdex.rs"
+path = "zkramp.rs"
 
 [features]
 default = ["std"]

@@ -17,6 +17,7 @@ const config: Config = {
       fontFamily: {
         manrope: ['Manrope', ...defaultTheme.fontFamily.sans],
         azaretMono: ['Azaret Mono', ...defaultTheme.fontFamily.mono],
+        inter: ['Inter', ...defaultTheme.fontFamily.sans],
       },
       backgroundImage: {
         gradient:
@@ -27,6 +28,9 @@ const config: Config = {
         outlineBorder: 'white',
         outlineText: 'white',
         outlineBackground: '#18181B',
+        surface2: '#09090B',
+        subtlest: '#A1A1AA',
+        surfaceHover: '#27272A',
         ring: 'hsl(var(--ring) / <alpha-value>)',
         background: 'hsl(var(--background) / <alpha-value>)',
         foreground: 'hsl(var(--foreground) / <alpha-value>)',

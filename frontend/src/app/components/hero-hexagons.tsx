@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 const HEXAGONS = [
   {
@@ -56,8 +56,8 @@ export const HeroHexagons: FC = () => {
   return (
     <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
       {HEXAGONS.map((hexagon, i) => (
-        <>
-          <Hexagon key={hexagon.title} {...hexagon} step={i + 1} />
+        <React.Fragment key={hexagon.title}>
+          <Hexagon {...hexagon} step={i + 1} />
           {i !== HEXAGONS.length - 1 && (
             <img
               src="/vectors/arrow.svg"
@@ -65,7 +65,7 @@ export const HeroHexagons: FC = () => {
               className="relative -mt-44 hidden origin-bottom-right md:block"
             />
           )}
-        </>
+        </React.Fragment>
       ))}
     </div>
   )

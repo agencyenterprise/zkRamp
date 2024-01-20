@@ -13,9 +13,9 @@ import toast from 'react-hot-toast'
 
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
-export const ZKDexContractInteractions: FC = () => {
+export const ZKRampContractInteractions: FC = () => {
   const { api, activeAccount, activeSigner } = useInkathon()
-  const { contract, address: contractAddress } = useRegisteredContract(ContractIds.zkdex)
+  const { contract, address: contractAddress } = useRegisteredContract(ContractIds.zkramp)
 
   const fetchAllOrders = async () => {
     if (!contract || !api) return
@@ -124,7 +124,7 @@ export const ZKDexContractInteractions: FC = () => {
   return (
     <>
       <div className="flex max-w-[22rem] grow flex-col gap-4">
-        <h2 className="text-center font-mono text-gray-400">ZKDex Smart Contract</h2>
+        <h2 className="text-center font-mono text-gray-400">ZKRamp Smart Contract</h2>
 
         <button className="w-sm rounded bg-slate-800" onClick={fetchAllOrders}>
           Get All Orders

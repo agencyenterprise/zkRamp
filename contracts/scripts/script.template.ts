@@ -9,7 +9,7 @@ import {
 } from '@scio-labs/use-inkathon/helpers'
 
 /**
- * Example script that updates & reads a message from a zkdex contract.
+ * Example script that updates & reads a message from a zkramp contract.
  * Can be used as a template for other scripts.
  *
  * Parameters:
@@ -23,8 +23,8 @@ import {
 const main = async () => {
   const { api, account } = await initPolkadotJs()
 
-  // Deploy zkdex contract
-  const { abi, wasm } = await getDeploymentData('zkdex')
+  // Deploy zkramp contract
+  const { abi, wasm } = await getDeploymentData('zkramp')
   const { address } = await deployContract(api, account, abi, wasm, 'default', [])
   const contract = new ContractPromise(api, abi, address)
 

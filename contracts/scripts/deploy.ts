@@ -4,7 +4,7 @@ import { writeContractAddresses } from '@/utils/writeContractAddresses'
 import { deployContract } from '@scio-labs/use-inkathon/helpers'
 
 /**
- * Script that deploys the zkdex contract and writes its address to a file.
+ * Script that deploys the zkramp contract and writes its address to a file.
  *
  * Parameters:
  *  - `DIR`: Directory to read contract build artifacts & write addresses to (optional, defaults to `./deployments`)
@@ -18,13 +18,13 @@ const main = async () => {
   const initParams = await initPolkadotJs()
   const { api, chain, account } = initParams
 
-  // Deploy zkdex contract
-  const { abi, wasm } = await getDeploymentData('zkdex')
-  const zkdex = await deployContract(api, account, abi, wasm, 'default', [])
+  // Deploy zkramp contract
+  const { abi, wasm } = await getDeploymentData('zkramp')
+  const zkramp = await deployContract(api, account, abi, wasm, 'default', [])
 
   // Write contract addresses to `{contract}/{network}.ts` file(s)
   await writeContractAddresses(chain.network, {
-    zkdex,
+    zkramp,
   })
 }
 
