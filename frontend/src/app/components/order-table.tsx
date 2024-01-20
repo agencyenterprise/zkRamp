@@ -134,6 +134,37 @@ export default function OrderTable() {
     await refresh()
   }
 
+  const cancelOrder = async (order: any) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(api, activeAccount.address, contract, 'cancel_order', {}, [order.id])
+
+    toast.success('Order canceled')
+    await refresh()
+  }
+
+  const submitProofSeller = async (order: any) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(
+      api,
+      activeAccount.address,
+      contract,
+      'update_claim_order_status',
+      {},
+      [order.id, 'Filled'],
+    )
+
+    toast.success('Proof seller submitted')
+    await refresh()
+  }
+
   return (
     <div className="w-full">
       <div className="flow-root">
@@ -209,6 +240,12 @@ export default function OrderTable() {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(order))}</Badge>
+                      <button className="p-2" onClick={() => cancelOrder(order)}>
+                        cancel
+                      </button>
+                      <button className="p-2" onClick={() => submitProofSeller(order)}>
+                        proof
+                      </button>
                     </td>
                   </tr>
                 ))}
