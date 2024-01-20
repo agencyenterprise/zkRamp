@@ -8,9 +8,7 @@ import { toast } from 'react-hot-toast'
 import { ZKRampContractInteractions } from '@/components/web3/zkramp-contract-interactions'
 
 import { Button } from '../components/ui/button'
-import { Background } from './components/background'
 import { HeroHexagons } from './components/hero-hexagons'
-import { HomeTopBar } from './components/home-top-bar'
 
 export default function HomePage() {
   const { error } = useInkathon()
@@ -35,8 +33,6 @@ export default function HomePage() {
 
   return (
     <>
-      <HomeTopBar />
-
       <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">
         <main className="flex flex-col gap-8">
           <HeroText />
@@ -52,7 +48,6 @@ export default function HomePage() {
           <ZKRampContractInteractions />
         </main>
       </div>
-      <Background />
     </>
   )
 }

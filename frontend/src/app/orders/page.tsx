@@ -1,7 +1,5 @@
 'use client'
 
-import { Background } from '../components/background'
-import { HomeTopBar } from '../components/home-top-bar'
 import OrderTable from '../components/order-table'
 
 export default function OrdersPage() {
@@ -18,15 +16,12 @@ export default function OrdersPage() {
 
   return (
     <>
-      <HomeTopBar />
-
       <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">
         <main className="flex flex-col gap-8">
           <Title />
           <OrderTable />
         </main>
       </div>
-      <Background />
     </>
   )
 }
