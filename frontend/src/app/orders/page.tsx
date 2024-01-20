@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import OrderTable from '../components/order-table'
-import PlaceOrderForm from '../components/place-order-form'
+import PlaceOrderForm, { PaymentInfo } from '../components/place-order-form'
 
 export default function OrdersPage() {
   const [showPlaceOrderForm, setShowPlaceOrderForm] = useState(false)
@@ -77,6 +77,10 @@ export default function OrdersPage() {
         </div>
       </div>
     )
+  }
+
+  const handleSubmit = (paymentInfo: PaymentInfo) => {
+    console.log(paymentInfo)
   }
 
   return (
