@@ -242,6 +242,7 @@ mod zkramp {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
 
+            // TODO: remove the claim order from the order book
             let mut order_claim = self.orders_claim.get(index).unwrap();
             order_claim.status = ClaimStatus::Canceled;
             self.orders_claim.insert(index, &order_claim);

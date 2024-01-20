@@ -7,11 +7,14 @@ import {
   useInkathon,
   useRegisteredContract,
 } from '@scio-labs/use-inkathon'
+import toast from 'react-hot-toast'
+
+import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import Badge from '../../components/ui/badge'
 
 export default function OrderTable() {
-  const { api, activeAccount } = useInkathon()
+  const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
   const [orders, setOrders] = useState<any>([])
   const [claimOrders, setClaimOrders] = useState<any>([])
@@ -61,9 +64,13 @@ export default function OrderTable() {
   }
 
   useEffect(() => {
+    refresh()
+  }, [contract, api])
+
+  const refresh = async () => {
     fetchAllOrders()
     fetchAllClaimOrders()
-  }, [contract, api])
+  }
 
   const getStatus = (order: any): string => {
     const claimedOrder = claimOrders.filter((claimOrder: any) => {
@@ -92,6 +99,39 @@ export default function OrderTable() {
       default:
         return 'Unknown'
     }
+  }
+
+  const cancelClaimOrder = async (claimOrder: any) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(api, activeAccount.address, contract, 'cancel_claim_order', {}, [
+      claimOrder.orderIndex,
+    ])
+
+    toast.success('Claim order canceled')
+    await refresh()
+  }
+
+  const submitProofClaimUser = async (claimOrder: any) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(
+      api,
+      activeAccount.address,
+      contract,
+      'update_claim_order_status',
+      {},
+      [claimOrder.orderIndex, 'WaitingForSellerProof'],
+    )
+
+    toast.success('Proof claim user submitted')
+    await refresh()
   }
 
   return (
@@ -247,6 +287,12 @@ export default function OrderTable() {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
+                      <button className="p-2" onClick={() => cancelClaimOrder(claimOrder)}>
+                        cancel
+                      </button>
+                      <button className="p-2" onClick={() => submitProofClaimUser(claimOrder)}>
+                        proof
+                      </button>
                     </td>
                   </tr>
                 ))}

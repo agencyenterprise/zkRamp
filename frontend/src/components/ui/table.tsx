@@ -91,6 +91,7 @@ export default function Table() {
       new Date().setDate(new Date().getDate() + 6),
     ])
 
+    toast.success('Claim order created')
     await refresh()
   }
 
