@@ -50,8 +50,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" className={cn('dark', GeistSans.variable, GeistMono.variable)}>
       <body>
         <ClientProviders>
-          <HomeTopBar />
-          <TooltipProvider>{children}</TooltipProvider>
+          <TooltipProvider>
+            <HomeTopBar />
+            {children}
+          </TooltipProvider>
           <ToastConfig />
           <Background />
         </ClientProviders>

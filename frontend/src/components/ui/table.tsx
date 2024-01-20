@@ -7,11 +7,14 @@ import {
   useInkathon,
   useRegisteredContract,
 } from '@scio-labs/use-inkathon'
+import toast from 'react-hot-toast'
+
+import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import Badge from './badge'
 
 export default function Table() {
-  const { api } = useInkathon()
+  const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
   const [orders, setOrders] = useState<any>([])
   const [claimOrders, setClaimOrders] = useState<any>([])
@@ -40,9 +43,13 @@ export default function Table() {
   }
 
   useEffect(() => {
-    fetchAllOrders()
-    fetchAllClaimOrders()
+    refresh()
   }, [contract, api])
+
+  const refresh = async () => {
+    await fetchAllOrders()
+    await fetchAllClaimOrders()
+  }
 
   const getStatus = (order: any): string => {
     const claimedOrder = claimOrders.filter((claimOrder: any) => {
@@ -71,6 +78,20 @@ export default function Table() {
       default:
         return 'Unknown'
     }
+  }
+
+  const createClaimOrder = (order: any) => async () => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(api, activeAccount.address, contract, 'claim_order', {}, [
+      order.id,
+      new Date().setDate(new Date().getDate() + 6),
+    ])
+
+    await refresh()
   }
 
   return (
@@ -132,8 +153,8 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
-                {orders.map((order: any, index: any) => (
-                  <tr key={order.depositor}>
+                {orders.map((order: any) => (
+                  <tr key={order.depositor} onClick={createClaimOrder(order)}>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
                       {order.id}
                     </td>
