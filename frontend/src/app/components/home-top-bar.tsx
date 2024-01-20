@@ -10,8 +10,8 @@ import { ConnectButton } from '@/components/web3/connect-button'
 
 const navigation = [
   { name: 'Liquidity', href: '/liquidity' },
-  { name: 'Deposits', href: '/about' },
-  { name: 'Receipts', href: '/contact' },
+  // { name: 'Deposits', href: '/about' },
+  // { name: 'Receipts', href: '/contact' },
   { name: 'Orders', href: '/orders', mustBeConnected: true },
 ]
 

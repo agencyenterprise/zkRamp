@@ -154,7 +154,11 @@ export default function Table() {
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
                 {orders.map((order: any) => (
-                  <tr key={order.depositor} onClick={createClaimOrder(order)}>
+                  <tr
+                    key={order.depositor}
+                    onClick={createClaimOrder(order)}
+                    className="cursor-pointer"
+                  >
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
                       {order.id}
                     </td>
