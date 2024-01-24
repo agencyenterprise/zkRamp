@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
 import {
@@ -19,6 +19,7 @@ export default function Table() {
   const { contract } = useRegisteredContract(ContractIds.zkramp)
   const [orders, setOrders] = useState<any>([])
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
+  const [claimedOrder, setClaimedOrder] = useState<any>(null)
   const [claimOrders, setClaimOrders] = useState<any>([])
 
   const fetchAllOrders = async () => {
@@ -83,11 +84,13 @@ export default function Table() {
   }
 
   const createClaimOrder = (order: any) => async () => {
+    console.log("Suahsuahusahushuausndsmidim")
+    console.log("createClaimOrder 1")
     if (!activeAccount || !contract || !activeSigner || !api) {
       toast.error('Wallet not connected. Try again…')
       return
     }
-
+    console.log("createClaimOrder 2")
     await contractTxWithToast(api, activeAccount.address, contract, 'claim_order', {}, [
       order.id,
       new Date().setDate(new Date().getDate() + 6),
@@ -97,13 +100,23 @@ export default function Table() {
     await refresh()
   }
 
+  const mockCreateOrder = async () => {
+    setClaimedOrder({
+      buyer: '0x0000000',
+      claimExpirationTime: new Date().setMinutes(new Date().getMinutes() + 1),
+      orderIndex: '1',
+      status: 'WaitingForSellerProof',
+    })
+  }
+
   return (
     <div className="w-full">
-      <BuyOrderModal order={selectedOrder}
-      claimedOrder={claimOrders.filter((claimOrder: any) => {
-        return claimOrder.orderIndex == selectedOrder?.id && claimOrder.status != 'Canceled'
-      })[0]}
-       onClaimCreated={(order) => createClaimOrder(order)} onClose={() => setSelectedOrder(undefined)} />
+      <BuyOrderModal 
+      order={selectedOrder}
+      claimedOrder={claimedOrder}
+      onClose={() => setSelectedOrder(undefined)}
+      onClaimCreated={mockCreateOrder}
+       />
       <div className="flow-root">
         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -161,7 +174,6 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
-                {console.log(claimOrders)}
                 {orders.map((order: any) => (
                   <tr
                     key={order.depositor}

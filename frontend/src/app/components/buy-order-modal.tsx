@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 import dayjs from 'dayjs'
 import { CircularProgressbar } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
@@ -28,19 +30,46 @@ interface Props {
   onClose: () => void
 }
 
+const interpolateColor = (color1: string, color2: string, ratio: number) => {
+  const hex = (color: string) => parseInt(color.substring(1), 16)
+
+  const r = Math.ceil((1 - ratio) * (hex(color1) >> 16) + ratio * (hex(color2) >> 16))
+  const g = Math.ceil(
+    (1 - ratio) * ((hex(color1) >> 8) & 0x00ff) + ratio * ((hex(color2) >> 8) & 0x00ff),
+  )
+  const b = Math.ceil((1 - ratio) * (hex(color1) & 0x0000ff) + ratio * (hex(color2) & 0x0000ff))
+
+  return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`
+}
+
 export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onClose }: Props) {
+  const [timeLeft, setTimeLeft] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!claimedOrder) return
+      // TODO: I set it to 1 minute and the unit to seconds for testing the progress bar, we should change the unit back to 'minute'
+      const diffInMinutes = dayjs(claimedOrder.claimExpirationTime).diff(dayjs(), 'second')
+      if (diffInMinutes <= 0) {
+        setTimeLeft(diffInMinutes)
+        clearInterval(interval)
+        return
+      }
+      setTimeLeft(diffInMinutes)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [claimedOrder])
   if (!order && !claimedOrder) return null
   if (claimedOrder) {
-    const diffInMinutes = dayjs(claimedOrder.claimExpirationTime).diff(dayjs(), 'minute')
+    const progressBarColor = interpolateColor('#BEF264', '#f87171', 1 - timeLeft / 60)
     return (
       <div className="absolute inset-0 z-50 flex h-full w-full items-center justify-center bg-opacity-50 transition-all">
-        <div className="inline-flexx] flex-col items-center justify-start gap-6 rounded bg-zinc-950 p-6 shadow">
+        <div className="inline-flex flex-col items-center justify-start gap-6 rounded bg-zinc-950 p-6 shadow">
           <div className="flex flex-col items-center justify-start gap-6 self-stretch">
             <div className="flex flex-col items-center justify-start gap-2 self-stretch">
-              <div className="self-stretch text-center font-['Manrope'] text-2xl font-bold leading-loose text-white">
+              <div className="self-stretch text-center font-manrope text-2xl font-bold leading-loose text-white">
                 Order Created
               </div>
-              <div className="font-['Azeret Mono'] self-stretch text-center text-base font-normal leading-normal text-zinc-300">
+              <div className="self-stretch text-center font-azaretMono text-base font-normal leading-normal text-zinc-300">
                 You have 1h to pay the order, upload the receipt.
               </div>
             </div>
@@ -48,14 +77,14 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
           <div className="flex flex-col items-center justify-start gap-6 self-stretch rounded bg-zinc-900 p-6">
             <div className="relative">
               <CircularProgressbar
-                value={100}
-                text={`${diffInMinutes} min`}
+                value={(timeLeft / 60) * 100}
+                text={`${timeLeft} min`}
                 styles={{
                   root: {
                     width: 100,
                   },
                   path: {
-                    stroke: '#10B981',
+                    stroke: progressBarColor,
                     strokeLinecap: 'butt',
                     transition: 'stroke-dashoffset 0.5s ease 0s',
                   },
@@ -73,11 +102,11 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
               />
             </div>
             <div className="flex h-24 flex-col items-start justify-start gap-1 self-stretch rounded border border-zinc-800 bg-zinc-800 px-4 py-5">
-              <div className="self-stretch font-['Manrope'] text-base font-medium leading-normal text-zinc-400">
+              <div className="self-stretch font-manrope text-base font-medium leading-normal text-zinc-400">
                 Wise Payment Link
               </div>
               <div className="inline-flex items-center justify-start gap-2 self-stretch">
-                <div className="shrink grow basis-0 font-['Manrope'] text-xl font-semibold leading-7 text-lime-300">
+                <div className="shrink grow basis-0 font-manrope text-xl font-semibold leading-7 text-lime-300">
                   https://www.wise.com/payment?=0s849sf8
                 </div>
                 <div className="h-5px] relative" />
@@ -85,9 +114,7 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
             </div>
             <div className="inline-flex items-start justify-start gap-3 self-stretch">
               <div className="flex h-12 shrink grow basis-0 items-center justify-center gap-2 rounded bg-lime-300 px-6 py-3 shadow">
-                <div className="font-['Manrope'] text-base font-semibold leading-normal text-zinc-950">
-                  Confirm Payment
-                </div>
+                <Button className="w-full">Confirm Payment</Button>
               </div>
             </div>
           </div>
@@ -96,6 +123,12 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
     )
   }
   if (!order) return null
+
+  const createClaimOrder = async () => {
+    console.log('createClaimOrder', order)
+    onClaimCreated(order)
+  }
+
   return (
     <div className="absolute inset-0 z-50 flex h-full w-full items-center justify-center bg-opacity-50 transition-all">
       <div className="inline-flex flex-col items-center justify-start gap-6 rounded bg-zinc-950 p-6 shadow">
@@ -155,7 +188,7 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
           </div>
         </div>
         <div className="flex flex-col items-start justify-start gap-3 self-stretch">
-          <Button className="w-full" onClick={() => onClaimCreated(order)}>
+          <Button className="w-full" onClick={createClaimOrder}>
             Buy
           </Button>
           <Button onClick={onClose} variant="outline" className="w-full">
