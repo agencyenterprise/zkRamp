@@ -12,11 +12,13 @@ import toast from 'react-hot-toast'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import Badge from './badge'
+import BuyOrderModal from '../../app/components/buy-order-modal'
 
 export default function Table() {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
   const [orders, setOrders] = useState<any>([])
+  const [selectedOrder, setSelectedOrder] = useState<any>(null)
   const [claimOrders, setClaimOrders] = useState<any>([])
 
   const fetchAllOrders = async () => {
@@ -25,7 +27,7 @@ export default function Table() {
     const result = await contractQuery(api, '', contract, 'get_all_orders')
     const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get_all_orders')
     if (isError) throw new Error(decodedOutput)
-
+    
     setOrders(output)
   }
 
@@ -97,6 +99,11 @@ export default function Table() {
 
   return (
     <div className="w-full">
+      <BuyOrderModal order={selectedOrder}
+      claimedOrder={claimOrders.filter((claimOrder: any) => {
+        return claimOrder.orderIndex == selectedOrder?.id && claimOrder.status != 'Canceled'
+      })[0]}
+       onClaimCreated={(order) => createClaimOrder(order)} onClose={() => setSelectedOrder(undefined)} />
       <div className="flow-root">
         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -154,10 +161,11 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
+                {console.log(claimOrders)}
                 {orders.map((order: any) => (
                   <tr
                     key={order.depositor}
-                    onClick={createClaimOrder(order)}
+                    onClick={() => setSelectedOrder(order)}
                     className="cursor-pointer"
                   >
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
