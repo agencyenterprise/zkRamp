@@ -30,14 +30,32 @@ interface Props {
   onClose: () => void
 }
 
-const interpolateColor = (color1: string, color2: string, ratio: number) => {
-  const hex = (color: string) => parseInt(color.substring(1), 16)
+const interpolateColor = (color1: string, color2: string, ratio: number): string => {
+  const hex = (color: string): number => parseInt(color.substring(1), 16)
 
-  const r = Math.ceil((1 - ratio) * (hex(color1) >> 16) + ratio * (hex(color2) >> 16))
-  const g = Math.ceil(
-    (1 - ratio) * ((hex(color1) >> 8) & 0x00ff) + ratio * ((hex(color2) >> 8) & 0x00ff),
+  // Adjust ratio for three-phase transition
+  let adjustedRatio: number
+  if (ratio < 0.3) {
+    // Green dominant phase (0% - 30%)
+    adjustedRatio = 0
+  } else if (ratio < 0.7) {
+    // Transition phase (30% - 70%)
+    adjustedRatio = (ratio - 0.3) / 0.4
+  } else {
+    // Red dominant phase (70% - 100%)
+    adjustedRatio = 1
+  }
+
+  const r = Math.ceil(
+    (1 - adjustedRatio) * (hex(color1) >> 16) + adjustedRatio * (hex(color2) >> 16),
   )
-  const b = Math.ceil((1 - ratio) * (hex(color1) & 0x0000ff) + ratio * (hex(color2) & 0x0000ff))
+  const g = Math.ceil(
+    (1 - adjustedRatio) * ((hex(color1) >> 8) & 0x00ff) +
+      adjustedRatio * ((hex(color2) >> 8) & 0x00ff),
+  )
+  const b = Math.ceil(
+    (1 - adjustedRatio) * (hex(color1) & 0x0000ff) + adjustedRatio * (hex(color2) & 0x0000ff),
+  )
 
   return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`
 }
@@ -107,7 +125,7 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
               </div>
               <div className="inline-flex items-center justify-start gap-2 self-stretch">
                 <div className="shrink grow basis-0 font-manrope text-xl font-semibold leading-7 text-lime-300">
-                  https://www.wise.com/payment?=0s849sf8
+                  https://www.wise.com/payment?={order?.paymentKey}
                 </div>
                 <div className="h-5px] relative" />
               </div>
