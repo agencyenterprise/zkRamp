@@ -48,7 +48,9 @@ mod zkramp {
     pub struct Order {
         id: u32,
         owner: AccountId,
-        deposited: Balance,
+        total: Balance,
+        amount_to_send: Balance,
+        collateral: Balance,
         amount_to_receive: Balance,
         status: OrderStatus,
         payment_key: String,
@@ -138,7 +140,7 @@ mod zkramp {
             name_length: u32,
         ) -> Result<(), ()> {
             let caller = self.env().caller();
-            let transferred_value = self.env().transferred_value();
+            let transferred_value = self.env().transferred_value(); // IS THIS AZERO????
             ink::env::debug_println!(
                 "thanks for the funding of {:?} from {:?}",
                 transferred_value,
@@ -148,7 +150,9 @@ mod zkramp {
             let order = Order {
                 id: self.next_order_nonce,
                 owner: caller,
-                deposited: transferred_value,
+                total: transferred_value,
+                amount_to_send: transferred_value / 2,
+                collateral: transferred_value / 2, // Collateral is 50% of the total
                 amount_to_receive: amount_to_receive,
                 status: OrderStatus::Open,
                 payment_key: payment_key,
@@ -185,7 +189,7 @@ mod zkramp {
             self.orders.insert(index, &order);
 
             let owner = self.orders.get(index).unwrap().owner;
-            let deposited = self.orders.get(index).unwrap().deposited;
+            let deposited = self.orders.get(index).unwrap().total;
             self.env().transfer(owner, deposited).unwrap();
 
             Ok(())
@@ -258,6 +262,7 @@ mod zkramp {
             &mut self,
             index_claim_order: u32,
             status: ClaimStatus,
+            claim_expiration_time: Option<u128>,
         ) -> Result<(), EscrowError> {
             let caller = self.env().caller();
 
@@ -277,20 +282,80 @@ mod zkramp {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
 
-            let mut order_claim = self.orders_claim.get(index_claim_order).unwrap();
-            order_claim.status = status.clone();
-            self.orders_claim.insert(index_claim_order, &order_claim);
-
             if status == ClaimStatus::Filled {
-                let mut order = self.orders.get(order_claim.order_index).unwrap();
-                order.status = OrderStatus::Filled;
-                self.orders.insert(order_claim.order_index, &order);
+                self.release_order_funds(index_claim_order);
+            } else {
+                let mut order_claim = self.orders_claim.get(index_claim_order).unwrap();
+                order_claim.status = status.clone();
 
-                // Transfer the funds to the buyer
-                // Release the funds to the seller
+                if status == ClaimStatus::WaitingForSellerProof {
+                    order_claim.claim_expiration_time = claim_expiration_time.unwrap();
+                }
+
+                self.orders_claim.insert(index_claim_order, &order_claim);
             }
 
             Ok(())
+        }
+
+        /// Buyer claim order funds.
+        /// Only the claim order buyer can get the funds if the time is expired and the seller did not provide the proof.
+        #[ink(message)]
+        pub fn buyer_claim_order_funds(
+            &mut self,
+            index_claim_order: u32,
+        ) -> Result<(), EscrowError> {
+            let caller = self.env().caller();
+
+            if !self.orders_claim.contains(&index_claim_order) {
+                return Err(EscrowError::OrderNotFound);
+            }
+
+            if self.orders_claim.get(&index_claim_order).unwrap().buyer != caller {
+                return Err(EscrowError::Unauthorised);
+            }
+
+            if self.orders_claim.get(&index_claim_order).unwrap().status
+                != ClaimStatus::WaitingForSellerProof
+            {
+                return Err(EscrowError::StatusCanNotBeChanged);
+            }
+
+            if self
+                .orders_claim
+                .get(&index_claim_order)
+                .unwrap()
+                .claim_expiration_time
+                > self.env().block_timestamp() as u128
+            {
+                return Err(EscrowError::OrderClaimed);
+            }
+
+            self.release_order_funds(index_claim_order);
+
+            Ok(())
+        }
+
+        /// Release order funds.
+        fn release_order_funds(&mut self, index_claim_order: u32) {
+            let mut order_claim = self.orders_claim.get(index_claim_order).unwrap();
+            order_claim.status = ClaimStatus::Filled;
+            self.orders_claim.insert(index_claim_order, &order_claim);
+
+            let mut order = self.orders.get(order_claim.order_index).unwrap();
+            order.status = OrderStatus::Filled;
+            self.orders.insert(order_claim.order_index, &order);
+
+            // Release 95% of collateral to the seller
+            // 5% is kept by the contract
+            self.env()
+                .transfer(order.owner, (order.collateral as f64 * 0.95) as u128)
+                .unwrap();
+
+            // Transfer the funds to the buyer
+            self.env()
+                .transfer(order_claim.buyer, order.amount_to_send)
+                .unwrap();
         }
 
         fn check_order_claim(&self, index: u32) -> Result<(), EscrowError> {
@@ -309,11 +374,7 @@ mod zkramp {
     #[cfg(test)]
     mod tests {
         use super::*;
-        use ink::env::{
-            self,
-            test::{get_account_balance, DefaultAccounts},
-            DefaultEnvironment,
-        };
+        use ink::env::{test::DefaultAccounts, DefaultEnvironment};
         use openbrush::test_utils;
 
         // === HELPERS ===
@@ -322,15 +383,6 @@ mod zkramp {
             test_utils::change_caller(accounts.bob);
             let zkramp = ZKRamp::default();
             (accounts, zkramp)
-        }
-
-        fn get_balance(account_id: AccountId) -> Balance {
-            ink::env::test::get_account_balance::<ink::env::DefaultEnvironment>(account_id)
-                .expect("Cannot get account balance")
-        }
-
-        fn set_balance(account_id: AccountId, balance: Balance) {
-            ink::env::test::set_account_balance::<ink::env::DefaultEnvironment>(account_id, balance)
         }
 
         #[ink::test]
@@ -355,7 +407,9 @@ mod zkramp {
             orders.push(Order {
                 id: 0,
                 owner: accounts.bob,
-                deposited: 100,
+                total: 100,
+                amount_to_send: 50,
+                collateral: 50,
                 amount_to_receive: 100,
                 status: OrderStatus::Open,
                 payment_key: String::from(""),
@@ -379,7 +433,9 @@ mod zkramp {
             orders.push(Order {
                 id: 0,
                 owner: accounts.bob,
-                deposited: 100,
+                total: 100,
+                amount_to_send: 50,
+                collateral: 50,
                 amount_to_receive: 100,
                 status: OrderStatus::Canceled,
                 payment_key: String::from(""),
@@ -530,7 +586,7 @@ mod zkramp {
                 .unwrap();
             zkramp.claim_order(1, 10000).unwrap();
             zkramp
-                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof)
+                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof, Some(1000))
                 .unwrap();
 
             let error = zkramp.cancel_claim_order(0);
@@ -547,7 +603,7 @@ mod zkramp {
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
             zkramp
-                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof)
+                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof, Some(1000))
                 .unwrap();
 
             let mut orders_claim = Vec::<OrderClaim>::new();
@@ -555,6 +611,22 @@ mod zkramp {
                 buyer: accounts.bob,
                 order_index: 0,
                 status: ClaimStatus::WaitingForSellerProof,
+                claim_expiration_time: 1000,
+            });
+            assert_eq!(zkramp.get_all_orders_claim(), orders_claim);
+
+            zkramp
+                .create_order(101, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkramp.claim_order(1, 100).unwrap();
+            zkramp
+                .update_claim_order_status(1, ClaimStatus::Filled, None)
+                .unwrap();
+
+            orders_claim.push(OrderClaim {
+                buyer: accounts.bob,
+                order_index: 1,
+                status: ClaimStatus::Filled,
                 claim_expiration_time: 100,
             });
             assert_eq!(zkramp.get_all_orders_claim(), orders_claim);
@@ -572,12 +644,13 @@ mod zkramp {
             zkramp.claim_order(0, 100).unwrap();
 
             ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
-            let error = zkramp.update_claim_order_status(0, ClaimStatus::Filled);
+            let error = zkramp.update_claim_order_status(0, ClaimStatus::Filled, None);
 
             assert_eq!(error, Err(EscrowError::Unauthorised));
 
             ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
-            let error = zkramp.update_claim_order_status(1, ClaimStatus::WaitingForSellerProof);
+            let error =
+                zkramp.update_claim_order_status(1, ClaimStatus::WaitingForSellerProof, Some(1000));
             assert_eq!(error, Err(EscrowError::OrderNotFound));
 
             zkramp
@@ -585,10 +658,64 @@ mod zkramp {
                 .unwrap();
             zkramp.claim_order(1, 100).unwrap();
             zkramp
-                .update_claim_order_status(1, ClaimStatus::Filled)
+                .update_claim_order_status(1, ClaimStatus::Filled, None)
                 .unwrap();
-            let error = zkramp.update_claim_order_status(1, ClaimStatus::WaitingForSellerProof);
+            let error =
+                zkramp.update_claim_order_status(1, ClaimStatus::WaitingForSellerProof, Some(1000));
             assert_eq!(error, Err(EscrowError::StatusCanNotBeChanged));
+        }
+
+        #[ink::test]
+        fn should_buyer_claim_order_funds() {
+            let (accounts, mut zkramp) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkramp
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkramp.claim_order(0, 100).unwrap();
+            zkramp
+                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof, Some(0))
+                .unwrap();
+            zkramp.buyer_claim_order_funds(0).unwrap();
+
+            let mut orders_claim = Vec::<OrderClaim>::new();
+            orders_claim.push(OrderClaim {
+                buyer: accounts.bob,
+                order_index: 0,
+                status: ClaimStatus::Filled,
+                claim_expiration_time: 0,
+            });
+            assert_eq!(zkramp.get_all_orders_claim(), orders_claim);
+        }
+
+        #[ink::test]
+        fn should_not_buyer_claim_order_funds() {
+            let (accounts, mut zkramp) = init();
+
+            ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
+            zkramp
+                .create_order(100, String::from(""), String::from(""), 0)
+                .unwrap();
+            zkramp.claim_order(0, 100).unwrap();
+            let error = zkramp.buyer_claim_order_funds(0);
+
+            assert_eq!(error, Err(EscrowError::StatusCanNotBeChanged));
+
+            let error = zkramp.buyer_claim_order_funds(1);
+
+            assert_eq!(error, Err(EscrowError::OrderNotFound));
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            let error = zkramp.buyer_claim_order_funds(0);
+            assert_eq!(error, Err(EscrowError::Unauthorised));
+
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
+            zkramp
+                .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof, Some(10))
+                .unwrap();
+            let error = zkramp.buyer_claim_order_funds(0);
+            assert_eq!(error, Err(EscrowError::OrderClaimed));
         }
     }
 }
