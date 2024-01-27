@@ -88,10 +88,12 @@ export default function OrdersPage() {
           <Title />
           <OrderTable onOpenUploadReceiptModal={setSelectedOrderUploadReceipt} />
 
-          <UploadReceiptModal
-            selectedOrder={selectedOrderUploadReceipt}
-            onClose={() => setSelectedOrderUploadReceipt(null)}
-          />
+          {selectedOrderUploadReceipt && (
+            <UploadReceiptModal
+              selectedOrder={selectedOrderUploadReceipt}
+              onClose={() => setSelectedOrderUploadReceipt(null)}
+            />
+          )}
 
           {showPlaceOrderForm && (
             <Modal>

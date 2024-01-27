@@ -1,5 +1,8 @@
+import { useCallback, useEffect } from 'react'
+
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline'
+import { useDropzone } from 'react-dropzone'
 
 import Modal from '../../components/ui/modal'
 
@@ -10,6 +13,36 @@ export default function UploadReceiptModal({
   selectedOrder: any
   onClose: any
 }) {
+  const onDrop = useCallback((acceptedFiles: any) => {
+    console.log('Files dragged and dropped ', acceptedFiles)
+  }, [])
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+
+  useEffect(() => {
+    const handlePaste = (event: any) => {
+      const items = (event.clipboardData || event.originalEvent.clipboardData).items
+      for (const item of items) {
+        if (item.kind === 'file') {
+          const file = item.getAsFile()
+          // If file
+          console.log(file)
+        } else if (item.kind === 'string') {
+          item.getAsString((string: string) => {
+            // If string
+            console.log(string)
+          })
+        }
+      }
+    }
+
+    window.addEventListener('paste', handlePaste)
+
+    // Cleanup the event listener
+    return () => {
+      window.removeEventListener('paste', handlePaste)
+    }
+  }, [])
+
   if (!selectedOrder) return null
   return (
     <Modal>
@@ -34,23 +67,33 @@ export default function UploadReceiptModal({
         <div className="self-stretch text-center font-manrope text-base font-normal leading-normal text-zinc-300">
           Upload your receipt to prove an payment
         </div>
-        <div className="flex flex-col items-center justify-start gap-1 self-stretch rounded-md border-2 border-dashed border-zinc-600 px-[26px] pb-[26px] pt-[22px]">
+        <div
+          {...getRootProps()}
+          className="flex cursor-pointer flex-col items-center justify-start gap-1 self-stretch rounded-md border-2 border-dashed border-zinc-600 px-[26px] pb-[26px] pt-[22px]"
+        >
+          <input {...getInputProps()} />
           <div className="relative flex h-12 w-12 items-center justify-center">
             <ArrowUpOnSquareIcon className="absolute h-8 w-8 text-zinc-300" />
           </div>
-          <div className="inline-flex items-center justify-start gap-1">
-            <div className="flex items-center justify-start rounded-md">
-              <div className="font-inter text-sm font-medium leading-tight text-lime-300">
-                Upload a file
+          {isDragActive ? (
+            <div className="mb-[10px]">Drop the file(s) to upload</div>
+          ) : (
+            <>
+              <div className="inline-flex items-center justify-start gap-1">
+                <div className="flex items-center justify-start rounded-md">
+                  <div className="font-inter text-sm font-medium leading-tight text-lime-300">
+                    Upload a file
+                  </div>
+                </div>
+                <div className="font-inter text-sm font-medium leading-tight text-zinc-300">
+                  or drag and drop
+                </div>
               </div>
-            </div>
-            <div className="font-inter text-sm font-medium leading-tight text-zinc-300">
-              or drag and drop
-            </div>
-          </div>
-          <div className="text-center font-inter text-xs font-normal leading-none text-zinc-400">
-            .EML
-          </div>
+              <div className="text-center font-inter text-xs font-normal leading-none text-zinc-400">
+                .EML
+              </div>
+            </>
+          )}
         </div>
         <div className="self-stretch text-center font-manrope text-base font-normal leading-normal text-zinc-300">
           Or
