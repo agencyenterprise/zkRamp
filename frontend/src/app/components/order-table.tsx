@@ -158,7 +158,7 @@ export default function OrderTable() {
       contract,
       'update_claim_order_status',
       {},
-      [order.id, 'Filled'],
+      [order.id, 'Filled', new Date().getTime()],
     )
 
     toast.success('Proof seller submitted')
