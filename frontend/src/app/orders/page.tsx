@@ -12,9 +12,11 @@ import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 import Modal from '../../components/ui/modal'
 import OrderTable from '../components/order-table'
 import PlaceOrderForm, { PaymentInfo } from '../components/place-order-form'
+import UploadReceiptModal from '../components/upload-receipt-modal'
 
 export default function OrdersPage() {
   const [showPlaceOrderForm, setShowPlaceOrderForm] = useState(false)
+  const [selectedOrderUploadReceipt, setSelectedOrderUploadReceipt] = useState<any>(null)
 
   const EmptyDepositsTitle = () => {
     return (
@@ -84,7 +86,12 @@ export default function OrdersPage() {
       <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">
         <main className="flex flex-col gap-8">
           <Title />
-          <OrderTable />
+          <OrderTable onOpenUploadReceiptModal={setSelectedOrderUploadReceipt} />
+
+          <UploadReceiptModal
+            selectedOrder={selectedOrderUploadReceipt}
+            onClose={() => setSelectedOrderUploadReceipt(null)}
+          />
 
           {showPlaceOrderForm && (
             <Modal>

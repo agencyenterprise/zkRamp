@@ -13,7 +13,11 @@ import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import Badge from '../../components/ui/badge'
 
-export default function OrderTable() {
+export default function OrderTable({
+  onOpenUploadReceiptModal,
+}: {
+  onOpenUploadReceiptModal: (order: any) => void
+}) {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
   const [orders, setOrders] = useState<any>([])
@@ -245,6 +249,9 @@ export default function OrderTable() {
                       </button>
                       <button className="p-2" onClick={() => submitProofSeller(order)}>
                         proof
+                      </button>
+                      <button className="p-2" onClick={() => onOpenUploadReceiptModal(order)}>
+                        upload
                       </button>
                     </td>
                   </tr>
