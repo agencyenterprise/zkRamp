@@ -127,7 +127,7 @@ export default function OrderTable() {
       contract,
       'update_claim_order_status',
       {},
-      [claimOrder.orderIndex, 'WaitingForSellerProof'],
+      [claimOrder.orderIndex, 'WaitingForSellerProof', new Date().getTime() + 1000 * 60 * 60],
     )
 
     toast.success('Proof claim user submitted')
