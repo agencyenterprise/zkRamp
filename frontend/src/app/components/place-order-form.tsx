@@ -62,15 +62,13 @@ export default function PlaceOrderForm({
           </div>
           <div className="flex items-center justify-start gap-2 border border-zinc-800 bg-zinc-950 px-2 py-1.5">
             <div className="relative h-4 w-4" />
-            <div className="font-manrope text-xs font-semibold leading-none text-zinc-300">
-              PIX Nubank
-            </div>
+            <img src="/vectors/wise.svg" alt="Wise" />
             <div className="relative h-2.5 w-2.5" />
           </div>
         </div>
         <div className="inline-flex items-center justify-start gap-1 self-stretch px-1.5 py-2">
           <Input
-            placeholder="PIX key"
+            placeholder="WISE Transfer ID"
             className="shrink grow basis-0 font-manrope text-base font-normal leading-tight text-zinc-500"
           />
         </div>
