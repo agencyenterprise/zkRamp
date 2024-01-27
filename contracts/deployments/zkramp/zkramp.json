@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xbeb1e9fbf9704c76b0ab5f89ded6bbfff2c3047cb6addec24ad9e3c108ccee8d",
+    "hash": "0x2741f8e0585f72f129994ecef216e3a1806a98bbd662ab4ea227efc865947203",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.75.0",
     "build_info": {
@@ -64,20 +64,20 @@
         "displayName": [
           "ChainExtension"
         ],
-        "type": 26
+        "type": 27
       },
       "hash": {
         "displayName": [
           "Hash"
         ],
-        "type": 24
+        "type": 25
       },
       "maxEventTopics": 4,
       "timestamp": {
         "displayName": [
           "Timestamp"
         ],
-        "type": 25
+        "type": 26
       }
     },
     "events": [],
@@ -346,6 +346,15 @@
               ],
               "type": 16
             }
+          },
+          {
+            "label": "claim_expiration_time",
+            "type": {
+              "displayName": [
+                "Option"
+              ],
+              "type": 24
+            }
           }
         ],
         "default": false,
@@ -365,6 +374,35 @@
           "type": 21
         },
         "selector": "0xd8590569"
+      },
+      {
+        "args": [
+          {
+            "label": "index_claim_order",
+            "type": {
+              "displayName": [
+                "u32"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Buyer claim order funds.",
+          " Only the claim order buyer can get the funds if the time is expired and the seller did not provide the proof."
+        ],
+        "label": "buyer_claim_order_funds",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0x20ad1e99"
       }
     ]
   },
@@ -404,7 +442,25 @@
                               "ty": 4
                             }
                           },
-                          "name": "deposited"
+                          "name": "total"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0xa4ec08fe",
+                              "ty": 4
+                            }
+                          },
+                          "name": "amount_to_send"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0xa4ec08fe",
+                              "ty": 4
+                            }
+                          },
+                          "name": "collateral"
                         },
                         {
                           "layout": {
@@ -770,7 +826,17 @@
                 "typeName": "AccountId"
               },
               {
-                "name": "deposited",
+                "name": "total",
+                "type": 4,
+                "typeName": "Balance"
+              },
+              {
+                "name": "amount_to_send",
+                "type": 4,
+                "typeName": "Balance"
+              },
+              {
+                "name": "collateral",
                 "type": 4,
                 "typeName": "Balance"
               },
@@ -1253,6 +1319,39 @@
       "id": 24,
       "type": {
         "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "def": {
           "composite": {
             "fields": [
               {
@@ -1270,7 +1369,7 @@
       }
     },
     {
-      "id": 25,
+      "id": 26,
       "type": {
         "def": {
           "primitive": "u64"
@@ -1278,7 +1377,7 @@
       }
     },
     {
-      "id": 26,
+      "id": 27,
       "type": {
         "def": {
           "variant": {}

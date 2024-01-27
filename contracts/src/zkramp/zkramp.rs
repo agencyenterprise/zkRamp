@@ -349,7 +349,7 @@ mod zkramp {
             // Release 95% of collateral to the seller
             // 5% is kept by the contract
             self.env()
-                .transfer(order.owner, (order.collateral as f64 * 0.95) as u128)
+                .transfer(order.owner, Balance::from(95u128) * order.collateral / 100)
                 .unwrap();
 
             // Transfer the funds to the buyer
