@@ -16,7 +16,12 @@ export default function UploadReceiptModal({
   const onDrop = useCallback((acceptedFiles: any) => {
     console.log('Files dragged and dropped ', acceptedFiles)
   }, [])
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'message/rfc822': ['.eml'],
+    },
+  })
 
   useEffect(() => {
     const handlePaste = (event: any) => {
