@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { Button } from '@/components/ui/button'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
+import Modal from '../../components/ui/modal'
 import OrderTable from '../components/order-table'
 import PlaceOrderForm, { PaymentInfo } from '../components/place-order-form'
 
@@ -26,7 +27,7 @@ export default function OrdersPage() {
 
   const NewDepositsTitle = () => {
     return (
-      <div className="mt-16 flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-1">
         <h1 className="text-2xl font-extrabold leading-loose text-white">New Order</h1>
         <h2 className="text-base font-normal leading-normal text-zinc-300">
           Placing a new order in the pool
@@ -69,12 +70,6 @@ export default function OrdersPage() {
     return (
       <div className="mt-16 flex flex-col items-start gap-1 md:mt-0">
         <h1 className="text-2xl font-extrabold leading-loose text-white">Orders</h1>
-        <h2 className="text-base font-normal leading-normal text-zinc-300">
-          Create a order description
-        </h2>
-        <div className="right-0 m-auto">
-          <Button onClick={createOrder}>Create Liquidity Pool</Button>
-        </div>
       </div>
     )
   }
@@ -97,10 +92,10 @@ export default function OrdersPage() {
             </>
           )}
           {showPlaceOrderForm && (
-            <>
+            <Modal>
               <NewDepositsTitle />
               <PlaceOrderForm onSubmit={handleSubmit} />
-            </>
+            </Modal>
           )}
         </main>
       </div>
