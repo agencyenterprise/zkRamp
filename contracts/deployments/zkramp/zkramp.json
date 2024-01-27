@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x2741f8e0585f72f129994ecef216e3a1806a98bbd662ab4ea227efc865947203",
+    "hash": "0xafffebc977803aff85fb816cc2f28265156822435328fc53679f2fbf5a2fd6b4",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.75.0",
     "build_info": {
@@ -179,9 +179,9 @@
             "label": "amount_to_receive",
             "type": {
               "displayName": [
-                "Balance"
+                "String"
               ],
-              "type": 4
+              "type": 5
             }
           },
           {
@@ -466,7 +466,7 @@
                           "layout": {
                             "leaf": {
                               "key": "0xa4ec08fe",
-                              "ty": 4
+                              "ty": 5
                             }
                           },
                           "name": "amount_to_receive"
@@ -842,8 +842,8 @@
               },
               {
                 "name": "amount_to_receive",
-                "type": 4,
-                "typeName": "Balance"
+                "type": 5,
+                "typeName": "String"
               },
               {
                 "name": "status",

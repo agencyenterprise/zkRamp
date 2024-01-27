@@ -51,7 +51,7 @@ mod zkramp {
         total: Balance,
         amount_to_send: Balance,
         collateral: Balance,
-        amount_to_receive: Balance,
+        amount_to_receive: String,
         status: OrderStatus,
         payment_key: String,
         hash_name: String,
@@ -134,7 +134,7 @@ mod zkramp {
         #[ink(message, payable)]
         pub fn create_order(
             &mut self,
-            amount_to_receive: Balance,
+            amount_to_receive: String,
             payment_key: String,
             hash_name: String,
             name_length: u32,
@@ -397,7 +397,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
 
             // didn't work on test env
@@ -410,7 +410,7 @@ mod zkramp {
                 total: 100,
                 amount_to_send: 50,
                 collateral: 50,
-                amount_to_receive: 100,
+                amount_to_receive: 100.to_string(),
                 status: OrderStatus::Open,
                 payment_key: String::from(""),
                 hash_name: String::from(""),
@@ -425,7 +425,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.cancel_order(0).unwrap();
 
@@ -436,7 +436,7 @@ mod zkramp {
                 total: 100,
                 amount_to_send: 50,
                 collateral: 50,
-                amount_to_receive: 100,
+                amount_to_receive: 100.to_string(),
                 status: OrderStatus::Canceled,
                 payment_key: String::from(""),
                 hash_name: String::from(""),
@@ -451,7 +451,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             let result = zkramp.cancel_order(1);
             assert!(!result.is_ok());
@@ -469,7 +469,7 @@ mod zkramp {
 
             // order claim status is not canceled
             zkramp
-                .create_order(10, String::from(""), String::from(""), 0)
+                .create_order(10.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(1, 100).unwrap();
             let result: Result<(), EscrowError> = zkramp.cancel_order(1);
@@ -482,7 +482,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
 
@@ -517,7 +517,7 @@ mod zkramp {
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
 
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
 
@@ -527,7 +527,7 @@ mod zkramp {
             assert_eq!(error, Err(EscrowError::OrderClaimed));
 
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.cancel_order(1).unwrap();
 
@@ -545,7 +545,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
             zkramp.cancel_claim_order(0).unwrap();
@@ -567,7 +567,7 @@ mod zkramp {
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
 
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
 
@@ -582,7 +582,7 @@ mod zkramp {
 
             ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(1, 10000).unwrap();
             zkramp
@@ -599,7 +599,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
             zkramp
@@ -616,7 +616,7 @@ mod zkramp {
             assert_eq!(zkramp.get_all_orders_claim(), orders_claim);
 
             zkramp
-                .create_order(101, String::from(""), String::from(""), 0)
+                .create_order(101.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(1, 100).unwrap();
             zkramp
@@ -639,7 +639,7 @@ mod zkramp {
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
 
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
 
@@ -654,7 +654,7 @@ mod zkramp {
             assert_eq!(error, Err(EscrowError::OrderNotFound));
 
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(1, 100).unwrap();
             zkramp
@@ -671,7 +671,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
             zkramp
@@ -695,7 +695,7 @@ mod zkramp {
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
-                .create_order(100, String::from(""), String::from(""), 0)
+                .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
             let error = zkramp.buyer_claim_order_funds(0);
