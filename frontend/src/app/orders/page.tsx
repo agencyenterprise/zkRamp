@@ -68,8 +68,9 @@ export default function OrdersPage() {
     }
 
     return (
-      <div className="mt-16 flex flex-col items-start gap-1 md:mt-0">
+      <div className="mt-16 flex w-full items-end justify-between gap-1 md:mt-0">
         <h1 className="text-2xl font-extrabold leading-loose text-white">Orders</h1>
+        <Button onClick={() => setShowPlaceOrderForm(true)}>Place An Order</Button>
       </div>
     )
   }
@@ -85,16 +86,12 @@ export default function OrdersPage() {
           <Title />
           <OrderTable />
 
-          {!showPlaceOrderForm && (
-            <>
-              <EmptyDepositsTitle />
-              <Button onClick={() => setShowPlaceOrderForm(true)}>Place An Order</Button>
-            </>
-          )}
           {showPlaceOrderForm && (
             <Modal>
-              <NewDepositsTitle />
-              <PlaceOrderForm onSubmit={handleSubmit} />
+              <PlaceOrderForm
+                onSubmit={handleSubmit}
+                onClose={() => setShowPlaceOrderForm(false)}
+              />
             </Modal>
           )}
         </main>
