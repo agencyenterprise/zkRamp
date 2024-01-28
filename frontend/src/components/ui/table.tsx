@@ -98,7 +98,7 @@ export default function Table() {
 
     await contractTxWithToast(api, activeAccount.address, contract, 'claim_order', {}, [
       order.id,
-      new Date().setDate(new Date().getDate() + 6),
+      new Date(new Date().getTime() + 60 * 60000).getTime(),
     ])
 
     setClaimedOrder({

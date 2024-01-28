@@ -37,7 +37,7 @@ export default function TimerAction({
           <Button onClick={() => releaseFunds!(claimOrder)}>Release Funds</Button>
         </>
       )}
-      {timesLeft && timesLeft > 0 && `${timesLeft} min`}
+      {timesLeft && timesLeft > 0 && `${timesLeft} mins`}
     </>
   )
 }
