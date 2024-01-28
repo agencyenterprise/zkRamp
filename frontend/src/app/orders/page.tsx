@@ -35,13 +35,19 @@ export default function OrdersPage() {
       return
     }
 
+    let amountToTransfer = Number(order.depositAmount.replaceAll('.', ''))
+    const decimals = 12 - (order.depositAmount.split('.')[1]?.length ?? 0)
+    for (let index = 0; index < decimals; index++) {
+      amountToTransfer = amountToTransfer * 10
+    }
+
     await contractTxWithToast(
       api,
       activeAccount.address,
       contract,
       'create_order',
       {
-        value: order.depositAmount * 2,
+        value: amountToTransfer * 2,
       },
       [order.receiveAmount, order.paymentKey, '', 0],
     )
