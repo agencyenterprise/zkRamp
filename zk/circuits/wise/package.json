@@ -10,13 +10,17 @@
         "@zk-email/circuits": "^2.0.1",
         "@zk-email/helpers": "^2.0.0",
         "buffer": "^6.0.3",
+        "bullmq": "^5.1.5",
         "circomlib": "^2.0.5",
+        "dotenv": "^16.4.1",
+        "eml-format": "^0.6.1",
         "process": "^0.11.10",
         "snarkjs": "latest"
     },
     "scripts": {
         "test": "jest",
         "build": "tsc",
+        "worker:wise:start": "npx ts-node-dev worker.ts --respawn --transpile-only --no-notify --no-deps --prefer-ts-exts --watch ",
         "gen-input:wise:send": "npx tsx ../../package/generate_input.ts --email_file=./emls/wise_send.eml --payment_type=wise --circuit_type=send",
         "gen-input:wise:registration": "npx tsx ../../package/generate_input.ts --email_file=./emls/wise_send.eml --payment_type=wise --circuit_type=registration",
         "gen-input:wise:send:receive": "npx tsx ../../package/generate_input.ts --email_file=./emls/wise_receive.eml --payment_type=wise --circuit_type=send --output_file=input_wise_send_receive",

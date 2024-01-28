@@ -44,3 +44,6 @@ coverage.json
 *.ptau
 build
 .yarn
+zk/circuits/wise/client.ts
+instructions.txt
+.vscode

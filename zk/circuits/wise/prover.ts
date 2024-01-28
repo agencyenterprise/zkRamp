@@ -126,7 +126,7 @@ async function getCircuitInputs(
   };
   circuitInputs: ICircuitInputs;
 }> {
-  console.log("Starting processing of inputs");
+  //console.log("Starting processing of inputs");
 
   let MAX_BODY_PADDED_BYTES_FOR_EMAIL_TYPE = MAX_BODY_PADDED_BYTES;
   let STRING_PRESELECTOR_FOR_EMAIL_TYPE = STRING_PRESELECTOR;
@@ -177,7 +177,7 @@ async function getCircuitInputs(
   const [bodyPadded, bodyPaddedLen] = await sha256Pad(body, Math.max(MAX_BODY_PADDED_BYTES_FOR_EMAIL_TYPE, calc_length));
 
   // Convet messagePadded to string to print the specific header data that is signed
-  // console.log(JSON.stringify(message).toString());
+  // //console.log(JSON.stringify(message).toString());
 
   // Ensure SHA manual unpadded is running the correct function
   const shaOut = await partialSha(messagePadded, messagePaddedLen);
@@ -187,12 +187,12 @@ async function getCircuitInputs(
   // Precompute SHA prefix
   const selector = STRING_PRESELECTOR_FOR_EMAIL_TYPE.split("").map((char) => char.charCodeAt(0));
   const selector_loc = await findSelector(bodyPadded, selector);
-  console.log("Body selector found at: ", selector_loc);
+  //console.log("Body selector found at: ", selector_loc);
   let shaCutoffIndex = Math.floor((await findSelector(bodyPadded, selector)) / 64) * 64;
   const precomputeText = bodyPadded.slice(0, shaCutoffIndex);
   let bodyRemaining = bodyPadded.slice(shaCutoffIndex);
   const bodyRemainingLen = bodyPaddedLen - precomputeText.length;
-  console.log(bodyRemainingLen, " bytes remaining in body");
+  //console.log(bodyRemainingLen, " bytes remaining in body");
   assert(bodyRemainingLen < MAX_BODY_PADDED_BYTES_FOR_EMAIL_TYPE, "Invalid slice");
   assert(bodyRemaining.length % 64 === 0, "Not going to be padded correctly with int64s");
   bodyRemaining = padWithZero(bodyRemaining, MAX_BODY_PADDED_BYTES_FOR_EMAIL_TYPE);
@@ -231,7 +231,7 @@ async function getCircuitInputs(
     const venmo_payer_id_idx = (Buffer.from(bodyRemaining).indexOf(payer_id_selector) + payer_id_selector.length).toString();
     const email_timestamp_idx = (raw_header.length - trimStrByStr(raw_header, "t=").length).toString();
     const venmo_amount_idx = (raw_header.length - trimStrByStr(email_subject, "$").length).toString();
-    console.log("Indexes into for venmo send email are: ", email_from_idx, venmo_amount_idx, venmo_payee_id_idx, venmo_payer_id_idx, email_timestamp_idx);
+    //console.log("Indexes into for venmo send email are: ", email_from_idx, venmo_amount_idx, venmo_payee_id_idx, venmo_payer_id_idx, email_timestamp_idx);
 
     circuitInputs = {
       in_padded,
@@ -252,26 +252,26 @@ async function getCircuitInputs(
       intent_hash,
     };
   } else if (circuit == CircuitType.EMAIL_WISE_SEND) {
-      const email_timestamp_idx = (raw_header.length - trimStrByStr(raw_header, "t=").length).toString();
-      console.log("Indexes into for wise send email are: ", email_from_idx, email_timestamp_idx);
-  
-      circuitInputs = {
-        in_padded,
-        modulus,
-        signature,
-        in_len_padded_bytes,
-        precomputed_sha,
-        in_body_padded,
-        in_body_len_padded_bytes,
-        body_hash_idx,
-        // venmo specific indices
-        
-      };
-    
+    const email_timestamp_idx = (raw_header.length - trimStrByStr(raw_header, "t=").length).toString();
+    //console.log("Indexes into for wise send email are: ", email_from_idx, email_timestamp_idx);
+
+    circuitInputs = {
+      in_padded,
+      modulus,
+      signature,
+      in_len_padded_bytes,
+      precomputed_sha,
+      in_body_padded,
+      in_body_len_padded_bytes,
+      body_hash_idx,
+      // venmo specific indices
+
+    };
+
   } else if (circuit == CircuitType.EMAIL_VENMO_REGISTRATION) {
     const actor_id_selector = Buffer.from('&actor_id=3D');
     const venmo_actor_id_idx = (Buffer.from(bodyRemaining).indexOf(actor_id_selector) + actor_id_selector.length).toString();
-    console.log("Indexes into for venmo send email are: ", email_from_idx, venmo_actor_id_idx);
+    //console.log("Indexes into for venmo send email are: ", email_from_idx, venmo_actor_id_idx);
 
     circuitInputs = {
       in_padded,
@@ -304,7 +304,7 @@ async function getCircuitInputs(
     const email_to_idx = raw_header.length - trimStrByStr(raw_header, "to:").length;
     const hdfc_acc_num_idx = (Buffer.from(bodyRemaining).indexOf(Buffer.from("**")) + Buffer.from("**").length).toString();
 
-    console.log("Indexes into for hdfc send email are: ", email_from_idx, hdfc_payee_id_idx, hdfc_amount_idx, email_date_idx, email_to_idx, hdfc_acc_num_idx, hdfc_payment_id_idx)
+    //console.log("Indexes into for hdfc send email are: ", email_from_idx, hdfc_payee_id_idx, hdfc_amount_idx, email_date_idx, email_to_idx, hdfc_acc_num_idx, hdfc_payment_id_idx)
 
     circuitInputs = {
       in_padded,
@@ -330,7 +330,7 @@ async function getCircuitInputs(
     const email_to_idx = raw_header.length - trimStrByStr(raw_header, "to:").length;
     const hdfc_acc_num_idx = (Buffer.from(bodyRemaining).indexOf(Buffer.from("**")) + Buffer.from("**").length).toString();
 
-    console.log("Indexes into for hdfc registration email are: ", email_from_idx, email_to_idx, hdfc_acc_num_idx)
+    //console.log("Indexes into for hdfc registration email are: ", email_from_idx, email_to_idx, hdfc_acc_num_idx)
 
     circuitInputs = {
       in_padded,
@@ -365,16 +365,16 @@ async function getCircuitInputs(
 
     const email_timestamp_idx = (raw_header.length - trimStrByStr(raw_header, "t=").length).toString();
     const email_to_idx = raw_header.length - trimStrByStr(raw_header, "to:").length;
-    console.log({
-      'email_from_idx': email_from_idx,
-      'email_timestamp_idx': email_timestamp_idx,
-      'email_to_idx': email_to_idx,
-      'paylah_amount_idx': paylah_amount_idx,
-      'paylah_payer_mobile_num_idx': paylah_payer_mobile_num_idx,
-      'paylah_payee_name_idx': paylah_payee_name_idx,
-      'paylah_payee_mobile_num_idx': paylah_payee_mobile_num_idx,
-      'paylah_payment_id_idx': paylah_payment_id_idx
-    })
+    //console.log({
+    //   'email_from_idx': email_from_idx,
+    //   'email_timestamp_idx': email_timestamp_idx,
+    //   'email_to_idx': email_to_idx,
+    //   'paylah_amount_idx': paylah_amount_idx,
+    //   'paylah_payer_mobile_num_idx': paylah_payer_mobile_num_idx,
+    //   'paylah_payee_name_idx': paylah_payee_name_idx,
+    //   'paylah_payee_mobile_num_idx': paylah_payee_mobile_num_idx,
+    //   'paylah_payment_id_idx': paylah_payment_id_idx
+    // })
 
     circuitInputs = {
       in_padded,
@@ -402,7 +402,7 @@ async function getCircuitInputs(
     const paylah_payer_mobile_num_idx = (Buffer.from(bodyRemaining).indexOf(paylah_payer_mobile_num_selector) + paylah_payer_mobile_num_selector.length).toString();
 
     const email_to_idx = raw_header.length - trimStrByStr(raw_header, "to:").length;
-    console.log("Indexes into for paylah send email are: ", email_from_idx, email_to_idx, paylah_payer_mobile_num_idx)
+    //console.log("Indexes into for paylah send email are: ", email_from_idx, email_to_idx, paylah_payer_mobile_num_idx)
 
     circuitInputs = {
       in_padded,
@@ -449,13 +449,13 @@ async function generate_inputs(
   if (typeof raw_email === "string") {
     email = Buffer.from(raw_email);
   } else email = raw_email;
-  // console.log(email.toString());
+  // //console.log(email.toString());
   const processed_email = preProcessEmail(email, type);
-  console.log(processed_email.toString());
-  console.log("DKIM verification starting");
+  //console.log(processed_email.toString());
+  //console.log("DKIM verification starting");
   result = await dkimVerify(processed_email);
-  // console.log("From:", result.headerFrom);
-  console.log("Results:", result.results[0]);
+  // //console.log("From:", result.headerFrom);
+  //console.log("Results:", result.results[0]);
   if (!result.results[0]) {
     throw new Error(`No result found on dkim output ${result}`);
   } else {
@@ -468,13 +468,13 @@ async function generate_inputs(
     }
   }
   const _ = result.results[0].publicKey.toString();
-  console.log("DKIM verification successful");
+  //console.log("DKIM verification successful");
   // try {
   //   // TODO: Condition code on if there is an internet connection, run this code
   //   var frozen = Cryo.stringify(result);
   //   fs.writeFileSync(`./email_cache_2.json`, frozen, { flag: "w" });
   // } catch (e) {
-  //   console.log("Reading cached email instead!");
+  //   //console.log("Reading cached email instead!");
   //   let frozen = fs.readFileSync(`./email_cache.json`, { encoding: "utf-8" });
   //   result = Cryo.parse(frozen);
   // }
@@ -492,39 +492,34 @@ async function generate_inputs(
 }
 
 
-async function generate_input(email_file, payment_type, circuit_type, intentHash, nonce) {
-    console.log(`Generating inputs for ${payment_type} ${circuit_type} with email file ${email_file}`)
-    const email = fs.readFileSync(email_file.trim());
-    console.log("Email file read");
-  
-    const type = `${payment_type}_${circuit_type}` as CircuitType;
-    const gen_inputs = await generate_inputs(email, type, intentHash, nonce);
-    console.log("Input generation successful");
-    return gen_inputs;
-  }
+async function generate_input(email, payment_type, circuit_type, intentHash, nonce) {
+  //console.log(`Generating inputs for ${payment_type} ${circuit_type} with email file ${email_file}`)
+  //console.log("Email file read");
 
-//const input = JSON.parse(readFileSync("./inputs/input_wise_send.json", "utf8"));
+  const type = `${payment_type}_${circuit_type}` as CircuitType;
+  const gen_inputs = await generate_inputs(email.trim(), type, intentHash, nonce);
+  console.log("Input generation successful");
+  return gen_inputs;
+}
 
 
 
-async function run() {
-  const input = await generate_input("../../package/emls/wise_send.eml", "wise", "send", "12345", "1")
-  
+export async function prove(eml: string): Promise<boolean> {
+  try {
+    const input = await generate_input(eml, "wise", "send", "12345", "1")
+    //console.log("Input generated");
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(input, "./build/wise_send_js/wise_send.wasm", "./build/wise_send.zkey");
 
-    console.log("Proof: ");
-    console.log(JSON.stringify(proof, null, 1));
+    //console.log("Proof: ");
+    //console.log(JSON.stringify(proof, null, 1));
 
     const vKey = JSON.parse(fs.readFileSync("./build/wise_send_vkey.json"));
 
-    const res = await snarkjs.groth16.verify(vKey, publicSignals, proof);
+    return await snarkjs.groth16.verify(vKey, publicSignals, proof);
+  } catch (err) {
+    console.log(err)
+    return false
+  }
 
-    if (res === true) {
-        console.log("Verification OK");
-    } else {
-        console.log("Invalid proof");
-    }
 
 }
-
-run()
