@@ -324,7 +324,9 @@ export default function OrderTable({
                     </td>
                     <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
-                      {fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)} AZERO
+                      {claimOrder &&
+                        fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)}{' '}
+                      AZERO
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {claimOrder.order?.amountToReceive} BRL
