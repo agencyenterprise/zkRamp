@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import dayjs from 'dayjs'
+import { fromBn } from 'evm-bn'
 import { CircularProgressbar } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 
@@ -8,10 +9,8 @@ import { Button } from '../../components/ui/button'
 
 interface Order {
   amountToReceive: string
-  deposited: string
-  hashName: string
+  amountToSend: any
   id: string
-  nameLength: string
   owner: string
   paymentKey: string
   status: string
@@ -125,7 +124,9 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
               </div>
               <div className="inline-flex items-center justify-start gap-2 self-stretch">
                 <div className="shrink grow basis-0 font-manrope text-xl font-semibold leading-7 text-lime-300">
-                  https://www.wise.com/payment?={order?.paymentKey}
+                  <a href={order?.paymentKey} className="cursor-pointer">
+                    {order?.paymentKey}
+                  </a>
                 </div>
                 <div className="h-5px] relative" />
               </div>
@@ -170,22 +171,12 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
             </div>
             <div className="inline-flex items-center justify-start gap-1 self-stretch">
               <div className="shrink grow basis-0 font-manrope text-xl font-semibold leading-7 text-zinc-100">
-                {order.deposited}
+                {fromBn(order.amountToSend.replaceAll(',', ''), 12)}
               </div>
               <div className="flex items-center justify-center gap-2.5 self-stretch rounded-sm border border-zinc-600 bg-zinc-900 px-1.5">
                 <div className="font-azaretMono text-base font-normal leading-normal text-zinc-500">
                   AZERO
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex h-24 flex-col items-start justify-start gap-1 self-stretch rounded border border-zinc-800 bg-zinc-800 px-4 py-5">
-            <div className="self-stretch font-manrope text-base font-medium leading-normal text-zinc-400">
-              Exchange
-            </div>
-            <div className="inline-flex items-center justify-start gap-1 self-stretch">
-              <div className="shrink grow basis-0 font-manrope text-xl font-semibold leading-7 text-zinc-100">
-                0.34%
               </div>
             </div>
           </div>

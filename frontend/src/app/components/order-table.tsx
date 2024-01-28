@@ -170,6 +170,12 @@ export default function OrderTable({
     await refresh()
   }
 
+  const getClaimOrder = (order: any) => {
+    return claimOrders.filter((claimOrder: any) => {
+      return claimOrder.orderIndex == order.id
+    })[0]
+  }
+
   return (
     <div className="w-full">
       <div className="flow-root">
@@ -191,17 +197,13 @@ export default function OrderTable({
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Token
-                    </a>
+                    Token
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Depositor
-                    </a>
+                    Depositor
                   </th>
                   <th
                     scope="col"
@@ -219,9 +221,7 @@ export default function OrderTable({
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Status
-                    </a>
+                    Status
                   </th>
                 </tr>
               </thead>
@@ -240,25 +240,28 @@ export default function OrderTable({
                       {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive} USD
+                      {order.amountToReceive} BRL
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(order))}</Badge>
-                      <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
-                        cancel
-                      </button>
-                      <button
-                        className="cursor-pointer p-2"
-                        onClick={() => submitProofSeller(order)}
-                      >
-                        proof
-                      </button>
-                      <button
-                        className="cursor-pointer p-2"
-                        onClick={() => onOpenUploadReceiptModal(order)}
-                      >
-                        upload
-                      </button>
+
+                      {order.status == 'Open' && (
+                        <>
+                          <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
+                            cancel
+                          </button>
+                        </>
+                      )}
+                      {order && getClaimOrder(order)?.status == 'WaitingForSellerProof' && (
+                        <>
+                          <button
+                            className="cursor-pointer p-2"
+                            onClick={() => onOpenUploadReceiptModal(order)}
+                          >
+                            upload
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -275,25 +278,19 @@ export default function OrderTable({
                     scope="col"
                     className="whitespace-pre py-3 pl-4 pr-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      #
-                    </a>
+                    #
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Token
-                    </a>
+                    Token
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Depositor
-                    </a>
+                    Depositor
                   </th>
                   <th
                     scope="col"
@@ -311,9 +308,7 @@ export default function OrderTable({
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Status
-                    </a>
+                    Status
                   </th>
                 </tr>
               </thead>
@@ -332,23 +327,27 @@ export default function OrderTable({
                       {fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)} AZERO
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {claimOrder.order?.amountToReceive} USD
+                      {claimOrder.order?.amountToReceive} BRL
                     </td>
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
-                      <button
-                        className="cursor-pointer p-2"
-                        onClick={() => cancelClaimOrder(claimOrder)}
-                      >
-                        cancel
-                      </button>
-                      <button
-                        className="cursor-pointer p-2"
-                        onClick={() => submitProofClaimUser(claimOrder)}
-                      >
-                        proof
-                      </button>
+                      {claimOrder.status == 'WaitingForBuyerProof' && (
+                        <>
+                          <button
+                            className="cursor-pointer p-2"
+                            onClick={() => cancelClaimOrder(claimOrder)}
+                          >
+                            cancel
+                          </button>
+                          <button
+                            className="cursor-pointer p-2"
+                            onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
+                          >
+                            upload
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
