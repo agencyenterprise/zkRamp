@@ -32,7 +32,11 @@ export default function Table() {
     const { output, isError, decodedOutput } = decodeOutput(result, contract, 'get_all_orders')
     if (isError) throw new Error(decodedOutput)
 
-    setOrders(output)
+    setOrders(
+      output.filter((order: any) => {
+        return order.status != 'Canceled' && order.status != 'Filled'
+      }),
+    )
   }
 
   const fetchAllClaimOrders = async () => {
