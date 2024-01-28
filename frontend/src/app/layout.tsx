@@ -10,6 +10,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { env } from '@/config/environment'
 import { cn } from '@/utils/cn'
 
+import { Footer } from './components/Footer'
 import { Background } from './components/background'
 import { HomeTopBar } from './components/home-top-bar'
 import './globals.css'
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <ToastConfig />
           <Background />
         </ClientProviders>
+        <Footer />
 
         {!!env.isProduction && <Analytics />}
       </body>
