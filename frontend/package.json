@@ -39,6 +39,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
+    "evm-bn": "^1.1.2",
     "geist": "^1.2.0",
     "lucide-react": "^0.298.0",
     "next": "^14.0.4",

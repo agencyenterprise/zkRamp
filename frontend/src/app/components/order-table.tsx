@@ -7,6 +7,7 @@ import {
   useInkathon,
   useRegisteredContract,
 } from '@scio-labs/use-inkathon'
+import { fromBn } from 'evm-bn'
 import toast from 'react-hot-toast'
 
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
@@ -206,17 +207,13 @@ export default function OrderTable({
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Exchange
-                    </a>
+                    Available Amount
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Deposit Amount
-                    </a>
+                    Price
                   </th>
                   <th
                     scope="col"
@@ -238,19 +235,28 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {order.owner}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">-0.3%</td>
+                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                      {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                    </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive}
+                      {order.amountToReceive} USD
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(order))}</Badge>
-                      <button className="p-2" onClick={() => cancelOrder(order)}>
+                      <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
                         cancel
                       </button>
-                      <button className="p-2" onClick={() => submitProofSeller(order)}>
+                      <button
+                        className="cursor-pointer p-2"
+                        onClick={() => submitProofSeller(order)}
+                      >
                         proof
                       </button>
-                      <button className="p-2" onClick={() => onOpenUploadReceiptModal(order)}>
+                      <button
+                        className="cursor-pointer p-2"
+                        onClick={() => onOpenUploadReceiptModal(order)}
+                      >
                         upload
                       </button>
                     </td>
@@ -293,17 +299,13 @@ export default function OrderTable({
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Exchange
-                    </a>
+                    Available Amount
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Deposit Amount
-                    </a>
+                    Price
                   </th>
                   <th
                     scope="col"
@@ -325,16 +327,26 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {claimOrder.buyer}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">-0.3%</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {claimOrder.order?.amountToReceive}
+                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                      {fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)} AZERO
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      {claimOrder.order?.amountToReceive} USD
+                    </td>
+
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
-                      <button className="p-2" onClick={() => cancelClaimOrder(claimOrder)}>
+                      <button
+                        className="cursor-pointer p-2"
+                        onClick={() => cancelClaimOrder(claimOrder)}
+                      >
                         cancel
                       </button>
-                      <button className="p-2" onClick={() => submitProofClaimUser(claimOrder)}>
+                      <button
+                        className="cursor-pointer p-2"
+                        onClick={() => submitProofClaimUser(claimOrder)}
+                      >
                         proof
                       </button>
                     </td>

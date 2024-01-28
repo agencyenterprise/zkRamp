@@ -41,9 +41,9 @@ export default function OrdersPage() {
       contract,
       'create_order',
       {
-        value: order.amountDeposit * 2,
+        value: order.depositAmount * 2,
       },
-      [order.amountReceive, order.paymentKey, 'HASH_NAME', 1],
+      [order.receiveAmount, order.paymentKey, 'HASH_NAME', 1],
     )
   }
 

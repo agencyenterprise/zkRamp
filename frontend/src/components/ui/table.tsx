@@ -7,6 +7,7 @@ import {
   useInkathon,
   useRegisteredContract,
 } from '@scio-labs/use-inkathon'
+import { fromBn } from 'evm-bn'
 import toast from 'react-hot-toast'
 
 import BuyOrderModal from '@/app/components/buy-order-modal'
@@ -151,7 +152,7 @@ export default function Table() {
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
                     <a href="#" className="group inline-flex">
-                      Exchange
+                      Available Amount
                     </a>
                   </th>
                   <th
@@ -159,7 +160,7 @@ export default function Table() {
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
                     <a href="#" className="group inline-flex">
-                      Deposit Amount
+                      Price
                     </a>
                   </th>
                   <th
@@ -173,28 +174,35 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
-                {orders.map((order: any) => (
-                  <tr
-                    key={order.depositor}
-                    onClick={() => setSelectedOrder(order)}
-                    className="cursor-pointer"
-                  >
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
-                      {order.id}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">AZERO</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.owner}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">-0.3%</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <Badge>{convertStatus(getStatus(order))}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {orders.map((order: any) => {
+                  return (
+                    <tr
+                      key={order.depositor}
+                      onClick={() => setSelectedOrder(order)}
+                      className="cursor-pointer"
+                    >
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
+                        {order.id}
+                      </td>
+                      <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                        AZERO
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        {order.owner}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        {order.amountToReceive} USD
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        <Badge>{convertStatus(getStatus(order))}</Badge>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
