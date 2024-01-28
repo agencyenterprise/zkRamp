@@ -3,7 +3,7 @@
     "declaration": true,
     "outDir": "./dist",
     "target": "es2020",
-    "module": "esnext",
+    "module": "CommonJS",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
