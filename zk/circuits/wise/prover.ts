@@ -509,10 +509,8 @@ export async function prove(eml: string): Promise<boolean> {
     const input = await generate_input(eml, "wise", "send", "12345", "1")
     //console.log("Input generated");
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(input, "./build/wise_send_js/wise_send.wasm", "./build/wise_send.zkey");
-
-    //console.log("Proof: ");
-    //console.log(JSON.stringify(proof, null, 1));
-
+    console.log("Proof: ");
+    console.log(JSON.stringify(proof, null, 1));
     const vKey = JSON.parse(fs.readFileSync("./build/wise_send_vkey.json"));
 
     return await snarkjs.groth16.verify(vKey, publicSignals, proof);

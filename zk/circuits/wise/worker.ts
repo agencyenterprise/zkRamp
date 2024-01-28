@@ -113,6 +113,7 @@ const worker = new Worker('proveReceipt', async job => {
         throw new Error("Invalid receipt! Proof is not valid")
     }
     console.log("Receipt is valid")
+    return isvalidProof
 
 }, {
     connection: {
