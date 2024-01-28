@@ -5,8 +5,6 @@ import { useEffect } from 'react'
 import { useInkathon } from '@scio-labs/use-inkathon'
 import { toast } from 'react-hot-toast'
 
-import { ZKRampContractInteractions } from '@/components/web3/zkramp-contract-interactions'
-
 import { Button } from '../components/ui/button'
 import { HeroHexagons } from './components/hero-hexagons'
 
@@ -45,7 +43,7 @@ export default function HomePage() {
             </Button>
           </div>
           <HeroHexagons />
-          <ZKRampContractInteractions />
+          {/* <ZKRampContractInteractions /> */}
         </main>
       </div>
     </>

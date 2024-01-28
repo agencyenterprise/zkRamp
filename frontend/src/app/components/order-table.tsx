@@ -235,9 +235,11 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {order.owner}
                     </td>
-                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
-                      {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex">
+                        <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                        {order && fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {order.amountToReceive} BRL
@@ -245,7 +247,7 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(order))}</Badge>
 
-                      {order.status == 'Open' && (
+                      {getClaimOrder(order)?.status == 'Open' && (
                         <>
                           <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
                             cancel
@@ -322,11 +324,14 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {claimOrder.buyer}
                     </td>
-                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
-                      {claimOrder &&
-                        fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)}{' '}
-                      AZERO
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex">
+                        <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                        {claimOrder &&
+                          claimOrder.order &&
+                          fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)}{' '}
+                        AZERO
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {claimOrder.order?.amountToReceive} BRL

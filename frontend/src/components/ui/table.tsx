@@ -9,6 +9,7 @@ import {
 } from '@scio-labs/use-inkathon'
 import { fromBn } from 'evm-bn'
 import toast from 'react-hot-toast'
+import { twMerge } from 'tailwind-merge'
 
 import BuyOrderModal from '@/app/components/buy-order-modal'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
@@ -22,6 +23,7 @@ export default function Table() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
   const [claimedOrder, setClaimedOrder] = useState<any>(null)
   const [claimOrders, setClaimOrders] = useState<any>([])
+  const [showBuyerModal, setShowBuyerModal] = useState(false)
 
   const fetchAllOrders = async () => {
     if (!contract || !api) return
@@ -95,28 +97,39 @@ export default function Table() {
       new Date().setDate(new Date().getDate() + 6),
     ])
 
+    setClaimedOrder({
+      buyer: activeAccount.address,
+      claimExpirationTime: new Date(new Date().getTime() + 60 * 60000),
+      orderIndex: order.id,
+      status: 'WaitingForSellerProof',
+    })
+
     toast.success('Claim order created')
     await refresh()
   }
 
   const mockCreateOrder = async () => {
     await createClaimOrder(selectedOrder)
-    setClaimedOrder({
-      buyer: '0x0000000',
-      claimExpirationTime: new Date().setMinutes(new Date().getMinutes() + 1),
-      orderIndex: '1',
-      status: 'WaitingForSellerProof',
-    })
+  }
+
+  const selectOrder = (order: any) => {
+    if (getStatus(order) == 'Open') {
+      setSelectedOrder(order)
+      setShowBuyerModal(true)
+    }
   }
 
   return (
     <div className="w-full">
-      <BuyOrderModal
-        order={selectedOrder}
-        claimedOrder={claimedOrder}
-        onClose={() => setSelectedOrder(undefined)}
-        onClaimCreated={mockCreateOrder}
-      />
+      {showBuyerModal && (
+        <BuyOrderModal
+          order={selectedOrder}
+          claimedOrder={claimedOrder}
+          onClose={() => setShowBuyerModal(false)}
+          onClaimCreated={mockCreateOrder}
+        />
+      )}
+
       <div className="flow-root">
         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -178,8 +191,8 @@ export default function Table() {
                   return (
                     <tr
                       key={order.depositor}
-                      onClick={() => setSelectedOrder(order)}
-                      className="cursor-pointer"
+                      onClick={() => selectOrder(order)}
+                      className={twMerge(getStatus(order) == 'Open' && 'cursor-pointer')}
                     >
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
                         {order.id}

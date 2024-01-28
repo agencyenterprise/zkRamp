@@ -43,7 +43,7 @@ export default function OrdersPage() {
       {
         value: order.depositAmount * 2,
       },
-      [order.receiveAmount, order.paymentKey, 'HASH_NAME', 1],
+      [order.receiveAmount, order.paymentKey, '', 0],
     )
   }
 

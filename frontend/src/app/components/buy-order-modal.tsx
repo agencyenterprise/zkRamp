@@ -65,17 +65,17 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
     const interval = setInterval(() => {
       if (!claimedOrder) return
       // TODO: I set it to 1 minute and the unit to seconds for testing the progress bar, we should change the unit back to 'minute'
-      const diffInMinutes = dayjs(claimedOrder.claimExpirationTime).diff(dayjs(), 'second')
-      if (diffInMinutes <= 0) {
-        setTimeLeft(diffInMinutes)
+      const diffInSeconds = dayjs(claimedOrder.claimExpirationTime).diff(dayjs(), 'minutes')
+      if (diffInSeconds <= 0) {
+        setTimeLeft(diffInSeconds)
         clearInterval(interval)
         return
       }
-      setTimeLeft(diffInMinutes)
+      setTimeLeft(diffInSeconds)
     }, 1000)
     return () => clearInterval(interval)
   }, [claimedOrder])
-  if (!order && !claimedOrder) return null
+
   if (claimedOrder) {
     const progressBarColor = interpolateColor('#BEF264', '#f87171', 1 - timeLeft / 60)
     return (
@@ -84,10 +84,10 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
           <div className="flex flex-col items-center justify-start gap-6 self-stretch">
             <div className="flex flex-col items-center justify-start gap-2 self-stretch">
               <div className="self-stretch text-center font-manrope text-2xl font-bold leading-loose text-white">
-                Order Created
+                Order Claimed
               </div>
               <div className="self-stretch text-center font-azaretMono text-base font-normal leading-normal text-zinc-300">
-                You have 1h to pay the order, upload the receipt.
+                You have 1h to pay the order, and upload the receipt.
               </div>
             </div>
           </div>
@@ -133,7 +133,9 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
             </div>
             <div className="inline-flex items-start justify-start gap-3 self-stretch">
               <div className="flex h-12 shrink grow basis-0 items-center justify-center gap-2 rounded bg-lime-300 px-6 py-3 shadow">
-                <Button className="w-full">Confirm Payment</Button>
+                <Button className="w-full" onClick={onClose}>
+                  Confirm Payment
+                </Button>
               </div>
             </div>
           </div>
@@ -141,11 +143,10 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
       </div>
     )
   }
-  if (!order) return null
 
   const createClaimOrder = async () => {
     console.log('createClaimOrder', order)
-    onClaimCreated(order)
+    onClaimCreated(order!)
   }
 
   return (
@@ -171,7 +172,7 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
             </div>
             <div className="inline-flex items-center justify-start gap-1 self-stretch">
               <div className="shrink grow basis-0 font-manrope text-xl font-semibold leading-7 text-zinc-100">
-                {fromBn(order.amountToSend.replaceAll(',', ''), 12)}
+                {fromBn(order?.amountToSend.replaceAll(',', ''), 12)}
               </div>
               <div className="flex items-center justify-center gap-2.5 self-stretch rounded-sm border border-zinc-600 bg-zinc-900 px-1.5">
                 <div className="font-azaretMono text-base font-normal leading-normal text-zinc-500">
@@ -186,7 +187,7 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
             </div>
             <div className="inline-flex items-center justify-start gap-1 self-stretch">
               <div className="shrink grow basis-0 font-manrope text-xl font-semibold leading-7 text-zinc-100">
-                {order.amountToReceive}
+                {order?.amountToReceive}
               </div>
               <div className="flex w-11 items-center justify-center gap-2.5 self-stretch rounded-sm border border-zinc-600 bg-zinc-900 px-1.5">
                 <div className="font-azaretMono text-base font-normal leading-normal text-zinc-500">
