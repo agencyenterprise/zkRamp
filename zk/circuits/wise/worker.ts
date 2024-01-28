@@ -112,6 +112,7 @@ const worker = new Worker('proveReceipt', async job => {
     if (!isvalidProof) {
         throw new Error("Invalid receipt! Proof is not valid")
     }
+    console.log("Receipt is valid")
 
 }, {
     connection: {
