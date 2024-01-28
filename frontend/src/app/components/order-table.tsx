@@ -247,14 +247,14 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(order))}</Badge>
 
-                      {getClaimOrder(order)?.status == 'Open' && (
+                      {order && getStatus(order) == 'Open' && (
                         <>
                           <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
                             cancel
                           </button>
                         </>
                       )}
-                      {order && getClaimOrder(order)?.status == 'WaitingForSellerProof' && (
+                      {order && getStatus(order) == 'WaitingForSellerProof' && (
                         <>
                           <button
                             className="cursor-pointer p-2"
