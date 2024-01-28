@@ -8,7 +8,7 @@ export const Footer = () => {
 
         <span>See what we could build for you</span>
         <Link
-          href="https://ae.studio?utm_term=5e9e4933-985a-4431-b11f-d9b552ce2fb2&utm_campaign=inno-pod&utm_source=innopod&utm_medium=referral"
+          href="https://ae.studio?utm_term=5e9e4933-985a-4431-b11f-d9b552ce2fb2&utm_campaign=alephzero-hackathon&utm_source=innopod&utm_medium=referral"
           target="_blank"
           className="font-semibold"
           data-analytics="learn-more-about-ae-link"
