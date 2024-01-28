@@ -123,7 +123,8 @@ const worker = new Worker('proveReceipt', async job => {
         password: process.env.REDIS_PASSWORD!
     },
     concurrency: 1,
-    autorun: false
+    autorun: false,
+    lockDuration: 600000
 });
 
 worker.run();
