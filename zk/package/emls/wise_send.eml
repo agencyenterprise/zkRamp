@@ -1,0 +1,1227 @@
+Delivered-To: gjpeixer@gmail.com
+Received: by 2002:a05:7108:4091:b0:363:f887:f067 with SMTP id e17csp9831151gdf;
+        Sun, 7 Jan 2024 06:08:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEpw9rYrnM0ciJvklgADHCw+xTi7hvrCpzX4YdUYzipmV9v2wsatnkcAngkNMB3OYLPUmNN
+X-Received: by 2002:adf:ce0a:0:b0:336:5ea5:2743 with SMTP id p10-20020adfce0a000000b003365ea52743mr1050633wrn.49.1704636493827;
+        Sun, 07 Jan 2024 06:08:13 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1704636493; cv=none;
+        d=google.com; s=arc-20160816;
+        b=wck3yh4za1GZ4Ir1IaYTw3ELCN4aDphAcmUBV86ET4KG2w2ioH3kG6EooPM3XkI5pi
+         U8NBVVSu07Ve94ZJaaj0EE9kp+i1hter0GvFU5YIpdbSdfy3oMnqoQoTGH4gu6m7vktb
+         In4elIfR1RgqcpBqEcW3mqvpXi9LXjvxLUN8Kh8U3Ly+Ns8Eeq8oa7D08VXeKArP04Be
+         MCt3Gaz2lKjMaUvHHEMQoOM/hONE35qxY+hyxNytoc5lrvhVyXv3sIdyGBHhSqQZIwfJ
+         XslEI4u3xwTUnboRpfgjFEXvtBpftwB6CfkijhJAhQJ+cZ2udGm14wYByUf4OtBSfB1p
+         +1/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:date:message-id:content-transfer-encoding:mime-version
+         :subject:to:from:dkim-signature:dkim-signature;
+        bh=MQDOmvYl2euyTkosgDqLfm/N/I71tppOAPG3QkPtQw4=;
+        fh=tbK/jcs3vcHAv6DhntlaObARP4LJ1I4r6Y86lbn3+SE=;
+        b=YSJGaZClTn8T2NQ0WYmbBepUT4J39IYrzwXxU5GVCpT1JHBZACH+XivDwlrs4F9XL0
+         +ptGnCrfVGL2eLRkrmLOr8CFuJUWc8R0qYHh9Mp3LZcU++rdQlCezBATGd4U79cJxrur
+         Qvs+Pvgr8m+2fG0tH9Vsjtd84x7Z69oD1EBEzK3+XQdOwJoCmUcQZ/4d4stDsV8dLh6n
+         xXXZ3S5GyRn6aKPvqlfmXe7XbzebpSRkty2jfx+M+tIeFioxfKPdmMtX97oyvWIzLNoU
+         9KyMd6ooGsEqqaj6vrmyhq2pk5B26CMd1eFvMXQWdglNIOGQr2gbZUMMkcCBfAjxEfG9
+         8IEQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@wise.com header.s=mriizrjk76ccxll4j6ckckpevf5xpb2j header.b=GwDKtZiy;
+       dkim=pass header.i=@amazonses.com header.s=shh3fegwg5fppqsuzphvschd53n6ihuv header.b=jR3JB+jK;
+       spf=pass (google.com: domain of 0102018ce440ae38-10fb5166-6a6c-4a63-879d-ab7343a13144-000000@mail.wise.com designates 54.240.6.121 as permitted sender) smtp.mailfrom=0102018ce440ae38-10fb5166-6a6c-4a63-879d-ab7343a13144-000000@mail.wise.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=wise.com
+Return-Path: <0102018ce440ae38-10fb5166-6a6c-4a63-879d-ab7343a13144-000000@mail.wise.com>
+Received: from a6-121.smtp-out.eu-west-1.amazonses.com (a6-121.smtp-out.eu-west-1.amazonses.com. [54.240.6.121])
+        by mx.google.com with ESMTPS id l5-20020adff485000000b003368d1451e6si2492682wro.692.2024.01.07.06.08.13
+        for <gjpeixer@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Jan 2024 06:08:13 -0800 (PST)
+Received-SPF: pass (google.com: domain of 0102018ce440ae38-10fb5166-6a6c-4a63-879d-ab7343a13144-000000@mail.wise.com designates 54.240.6.121 as permitted sender) client-ip=54.240.6.121;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@wise.com header.s=mriizrjk76ccxll4j6ckckpevf5xpb2j header.b=GwDKtZiy;
+       dkim=pass header.i=@amazonses.com header.s=shh3fegwg5fppqsuzphvschd53n6ihuv header.b=jR3JB+jK;
+       spf=pass (google.com: domain of 0102018ce440ae38-10fb5166-6a6c-4a63-879d-ab7343a13144-000000@mail.wise.com designates 54.240.6.121 as permitted sender) smtp.mailfrom=0102018ce440ae38-10fb5166-6a6c-4a63-879d-ab7343a13144-000000@mail.wise.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=wise.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=mriizrjk76ccxll4j6ckckpevf5xpb2j; d=wise.com; t=1704636493;
+	h=From:To:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-ID:Date;
+	bh=7fpJbXT0FZDuCAm0hcnsu/Y1e39zupFhGN+sOLuyW1c=;
+	b=GwDKtZiymw+h6cB1xcUQL+HSVWVyYuMTX1FIZjj509v+iHP16LSDD0xSLJDYT2oV
+	IL0RFdoq1ucW/2q71//qiPapYucitAe5SDGAoFjJEg3FjKlP7PIz38gm6V4N4+WPBAt
+	dxyN8o5UIwWLJw5neLEYOhG7utaNd2vUua9rSyY8=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=shh3fegwg5fppqsuzphvschd53n6ihuv; d=amazonses.com; t=1704636493;
+	h=From:To:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-ID:Date:Feedback-ID;
+	bh=7fpJbXT0FZDuCAm0hcnsu/Y1e39zupFhGN+sOLuyW1c=;
+	b=jR3JB+jKp1p70B7sRBjQNOiPhy4rJacg0Yng1FS1wRVJO0QgbCBn7ZpVgkuNNJjF
+	oJAWycDjB0QRQkyLuc1+BVMCIT5zuSqSWVZ6wOJCZN91bv15Ym6A7997NfcAfGxHB2Q
+	VDMrXsb/AfbrSJ1hm/Bxs6frRu0RawRwVs4ghCcg=
+From: Wise <noreply@wise.com>
+To: gjpeixer@gmail.com
+Subject: =?UTF-8?Q?Transfer=C3=AAncia_enviada_(#925055335)?=
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Message-ID: <0102018ce440ae38-10fb5166-6a6c-4a63-879d-ab7343a13144-000000@eu-west-1.amazonses.com>
+Date: Sun, 7 Jan 2024 14:08:13 +0000
+Feedback-ID: 1.eu-west-1.mm5NPSHhtqGV8xmTc+H48ekbFiBo7YChlSZtE09syLc=:AmazonSES
+X-SES-Outgoing: 2024.01.07-54.240.6.121
+
+<!doctype html>
+<html xmlns=3D"http://www.w3.org/1999/xhtml" xmlns:v=3D"urn:schemas-microso=
+ft-com:vml" xmlns:o=3D"urn:schemas-microsoft-com:office:office" style=3D"fo=
+nt-family: Inter, Averta, Helvetica, Arial; font-weight: 400; color: #45474=
+5; font-size: 16px;">
+
+<head>
+  <title></title>
+  <!--[if !mso]><!-->
+  <meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3Dedge">
+  <!--<![endif]-->
+  <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1">
+  <style type=3D"text/css">
+    #outlook a {
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    table,
+    td {
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+
+    img {
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
+    p {
+      display: block;
+      margin: 13px 0;
+    }
+
+  </style>
+  <!--[if mso]>
+    <noscript>
+    <xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+    </xml>
+    </noscript>
+    <![endif]-->
+  <!--[if lte mso 11]>
+    <style type=3D"text/css">
+      .mj-outlook-group-fix { width:100% !important; }
+    </style>
+    <![endif]-->
+  <!--[if !mso]><!-->
+  <link href=3D"https://wise.com/public-resources/assets/notification-servi=
+ce/fonts/inter-latin.css" rel=3D"stylesheet" type=3D"text/css">
+  <style type=3D"text/css">
+    @import url(https://wise.com/public-resources/assets/notification-servi=
+ce/fonts/inter-latin.css);
+
+  </style>
+  <!--<![endif]-->
+  <style type=3D"text/css">
+    @media only screen and (min-width:480px) {
+      .mj-column-per-100 {
+        width: 100% !important;
+        max-width: 100%;
+      }
+
+      .mj-column-per-25 {
+        width: 25% !important;
+        max-width: 25%;
+      }
+
+      .mj-column-per-20 {
+        width: 20% !important;
+        max-width: 20%;
+      }
+
+      .mj-column-per-30 {
+        width: 30% !important;
+        max-width: 30%;
+      }
+    }
+
+  </style>
+  <style media=3D"screen and (min-width:480px)">
+    .moz-text-html .mj-column-per-100 {
+      width: 100% !important;
+      max-width: 100%;
+    }
+
+    .moz-text-html .mj-column-per-25 {
+      width: 25% !important;
+      max-width: 25%;
+    }
+
+    .moz-text-html .mj-column-per-20 {
+      width: 20% !important;
+      max-width: 20%;
+    }
+
+    .moz-text-html .mj-column-per-30 {
+      width: 30% !important;
+      max-width: 30%;
+    }
+
+  </style>
+  <style type=3D"text/css">
+    @media only screen and (max-width:479px) {
+      table.mj-full-width-mobile {
+        width: 100% !important;
+      }
+
+      td.mj-full-width-mobile {
+        width: auto !important;
+      }
+    }
+
+  </style>
+  <style type=3D"text/css">
+    body,
+    html {
+      font-family: Inter, Averta, Helvetica, Arial !important;
+      font-weight: 400;
+      font-size: 14px !important;
+      color: #454745;
+    }
+
+    a {
+      color: #163300 !important;
+      font-weight: 600;
+    }
+
+    a.text-slimmer {
+      font-weight: 400;
+    }
+
+    a.text-inverse {
+      color: #9FE870 !important;
+    }
+
+    a:hover,
+    a:focus {
+      color: #0d1f00;
+    }
+
+    a:active {
+      color: #0e0f0c;
+    }
+
+    a.text-inverse:hover,
+    a.text-inverse:focus {
+      color: #80e142;
+    }
+
+    a.text-inverse:active {
+      color: #65cf21;
+    }
+
+    span.text-underline {
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    span.text-body-bold {
+      font-size: 16px !important;
+      line-height: 24px !important;
+      color: #454745 !important;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #80e142 !important;
+      border-color: #80e142 !important;
+      color: #0d1f00 !important;
+    }
+
+    .btn-primary:focus {
+      background-color: #80e142 !important;
+      border-color: #80e142 !important;
+      color: #0d1f00 !important;
+    }
+
+    .btn-primary:active {
+      background-color: #65cf21 !important;
+      border-color: #65cf21 !important;
+      color: #0e0f0c !important;
+    }
+
+    .btn-accent:hover {
+      background-color: #80e142 !important;
+      color: #0d1f00 !important;
+    }
+
+    .btn-accent:focus {
+      background-color: #80e142 !important;
+      border-color: #80e142 !important;
+      color: #0d1f00 !important;
+    }
+
+    .btn-accent:active {
+      background-color: #65cf21 !important;
+      border-color: #9fe870 !important;
+      color: #0e0f0c !important;
+    }
+
+    .btn-negative {
+      background-color: #a8200d !important;
+      border-color: #a8200d !important;
+      color: #fff !important;
+      transition: all .15s ease-in-out;
+    }
+
+    .btn-negative:active {
+      background-color: #761709 !important;
+      border-color: #761709 !important;
+      color: #fff !important;
+    }
+
+    .btn-negative:focus {
+      background-color: #8e1b0b !important;
+      border-color: #8e1b0b !important;
+      color: #fff !important;
+    }
+
+    .btn-negative:hover {
+      background-color: #8e1b0b !important;
+      border-color: #8e1b0b !important;
+      color: #fff !important;
+    }
+
+    .btn-secondary-negative {
+      background-color: #fff !important;
+      border-color: #a8200d !important;
+      color: #a8200d !important;
+      transition: all .15s ease-in-out;
+    }
+
+    .btn-secondary-negative:active {
+      background-color: #761709 !important;
+      border-color: #761709 !important;
+      color: #fff !important;
+    }
+
+    .btn-secondary-negative:focus {
+      background-color: #8e1b0b !important;
+      border-color: #8e1b0b !important;
+      color: #fff !important;
+    }
+
+    .btn-secondary-negative:hover {
+      background-color: #8e1b0b !important;
+      border-color: #8e1b0b !important;
+      color: #fff !important;
+    }
+
+    .btn-neutral:hover {
+      background-color: #16330037 !important;
+    }
+
+    .btn:active,
+    .btn:focus {
+      outline: 3px solid #163300;
+      outline-offset: 2px;
+    }
+
+    @media only screen and (max-width: 576px) {
+      .logo-img>table {
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+
+      .logo-img {
+        text-align: center;
+        text-align: -webkit-center;
+      }
+
+      .nav-image {
+        padding-top: 48px !important;
+        padding-bottom: 0px !important;
+      }
+
+      .code-text {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+      }
+
+      .code-text div {
+        font-size: 36px !important;
+        letter-spacing: 5px;
+      }
+
+      .text-footer div {
+        font-size: 12px !important;
+        line-height: 20px !important;
+      }
+
+      .hidden-xs {
+        display: none !important;
+      }
+
+      .location-image img {
+        width: 150px !important;
+        height: 150px !important;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .center-xs>div {
+        text-align: center !important;
+      }
+
+      .text-subheading>div {
+        font-size: 18px !important;
+      }
+
+      .left-edge.max221 img {
+        width: 111px !important;
+        height: 63px !important;
+      }
+
+      .icon-img>table {
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+
+      .icon-img img {
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+    }
+
+  </style>
+</head>
+
+<body style=3D"font-family: Inter, Averta, Helvetica, Arial; font-weight: 4=
+00; color: #454745; word-spacing: normal; font-size: 16px;">
+  <div class=3D"body-wrapper" style><div style=3D"display: none">
+      Wise. A conta feita para todo dinheiro do mundo
+    </div>
+    <div style=3D"display: none"> &#8199;&#847; &#8199;&#847; &#8199;&#847;=
+ &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#81=
+99;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#=
+847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; =
+&#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#819=
+9;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#8=
+47; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &=
+#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199=
+;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#84=
+7; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#=
+8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;=
+&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847=
+; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8=
+199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&=
+#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;=
+ &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#81=
+99;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#=
+847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; =
+&#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#819=
+9;&#847; &#8199;&#847; &#8199;&#847; &shy; &shy; &shy; &shy; &shy; &shy; &s=
+hy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;=
+ &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &s=
+hy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;=
+ &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &s=
+hy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;=
+ &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &s=
+hy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;=
+ &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &s=
+hy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;=
+ &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &s=
+hy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &nbsp; </div>
+    <!--[if mso | IE]><table align=3D"center" border=3D"0" cellpadding=3D"0=
+" cellspacing=3D"0" class=3D"main-container-outlook" role=3D"presentation" =
+style=3D"width:600px;" width=3D"600" bgcolor=3D"#F2F2F2" ><tr><td style=3D"=
+line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div class=3D"main-container" style=3D"background:#F2F2F2;background-co=
+lor:#F2F2F2;margin:0px auto;max-width:600px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"background: #F2F2F2; background-color: #=
+F2F2F2; width: 100%; font-family: Inter, Averta, Helvetica, Arial;" width=
+=3D"100%" bgcolor=3D"#F2F2F2">
+        <tbody>
+          <tr>
+            <td style=3D"direction:ltr;font-size:0px;padding:0;text-align:c=
+enter;">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"section-container-light=
+-outlook nav-header-emails-outlook p-b-4-outlook" width=3D"600px" ><table a=
+lign=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=3D"s=
+ection-container-light-outlook nav-header-emails-outlook p-b-4-outlook" rol=
+e=3D"presentation" style=3D"width:600px;" width=3D"600" ><tr><td style=3D"l=
+ine-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+              <div class=3D"section-container-light nav-header-emails p-b-4=
+" style=3D"background-color: #ffffff; margin: 0px auto; max-width: 600px; p=
+adding-bottom: 32px; font-family: Inter, Averta, Helvetica, Arial; font-siz=
+e: 16px;">
+                <table align=3D"center" border=3D"0" cellpadding=3D"0" cell=
+spacing=3D"0" role=3D"presentation" style=3D"height: 70px; width: 100%; fon=
+t-family: Inter, Averta, Helvetica, Arial;" width=3D"100%" height=3D"70">
+                  <tbody>
+                    <tr>
+                      <td style=3D"direction:ltr;font-size:0px;padding:0;te=
+xt-align:center;">
+                        <!--[if mso | IE]><table role=3D"presentation" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"ve=
+rtical-align:middle;width:150px;" ><![endif]-->
+                        <div class=3D"mj-column-per-25 mj-outlook-group-fix=
+" style=3D"text-align: left; direction: ltr; display: inline-block; vertica=
+l-align: middle; width: 100%; font-family: Inter, Averta, Helvetica, Arial;=
+ font-size: 16px;">
+                          <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" width=3D"100%" style=3D"font-family: Inter, Av=
+erta, Helvetica, Arial;">
+                            <tbody>
+                              <tr>
+                                <td style=3D"vertical-align:middle;padding:=
+4px 0px;">
+                                  <table border=3D"0" cellpadding=3D"0" cel=
+lspacing=3D"0" role=3D"presentation" style=3D"font-family: Inter, Averta, H=
+elvetica, Arial;" width=3D"100%">
+                                    <tbody>
+                                      <tr>
+                                        <td align=3D"left" class=3D"logo-im=
+g" style=3D"font-size:0px;padding:0px 0px 0px 0px;word-break:break-word;">
+                                          <table border=3D"0" cellpadding=
+=3D"0" cellspacing=3D"0" role=3D"presentation" style=3D"border-collapse: co=
+llapse; border-spacing: 0px; font-family: Inter, Averta, Helvetica, Arial; =
+margin-left: 40px;">
+                                            <tbody>
+                                              <tr>
+                                                <td style=3D"width:93px;">
+                                                  <img src=3D"https://wise.=
+com/public-resources/assets/logos/wise-personal/logo.png" style=3D"border:0=
+;display:block;outline:none;text-decoration:none;height:21px;width:100%;fon=
+t-size:13px;" width=3D"93" height=3D"21">
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]></td><td class=3D"hidden-xs-outlo=
+ok" style=3D"vertical-align:middle;width:120px;" ><![endif]-->
+                        <div class=3D"mj-column-per-20 mj-outlook-group-fix=
+ hidden-xs" style=3D"text-align: left; direction: ltr; display: inline-bloc=
+k; vertical-align: middle; width: 100%; font-family: Inter, Averta, Helveti=
+ca, Arial; font-size: 16px;">
+                          <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" width=3D"100%" style=3D"font-family: Inter, Av=
+erta, Helvetica, Arial;">
+                            <tbody>
+                              <tr>
+                                <td style=3D"vertical-align:middle;padding:=
+4px 0px 4px 0px;">
+                                  <table border=3D"0" cellpadding=3D"0" cel=
+lspacing=3D"0" role=3D"presentation" style=3D"font-family: Inter, Averta, H=
+elvetica, Arial;" width=3D"100%">
+                                    <tbody>
+                                      <tr>
+                                        <td align=3D"center" style=3D"font-=
+size:0px;padding:0px 0px 0px 0px;word-break:break-word;">
+                                          <div style=3D"line-height: 24px; =
+text-align: center; color: #454745; font-family: Inter, Averta, Helvetica, =
+Arial; font-size: 16px;"><a class=3D"nav-link" href=3D"https://wise.com/sen=
+d-money" style=3D"color: #163300; text-decoration: none; font-size: 12px; f=
+ont-weight: 500; letter-spacing: 0.02em; line-height: 28px; font-family: In=
+ter, Averta, Helvetica, Arial;">Transfer=C3=AAncia de dinheiro</a></div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]></td><td class=3D"hidden-xs-outlo=
+ok" style=3D"vertical-align:middle;width:150px;" ><![endif]-->
+                        <div class=3D"mj-column-per-25 mj-outlook-group-fix=
+ hidden-xs" style=3D"text-align: left; direction: ltr; display: inline-bloc=
+k; vertical-align: middle; width: 100%; font-family: Inter, Averta, Helveti=
+ca, Arial; font-size: 16px;">
+                          <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" width=3D"100%" style=3D"font-family: Inter, Av=
+erta, Helvetica, Arial;">
+                            <tbody>
+                              <tr>
+                                <td style=3D"vertical-align:middle;padding:=
+4px 0px 4px 0px;">
+                                  <table border=3D"0" cellpadding=3D"0" cel=
+lspacing=3D"0" role=3D"presentation" style=3D"font-family: Inter, Averta, H=
+elvetica, Arial;" width=3D"100%">
+                                    <tbody>
+                                      <tr>
+                                        <td align=3D"center" style=3D"font-=
+size:0px;padding:0px 0px 0px 0px;word-break:break-word;">
+                                          <div style=3D"line-height: 24px; =
+text-align: center; color: #454745; font-family: Inter, Averta, Helvetica, =
+Arial; font-size: 16px;"><a class=3D"nav-link" href=3D"https://wise.com/mul=
+ti-currency-account" style=3D"color: #163300; text-decoration: none; font-s=
+ize: 12px; font-weight: 500; letter-spacing: 0.02em; line-height: 28px; fon=
+t-family: Inter, Averta, Helvetica, Arial;">Conta multimoeda</a></div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]></td><td class=3D"hidden-xs-outlo=
+ok" style=3D"vertical-align:middle;width:180px;" ><![endif]-->
+                        <div class=3D"mj-column-per-30 mj-outlook-group-fix=
+ hidden-xs" style=3D"text-align: left; direction: ltr; display: inline-bloc=
+k; vertical-align: middle; width: 100%; font-family: Inter, Averta, Helveti=
+ca, Arial; font-size: 16px;">
+                          <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" width=3D"100%" style=3D"font-family: Inter, Av=
+erta, Helvetica, Arial;">
+                            <tbody>
+                              <tr>
+                                <td style=3D"vertical-align:middle;padding:=
+4px 0px 4px 0px;">
+                                  <table border=3D"0" cellpadding=3D"0" cel=
+lspacing=3D"0" role=3D"presentation" style=3D"font-family: Inter, Averta, H=
+elvetica, Arial;" width=3D"100%">
+                                    <tbody>
+                                      <tr>
+                                        <td align=3D"right" class=3D"nav-bt=
+n" style=3D"font-size:0px;padding:0px 0px 0px 0px;word-break:break-word;">
+                                          <div style=3D"margin-right: 40px;=
+ line-height: 24px; text-align: right; color: #454745; font-family: Inter, =
+Averta, Helvetica, Arial; font-size: 16px;"><a class=3D"btn btn-primary btn=
+-nav-a btn-border" href=3D"https://wise.com" style=3D"font-weight: 600; bor=
+der-radius: 9999px; border: 1px solid transparent; text-align: center; touc=
+h-action: manipulation; -webkit-user-select: none; -ms-user-select: none; u=
+ser-select: none; vertical-align: middle; background-image: none; border: 1=
+px solid transparent; border-radius: 9999px; cursor: pointer; letter-spacin=
+g: .005em; margin-bottom: 0; box-sizing: border-box; border-color: #163300;=
+ background-color: #fff; color: #163300; transition: all .15s ease-in-out; =
+font-size: 14px; line-height: 30px; max-height: 48px; min-height: 32px; pad=
+ding: 8px 16px; text-decoration: none; width: 100%; word-wrap: break-word; =
+display: block; line-height: 14px; margin: 0px; white-space: normal; font-f=
+amily: Inter, Averta, Helvetica, Arial;">Entrar</a></div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!--[if mso | IE]></td></tr></table><![endif]-->
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table></td></tr><![endif]--> <m=
+j-section css-class=3D"p-y-0">
+                <mj-column>
+                  <mj-spacer height=3D"48px">
+                  </mj-spacer></mj-column>
+              </mj-section> <!--[if mso | IE]></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><![endif]--> <!--[if mso | IE]><tab=
+le align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=
+=3D"section-container-light-outlook section-container-content-outlook" role=
+=3D"presentation" style=3D"width:600px;" width=3D"600" ><tr><td style=3D"li=
+ne-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div class=3D"section-container-light section-container-content" style=
+=3D"background-color: #ffffff; margin: 0px auto; max-width: 600px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"width:100%;">
+        <tbody>
+          <tr>
+            <td style=3D"direction: ltr; font-size: 0px; text-align: center=
+; padding: 0px 40px;" align=3D"center">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"vertical-ali=
+gn:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix" style=
+=3D"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertic=
+al-align:top;width:100%;">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
+e=3D"presentation" width=3D"100%">
+                  <tbody>
+                    <tr>
+                      <td style=3D"vertical-align:top;padding:0;">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" style width=3D"100%">
+                          <tbody>
+                            <tr>
+                              <td align=3D"left" class=3D"text-body" style=
+=3D"font-size: 0px; padding: 0; word-break: break-word; padding-left: 0px; =
+padding-right: 0px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 16px; line-=
+height: 24px; color: #454745;"> Ol=C3=A1 Glaicon Jose,</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><table align=3D"center" border=3D"0=
+" cellpadding=3D"0" cellspacing=3D"0" class=3D"section-container-light-outl=
+ook section-container-content-outlook p-b-4-outlook" role=3D"presentation" =
+style=3D"width:600px;" width=3D"600" ><tr><td style=3D"line-height:0px;font=
+-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div class=3D"section-container-light section-container-content p-b-4" =
+style=3D"background-color: #ffffff; margin: 0px auto; max-width: 600px; pad=
+ding-bottom: 32px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"width:100%;">
+        <tbody>
+          <tr>
+            <td style=3D"direction: ltr; font-size: 0px; text-align: center=
+; padding: 0px 40px;" align=3D"center">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"vertical-ali=
+gn:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix" style=
+=3D"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertic=
+al-align:top;width:100%;">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
+e=3D"presentation" width=3D"100%">
+                  <tbody>
+                    <tr>
+                      <td style=3D"vertical-align:top;padding:0;">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" style width=3D"100%">
+                          <tbody>
+                            <tr>
+                              <td align=3D"left" class=3D"text-title p-b-4 =
+p-t-3" style=3D"font-size: 0px; padding: 0; word-break: break-word; padding=
+-left: 0px; padding-right: 0px; padding-top: 24px; padding-bottom: 32px;">
+                                <div style=3D"font-weight: 600; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 30px; line-=
+height: 34px; color: #0E0F0C;"><mj-raw></mj-raw>
+                                  60 CAD j=C3=A1 est=C3=A3o na conta banc=
+=C3=A1ria de Let=C3=ADcia Pires.
+                                  <mj-raw></mj-raw>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"left-edge max560 =
+p-b-4 p-x-0" style=3D"font-size: 0px; padding: 0; word-break: break-word; p=
+adding-bottom: 32px; padding-left: 0px; padding-right: 0px;">
+                                <table border=3D"0" cellpadding=3D"0" cells=
+pacing=3D"0" role=3D"presentation" style=3D"border-collapse:collapse;border=
+-spacing:0px;">
+                                  <tbody>
+                                    <tr>
+                                      <td style=3D"width:600px;">
+                                        <img src=3D"https://wise.com/public=
+-resources/assets/notification-service/images/check_with_trail.png" style=
+=3D"margin-left: -40px; max-width: 560px; border: 0; display: block; outlin=
+e: none; text-decoration: none; width: 100%; font-size: 13px; height: auto;=
+" width=3D"600" height=3D"auto">
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"text-body p-b-3" =
+style=3D"font-size: 0px; padding: 0; word-break: break-word; padding-left: =
+0px; padding-right: 0px; padding-bottom: 24px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 16px; line-=
+height: 24px; color: #454745;"><mj-raw></mj-raw>
+                                  <mj-raw></mj-raw>
+                                  Seu dinheiro chegou em apenas 4 segundos.=
+ Isso =C3=A9 o que chamamos de praticidade e rapidez!
+                                  <mj-raw></mj-raw>
+                                  <mj-raw></mj-raw>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"text-body p-b-0" =
+style=3D"font-size: 0px; padding: 0; word-break: break-word; padding-left: =
+0px; padding-right: 0px; padding-bottom: 0px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 16px; line-=
+height: 24px; color: #454745;">Precisa de um recibo? Voc=C3=AA pode baixar =
+um recibo na sua conta da Wise. Se n=C3=A3o precisar, veja o resumo abaixo:=
+</div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"text-subheading p=
+-t-4" style=3D"font-size: 0px; padding: 0; word-break: break-word; padding-=
+left: 0px; padding-right: 0px; padding-top: 32px;">
+                                <div style=3D"font-weight: 600; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 22px; color=
+: #0E0F0C; line-height: 28px;">Dados da transfer=C3=AAncia</div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"text-body p-t-2" =
+style=3D"font-size: 0px; padding: 0; word-break: break-word; padding-left: =
+0px; padding-right: 0px; padding-top: 16px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 16px; line-=
+height: 24px; color: #454745;">Quantia:</div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"text-subheading p=
+-t-4-px" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddi=
+ng-left: 0px; padding-right: 0px; padding-top: 4px;">
+                                <div style=3D"font-weight: 600; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 22px; color=
+: #0E0F0C; line-height: 28px;">60 CAD</div>
+                              </td>
+                            </tr> <tr>
+                              <td align=3D"left" class=3D"text-body p-t-2" =
+style=3D"font-size: 0px; padding: 0; word-break: break-word; padding-left: =
+0px; padding-right: 0px; padding-top: 16px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 16px; line-=
+height: 24px; color: #454745;"><mj-raw></mj-raw>
+                                  Tarifa da Wise:
+                                  <mj-raw></mj-raw>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"text-subheading p=
+-t-4-px" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddi=
+ng-left: 0px; padding-right: 0px; padding-top: 4px;">
+                                <div style=3D"font-weight: 600; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 22px; color=
+: #0E0F0C; line-height: 28px;">0 CAD</div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"center" class=3D"text-body p-t-3=
+ p-b-3" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddin=
+g-left: 0px; padding-right: 0px; padding-top: 24px; padding-bottom: 24px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: center; font-size: 16px; lin=
+e-height: 24px; color: #454745;"><a href=3D"https://api.transferwise.com/v1=
+/notification-flow/messages/428af0b7-ecdc-3e50-830d-f5ebe414ede1/deliveries=
+/94d5fa68-ca15-4c0c-866a-f217c35efd5e/linkClicks?name=3DtransferDetails&lin=
+k=3DaHR0cHM6Ly93aXNlLmNvbS9hY3Rpdml0eS9hY3Rpdml0aWVzL2J5LXJlc291cmNlL3RyYW5=
+zZmVyLzkyNTA1NTMzNQ&hash=3Dc343ef1baf0875c96621986d72955aed" class=3D"btn b=
+tn-accent btn-full btn-lg-a" style=3D"font-weight: 600; border-radius: 9999=
+px; border: 1px solid transparent; text-align: center; touch-action: manipu=
+lation; -webkit-user-select: none; -ms-user-select: none; user-select: none=
+; vertical-align: middle; white-space: nowrap; background-image: none; bord=
+er: 1px solid transparent; border-radius: 9999px; cursor: pointer; letter-s=
+pacing: .005em; margin-bottom: 0; box-sizing: border-box; display: inline-b=
+lock; background-color: #9fe870; transition: all .15s ease-in-out; font-siz=
+e: 16px; line-height: 48px; max-height: 48px; min-height: 48px; height: 48p=
+x; padding: 0px 48px; text-decoration: none; color: #163300; width: 100%;">
+                                    Ver detalhes da transfer=C3=AAncia
+                                  </a></div>
+                              </td>
+                            </tr>                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><table align=3D"center" border=3D"0=
+" cellpadding=3D"0" cellspacing=3D"0" class=3D"section-container-content-ou=
+tlook section-container-light-outlook" role=3D"presentation" style=3D"width=
+:600px;" width=3D"600" ><tr><td style=3D"line-height:0px;font-size:0px;mso-=
+line-height-rule:exactly;"><![endif]-->
+    <div class=3D"section-container-content section-container-light" style=
+=3D"background-color: #ffffff; margin: 0px auto; max-width: 600px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"width:100%;">
+        <tbody>
+          <tr>
+            <td style=3D"direction: ltr; font-size: 0px; text-align: center=
+; padding: 0px 40px;" align=3D"center">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"vertical-ali=
+gn:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix" style=
+=3D"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertic=
+al-align:top;width:100%;">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
+e=3D"presentation" width=3D"100%">
+                  <tbody>
+                    <tr>
+                      <td style=3D"vertical-align:top;padding:0;">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" style width=3D"100%">
+                          <tbody>
+                            <tr>
+                              <td align=3D"left" class=3D"text-body p-b-0" =
+style=3D"font-size: 0px; padding: 0; word-break: break-word; padding-left: =
+0px; padding-right: 0px; padding-bottom: 0px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 16px; line-=
+height: 24px; color: #454745;">Obrigado,</div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"left" class=3D"text-body p-t-3-p=
+x p-b-4" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddi=
+ng-left: 0px; padding-right: 0px; padding-bottom: 32px; padding-top: 3px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: left; font-size: 16px; line-=
+height: 24px; color: #454745;">Equipe da Wise</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><table align=3D"center" border=3D"0=
+" cellpadding=3D"0" cellspacing=3D"0" class=3D"section-container-outlook se=
+ction-container-content-outlook p-t-4-outlook p-b-4-outlook" role=3D"presen=
+tation" style=3D"width:600px;" width=3D"600" ><tr><td style=3D"line-height:=
+0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div class=3D"section-container section-container-content p-t-4 p-b-4" =
+style=3D"background-color: #163300; margin: 0px auto; max-width: 600px; pad=
+ding-top: 32px; padding-bottom: 32px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"width:100%;">
+        <tbody>
+          <tr>
+            <td style=3D"direction: ltr; font-size: 0px; text-align: center=
+; padding: 0px 40px;" align=3D"center">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"p-y-0-outlook" style=3D=
+"vertical-align:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix p-y-0" s=
+tyle=3D"font-size: 0px; text-align: left; direction: ltr; display: inline-b=
+lock; vertical-align: top; width: 100%; padding-top: 0px; padding-bottom: 0=
+px;">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
+e=3D"presentation" width=3D"100%">
+                  <tbody>
+                    <tr>
+                      <td style=3D"vertical-align:top;padding:0;">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" style width=3D"100%">
+                          <tbody>
+                            <tr>
+                              <td align=3D"center" class=3D"text-footer tex=
+t-white p-b-2" style=3D"font-size: 0px; padding: 0; word-break: break-word;=
+ padding-left: 0px; padding-right: 0px; padding-bottom: 16px;">
+                                <div style=3D"font-weight: 400; font-family=
+: Inter, Averta, Helvetica, Arial; text-align: center; font-size: 14px; lin=
+e-height: 20px; color: #fff;">Quer alterar as atualiza=C3=A7=C3=B5es que en=
+viamos para voc=C3=AA? Acesse <a class=3D"text-inverse text-slimmer" href=
+=3D"https://api.transferwise.com/v1/notification-flow/messages/428af0b7-ecd=
+c-3e50-830d-f5ebe414ede1/deliveries/94d5fa68-ca15-4c0c-866a-f217c35efd5e/li=
+nkClicks?name=3DnotificationPreferences&link=3DaHR0cDovL3dpc2UuY29tL3NldHRp=
+bmdzL25vdGlmaWNhdGlvbi1wcmVmZXJlbmNlcyNwcmVmZXJlbmNlcy10b2tlbj1leUowZVhBaU9=
+pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKbFpHbDBZV0pzWlVOaGRHVm5iM0pwWlhNaU=
+9sc2lWRkpCVGxOR1JWSlRJaXdpUWtGTVFVNURSVk5mUVU1RVgwTkJVa1JUSWl3aVVGSlBUVTlVU=
+1U5T1FVd2lMQ0pUVlZKV1JWbFRJaXdpUTBGTlVFRkpSMDVUSWwwc0ltbHpjeUk2SW5kcGMyVXRi=
+bTkwYVdacFkyRjBhVzl1SWl3aVpYaHdJam94TnpBM016RTBPRGt5TENKMWMyVnlTV1FpT2lKVVZ=
+6bzZOemd4T0RjME15SjkuTFJXbXFDa1EyUmZXdXFWZktuUHJVS09PWnpWdWxHUC1Zakp2SXd0NF=
+gzMA&hash=3D6e694f9ac106da94f0e98aa0cbd02d9d">Configura=C3=A7=C3=B5es de no=
+tifica=C3=A7=C3=A3o</a> para definir as suas prefer=C3=AAncias. N=C3=A3o po=
+demos receber respostas neste endere=C3=A7o de e-mail. Mas se voc=C3=AA pre=
+cisar de ajuda, visite o nosso <a class=3D"text-inverse text-slimmer" href=
+=3D"https://api.transferwise.com/v1/notification-flow/messages/428af0b7-ecd=
+c-3e50-830d-f5ebe414ede1/deliveries/94d5fa68-ca15-4c0c-866a-f217c35efd5e/li=
+nkClicks?name=3DhelpCentre&link=3DaHR0cHM6Ly93aXNlLmNvbS9oZWxw&hash=3D3168b=
+3b1e92e6c59ec4f37927a9b1ac2">Centro de Suporte.</a>.</div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"center" class=3D"text-small text=
+-white" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddin=
+g-left: 0px; padding-right: 0px;">
+                                <div style=3D"font-family: Inter, Averta, H=
+elvetica, Arial; text-align: center; color: #fff; font-size: 10px; line-hei=
+ght: 18px;"><mj-raw></mj-raw>
+                                  Este e-mail foi enviado pela Wise. Ao usa=
+r os nossos servi=C3=A7os, voc=C3=AA concorda com os nossos <a href=3D"http=
+s://api.transferwise.com/v1/notification-flow/messages/428af0b7-ecdc-3e50-8=
+30d-f5ebe414ede1/deliveries/94d5fa68-ca15-4c0c-866a-f217c35efd5e/linkClicks=
+?name=3DcustomerAgreements&link=3DaHR0cHM6Ly93aXNlLmNvbS90ZXJtcy1hbmQtY29uZ=
+Gl0aW9ucw&hash=3D536fa978ae56c9f7288d873a43f33626" class=3D"text-inverse te=
+xt-slimmer">contratos do cliente</a>. <mj-raw> </mj-raw>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"center" class=3D"text-small text=
+-white" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddin=
+g-left: 0px; padding-right: 0px;">
+                                <div style=3D"font-family: Inter, Averta, H=
+elvetica, Arial; text-align: center; color: #fff; font-size: 10px; line-hei=
+ght: 18px;"><mj-raw> </mj-raw>
+                                  Todos os servi=C3=A7os de investimento s=
+=C3=A3o fornecidos pelas subsidi=C3=A1rias da Wise, que est=C3=A3o autoriza=
+das e regulamentadas para fornecer esses servi=C3=A7os. Se voc=C3=AA possui=
+ um reserva ou um saldo mantido em Ativos, qualquer comunica=C3=A7=C3=A3o s=
+obre o assunto dever=C3=A1 ser feita por <a href=3D"https://api.transferwis=
+e.com/v1/notification-flow/messages/428af0b7-ecdc-3e50-830d-f5ebe414ede1/de=
+liveries/94d5fa68-ca15-4c0c-866a-f217c35efd5e/linkClicks?name=3DcomplianceL=
+ink&link=3DaHR0cHM6Ly93aXNlLmNvbS9oZWxwL2FydGljbGVzLzRNbzlWN015WG9zNnNjTTd4=
+dmhnMTUvbGljZW5jZXMtYW5kLXJlZ3VsYXRvcnMtd2hlbi1ob2xkaW5nLW1vbmV5LWFzLWRpZmZ=
+lcmVudC1hc3NldHM&hash=3D80171b3e6cd2c2070740ceb9b8ee3d9d" class=3D"text-inv=
+erse text-slimmer">representantes da entidade de investimento relevante</a>=
+.
+                                  Todos os servi=C3=A7os de investimento s=
+=C3=A3o fornecidos pela respectiva <a href=3D"https://api.transferwise.com/=
+v1/notification-flow/messages/428af0b7-ecdc-3e50-830d-f5ebe414ede1/deliveri=
+es/94d5fa68-ca15-4c0c-866a-f217c35efd5e/linkClicks?name=3DcomplianceLink&li=
+nk=3DaHR0cHM6Ly93aXNlLmNvbS9oZWxwL2FydGljbGVzLzRNbzlWN015WG9zNnNjTTd4dmhnMT=
+UvbGljZW5jZXMtYW5kLXJlZ3VsYXRvcnMtd2hlbi1ob2xkaW5nLW1vbmV5LWFzLWRpZmZlcmVud=
+C1hc3NldHM&hash=3D80171b3e6cd2c2070740ceb9b8ee3d9d" class=3D"text-inverse t=
+ext-slimmer">entidade da Wise Assets</a> na sua regi=C3=A3o. <mj-raw> </mj-=
+raw>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"center" class=3D"text-small text=
+-white" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddin=
+g-left: 0px; padding-right: 0px;">
+                                <div style=3D"font-family: Inter, Averta, H=
+elvetica, Arial; text-align: center; color: #fff; font-size: 10px; line-hei=
+ght: 18px;"></div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td align=3D"center" class=3D"text-small text=
+-white" style=3D"font-size: 0px; padding: 0; word-break: break-word; paddin=
+g-left: 0px; padding-right: 0px;">
+                                <div style=3D"font-family: Inter, Averta, H=
+elvetica, Arial; text-align: center; color: #fff; font-size: 10px; line-hei=
+ght: 18px;">=C2=A9 Wise 2023. Todos os direitos reservados.</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><table align=3D"center" border=3D"0=
+" cellpadding=3D"0" cellspacing=3D"0" class=3D"" role=3D"presentation" styl=
+e=3D"width:600px;" width=3D"600" ><tr><td style=3D"line-height:0px;font-siz=
+e:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div style=3D"margin:0px auto;max-width:600px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"width:100%;">
+        <tbody>
+          <tr>
+            <td style=3D"direction:ltr;font-size:0px;padding:0;text-align:c=
+enter;">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"vertical-ali=
+gn:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix" style=
+=3D"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertic=
+al-align:top;width:100%;">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
+e=3D"presentation" width=3D"100%">
+                  <tbody>
+                    <tr>
+                      <td style=3D"vertical-align:top;padding:0;">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" style width=3D"100%">
+                          <tbody>
+                            <tr>
+                              <td style=3D"font-size:0px;padding:0;word-bre=
+ak:break-word;">
+                                <div style=3D"height:24px;line-height:24px;=
+">&#8202;</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><table align=3D"center" border=3D"0=
+" cellpadding=3D"0" cellspacing=3D"0" class=3D"" role=3D"presentation" styl=
+e=3D"width:600px;" width=3D"600" bgcolor=3D"transparent" ><tr><td style=3D"=
+line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div style=3D"background:transparent;background-color:transparent;margi=
+n:0px auto;max-width:600px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"background:transparent;background-color:=
+transparent;width:100%;">
+        <tbody>
+          <tr>
+            <td style=3D"direction:ltr;font-size:0px;padding:0;text-align:c=
+enter;">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"vertical-ali=
+gn:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix" style=
+=3D"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertic=
+al-align:top;width:100%;">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
+e=3D"presentation" width=3D"100%">
+                  <tbody>
+                    <tr>
+                      <td style=3D"vertical-align:top;padding:0;">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" style width=3D"100%">
+                          <tbody>
+                            <tr>
+                              <td align=3D"left" class=3D"zendesk-tag" styl=
+e=3D"font-size:0px;padding:0;word-break:break-word;">
+                                <div style=3D"font-family:Inter, Averta, He=
+lvetica, Arial;font-size:1px;line-height:24px;text-align:left;color:#f2f5f7=
+;">zdtag-nr-contact-form-sent</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><table align=3D"center" border=3D"0=
+" cellpadding=3D"0" cellspacing=3D"0" class=3D"" role=3D"presentation" styl=
+e=3D"width:600px;" width=3D"600" bgcolor=3D"transparent" ><tr><td style=3D"=
+line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div style=3D"background:transparent;background-color:transparent;margi=
+n:0px auto;max-width:600px;">
+      <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D=
+"0" role=3D"presentation" style=3D"background:transparent;background-color:=
+transparent;width:100%;">
+        <tbody>
+          <tr>
+            <td style=3D"direction:ltr;font-size:0px;padding:0;text-align:c=
+enter;">
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"vertical-ali=
+gn:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix" style=
+=3D"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertic=
+al-align:top;width:100%;">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
+e=3D"presentation" width=3D"100%">
+                  <tbody>
+                    <tr>
+                      <td style=3D"vertical-align:top;padding:0;">
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" role=3D"presentation" style width=3D"100%">
+                          <tbody>
+                            <tr>
+                              <td align=3D"center" style=3D"font-size:0px;p=
+adding:0;word-break:break-word;">
+                                <table border=3D"0" cellpadding=3D"0" cells=
+pacing=3D"0" role=3D"presentation" style=3D"border-collapse:collapse;border=
+-spacing:0px;">
+                                  <tbody>
+                                    <tr>
+                                      <td style=3D"width:1px;">
+                                        <img src=3D"https://api.transferwis=
+e.com/v1/notification-flow/messages/428af0b7-ecdc-3e50-830d-f5ebe414ede1/de=
+liveries/94d5fa68-ca15-4c0c-866a-f217c35efd5e/open.gif" style=3D"border:0;d=
+isplay:block;outline:none;text-decoration:none;height:1;width:100%;font-siz=
+e:13px;" width=3D"1" height=3D"1">
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--[if mso | IE]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><![endif]-->
+  </div>
+</body>
+
+</html>
