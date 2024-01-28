@@ -7,8 +7,10 @@ import {
   useInkathon,
   useRegisteredContract,
 } from '@scio-labs/use-inkathon'
+import { fromBn } from 'evm-bn'
 import toast from 'react-hot-toast'
 
+import BuyOrderModal from '@/app/components/buy-order-modal'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import Badge from './badge'
@@ -17,6 +19,8 @@ export default function Table() {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
   const [orders, setOrders] = useState<any>([])
+  const [selectedOrder, setSelectedOrder] = useState<any>(null)
+  const [claimedOrder, setClaimedOrder] = useState<any>(null)
   const [claimOrders, setClaimOrders] = useState<any>([])
 
   const fetchAllOrders = async () => {
@@ -80,7 +84,7 @@ export default function Table() {
     }
   }
 
-  const createClaimOrder = (order: any) => async () => {
+  const createClaimOrder = async (order: any) => {
     if (!activeAccount || !contract || !activeSigner || !api) {
       toast.error('Wallet not connected. Try again…')
       return
@@ -95,8 +99,24 @@ export default function Table() {
     await refresh()
   }
 
+  const mockCreateOrder = async () => {
+    await createClaimOrder(selectedOrder)
+    setClaimedOrder({
+      buyer: '0x0000000',
+      claimExpirationTime: new Date().setMinutes(new Date().getMinutes() + 1),
+      orderIndex: '1',
+      status: 'WaitingForSellerProof',
+    })
+  }
+
   return (
     <div className="w-full">
+      <BuyOrderModal
+        order={selectedOrder}
+        claimedOrder={claimedOrder}
+        onClose={() => setSelectedOrder(undefined)}
+        onClaimCreated={mockCreateOrder}
+      />
       <div className="flow-root">
         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -132,7 +152,7 @@ export default function Table() {
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
                     <a href="#" className="group inline-flex">
-                      Exchange
+                      Available Amount
                     </a>
                   </th>
                   <th
@@ -140,7 +160,7 @@ export default function Table() {
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
                     <a href="#" className="group inline-flex">
-                      Deposit Amount
+                      Price
                     </a>
                   </th>
                   <th
@@ -154,28 +174,35 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
-                {orders.map((order: any) => (
-                  <tr
-                    key={order.depositor}
-                    onClick={createClaimOrder(order)}
-                    className="cursor-pointer"
-                  >
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
-                      {order.id}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">AZERO</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.owner}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">-0.3%</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <Badge>{convertStatus(getStatus(order))}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {orders.map((order: any) => {
+                  return (
+                    <tr
+                      key={order.depositor}
+                      onClick={() => setSelectedOrder(order)}
+                      className="cursor-pointer"
+                    >
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
+                        {order.id}
+                      </td>
+                      <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                        AZERO
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        {order.owner}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        {order.amountToReceive} BRL
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                        <Badge>{convertStatus(getStatus(order))}</Badge>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

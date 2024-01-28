@@ -7,13 +7,18 @@ import {
   useInkathon,
   useRegisteredContract,
 } from '@scio-labs/use-inkathon'
+import { fromBn } from 'evm-bn'
 import toast from 'react-hot-toast'
 
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import Badge from '../../components/ui/badge'
 
-export default function OrderTable() {
+export default function OrderTable({
+  onOpenUploadReceiptModal,
+}: {
+  onOpenUploadReceiptModal: (order: any) => void
+}) {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
   const [orders, setOrders] = useState<any>([])
@@ -127,7 +132,7 @@ export default function OrderTable() {
       contract,
       'update_claim_order_status',
       {},
-      [claimOrder.orderIndex, 'WaitingForSellerProof'],
+      [claimOrder.orderIndex, 'WaitingForSellerProof', new Date().getTime() + 1000 * 60 * 60],
     )
 
     toast.success('Proof claim user submitted')
@@ -158,11 +163,17 @@ export default function OrderTable() {
       contract,
       'update_claim_order_status',
       {},
-      [order.id, 'Filled'],
+      [order.id, 'Filled', new Date().getTime()],
     )
 
     toast.success('Proof seller submitted')
     await refresh()
+  }
+
+  const getClaimOrder = (order: any) => {
+    return claimOrders.filter((claimOrder: any) => {
+      return claimOrder.orderIndex == order.id
+    })[0]
   }
 
   return (
@@ -186,41 +197,31 @@ export default function OrderTable() {
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Token
-                    </a>
+                    Token
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Depositor
-                    </a>
+                    Depositor
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Exchange
-                    </a>
+                    Available Amount
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Deposit Amount
-                    </a>
+                    Price
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Status
-                    </a>
+                    Status
                   </th>
                 </tr>
               </thead>
@@ -234,18 +235,33 @@ export default function OrderTable() {
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {order.owner}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">-0.3%</td>
+                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                      {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                    </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive}
+                      {order.amountToReceive} BRL
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(order))}</Badge>
-                      <button className="p-2" onClick={() => cancelOrder(order)}>
-                        cancel
-                      </button>
-                      <button className="p-2" onClick={() => submitProofSeller(order)}>
-                        proof
-                      </button>
+
+                      {order.status == 'Open' && (
+                        <>
+                          <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
+                            cancel
+                          </button>
+                        </>
+                      )}
+                      {order && getClaimOrder(order)?.status == 'WaitingForSellerProof' && (
+                        <>
+                          <button
+                            className="cursor-pointer p-2"
+                            onClick={() => onOpenUploadReceiptModal(order)}
+                          >
+                            upload
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -262,49 +278,37 @@ export default function OrderTable() {
                     scope="col"
                     className="whitespace-pre py-3 pl-4 pr-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      #
-                    </a>
+                    #
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Token
-                    </a>
+                    Token
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Depositor
-                    </a>
+                    Depositor
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Exchange
-                    </a>
+                    Available Amount
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Deposit Amount
-                    </a>
+                    Price
                   </th>
                   <th
                     scope="col"
                     className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
                   >
-                    <a href="#" className="group inline-flex">
-                      Status
-                    </a>
+                    Status
                   </th>
                 </tr>
               </thead>
@@ -318,18 +322,34 @@ export default function OrderTable() {
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {claimOrder.buyer}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">-0.3%</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {claimOrder.order?.amountToReceive}
+                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                      {claimOrder &&
+                        fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)}{' '}
+                      AZERO
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      {claimOrder.order?.amountToReceive} BRL
+                    </td>
+
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
-                      <button className="p-2" onClick={() => cancelClaimOrder(claimOrder)}>
-                        cancel
-                      </button>
-                      <button className="p-2" onClick={() => submitProofClaimUser(claimOrder)}>
-                        proof
-                      </button>
+                      {claimOrder.status == 'WaitingForBuyerProof' && (
+                        <>
+                          <button
+                            className="cursor-pointer p-2"
+                            onClick={() => cancelClaimOrder(claimOrder)}
+                          >
+                            cancel
+                          </button>
+                          <button
+                            className="cursor-pointer p-2"
+                            onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
+                          >
+                            upload
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

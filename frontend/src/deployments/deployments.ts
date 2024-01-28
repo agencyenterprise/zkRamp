@@ -16,7 +16,7 @@ export const getDeployments = async (): Promise<SubstrateDeployment[]> => {
 
   for (const networkId of networks) {
     for (const contractId of Object.values(ContractIds)) {
-        const abi = await import(`@inkathon/contracts/deployments/${contractId}/${contractId}.json`)
+      const abi = await import(`@inkathon/contracts/deployments/${contractId}/${contractId}.json`)
       const { address } = await import(
         `@inkathon/contracts/deployments/${contractId}/${networkId}.ts`
       )
