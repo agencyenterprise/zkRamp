@@ -133,7 +133,11 @@ export default function OrderTable({
       contract,
       'update_claim_order_status',
       {},
-      [claimOrder.orderIndex, 'WaitingForSellerProof', new Date().getTime() + 1000 * 60 * 60],
+      [
+        claimOrder.orderIndex,
+        'WaitingForSellerProof',
+        new Date(new Date().getTime() + 5 * 60000).getTime(),
+      ],
     )
 
     toast.success('Proof claim user submitted')
@@ -385,7 +389,7 @@ export default function OrderTable({
                           </button>
                           <button
                             className="cursor-pointer p-2"
-                            onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
+                            onClick={() => submitProofClaimUser(claimOrder)}
                           >
                             upload
                           </button>
