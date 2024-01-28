@@ -246,10 +246,7 @@ mod zkramp {
                 return Err(EscrowError::StatusCanNotBeChanged);
             }
 
-            // TODO: remove the claim order from the order book
-            let mut order_claim = self.orders_claim.get(index).unwrap();
-            order_claim.status = ClaimStatus::Canceled;
-            self.orders_claim.insert(index, &order_claim);
+            self.orders_claim.remove(index);
 
             Ok(())
         }
@@ -551,12 +548,6 @@ mod zkramp {
             zkramp.cancel_claim_order(0).unwrap();
 
             let mut orders_claim = Vec::<OrderClaim>::new();
-            orders_claim.push(OrderClaim {
-                buyer: accounts.bob,
-                order_index: 0,
-                status: ClaimStatus::Canceled,
-                claim_expiration_time: 100,
-            });
             assert_eq!(zkramp.get_all_orders_claim(), orders_claim);
         }
 
