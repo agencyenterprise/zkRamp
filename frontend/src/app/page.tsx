@@ -1,11 +1,10 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect } from 'react'
 
 import { useInkathon } from '@scio-labs/use-inkathon'
 import { toast } from 'react-hot-toast'
-
-import { ZKRampContractInteractions } from '@/components/web3/zkramp-contract-interactions'
 
 import { Button } from '../components/ui/button'
 import { HeroHexagons } from './components/hero-hexagons'
@@ -38,14 +37,14 @@ export default function HomePage() {
           <HeroText />
           <div className="mb-6 flex items-center justify-center gap-6 px-2 md:mb-0">
             <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="outline">
-              Add Liquidity
+              <Link href="orders">Add Liquidity</Link>
             </Button>
             <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="default">
-              Buy AZERO
+              <Link href="liquidity">Buy AZERO</Link>
             </Button>
           </div>
           <HeroHexagons />
-          <ZKRampContractInteractions />
+          {/* <ZKRampContractInteractions /> */}
         </main>
       </div>
     </>

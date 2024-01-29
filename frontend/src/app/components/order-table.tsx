@@ -13,6 +13,7 @@ import toast from 'react-hot-toast'
 import { contractTxWithToast } from '@/utils/contract-tx-with-toast'
 
 import Badge from '../../components/ui/badge'
+import TimerAction from './timer-action'
 
 export default function OrderTable({
   onOpenUploadReceiptModal,
@@ -170,6 +171,20 @@ export default function OrderTable({
     await refresh()
   }
 
+  const releaseFunds = async (claimOrder: any) => {
+    if (!activeAccount || !contract || !activeSigner || !api) {
+      toast.error('Wallet not connected. Try again…')
+      return
+    }
+
+    await contractTxWithToast(api, activeAccount.address, contract, 'buyer_claim_order_funds', {}, [
+      claimOrder.orderIndex,
+    ])
+
+    toast.success('Funds released')
+    await refresh()
+  }
+
   const getClaimOrder = (order: any) => {
     return claimOrders.filter((claimOrder: any) => {
       return claimOrder.orderIndex == order.id
@@ -235,24 +250,36 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {order.owner}
                     </td>
-                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
-                      {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex">
+                        <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                        {order && fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {order.amountToReceive} BRL
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(order))}</Badge>
+                      {getClaimOrder(order) &&
+                        (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
+                          getClaimOrder(order).status == 'WaitingForSellerProof') && (
+                          <div className="ml-2 mr-2 inline">
+                            <TimerAction
+                              claimOrder={getClaimOrder(order)}
+                              releaseFunds={releaseFunds}
+                            ></TimerAction>
+                          </div>
+                        )}
 
-                      {order.status == 'Open' && (
+                      {order && getStatus(order) == 'Open' && (
                         <>
                           <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
                             cancel
                           </button>
                         </>
                       )}
-                      {order && getClaimOrder(order)?.status == 'WaitingForSellerProof' && (
+                      {order && getStatus(order) == 'WaitingForSellerProof' && (
                         <>
                           <button
                             className="cursor-pointer p-2"
@@ -322,11 +349,14 @@ export default function OrderTable({
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {claimOrder.buyer}
                     </td>
-                    <td className="flex whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
-                      {claimOrder &&
-                        fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)}{' '}
-                      AZERO
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex">
+                        <img className="mr-2" src="/icons/azero.png" width={20} height={20} />
+                        {claimOrder &&
+                          claimOrder.order &&
+                          fromBn(claimOrder.order?.amountToSend.replaceAll(',', ''), 12)}{' '}
+                        AZERO
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       {claimOrder.order?.amountToReceive} BRL
@@ -334,6 +364,17 @@ export default function OrderTable({
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
+                      {(claimOrder.status == 'WaitingForBuyerProof' ||
+                        claimOrder.status == 'WaitingForSellerProof') &&
+                        claimOrder.claimExpirationTime && (
+                          <div className="ml-2 mr-2 inline">
+                            <TimerAction
+                              claimOrder={claimOrder}
+                              releaseFunds={releaseFunds}
+                            ></TimerAction>
+                          </div>
+                        )}
+
                       {claimOrder.status == 'WaitingForBuyerProof' && (
                         <>
                           <button

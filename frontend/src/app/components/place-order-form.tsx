@@ -58,7 +58,9 @@ export default function PlaceOrderForm({
   return (
     <div className="inline-flex flex-col items-start justify-center gap-4 rounded border border-zinc-800 bg-zinc-950 p-4">
       <div className="flex w-full items-center justify-between">
-        <div className="font-manrope text-lg font-semibold leading-7 text-zinc-100">Order</div>
+        <div className="font-manrope text-lg font-semibold leading-7 text-zinc-100">
+          Create Order
+        </div>
         <XCircleIcon onClick={onClose} className="h-6 w-6 cursor-pointer text-zinc-100" />
       </div>
       <div className="inline-flex flex-col items-start justify-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-4 py-5">
