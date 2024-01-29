@@ -343,7 +343,7 @@ export default function OrderTable({
                 {filterMyClaimOrders(claimOrders).map((claimOrder: any) => (
                   <tr key={claimOrder.id}>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-subtlest">
-                      {claimOrder.orderIndex}
+                      {claimOrder.id}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">AZERO</td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
