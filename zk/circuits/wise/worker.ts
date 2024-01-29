@@ -1,6 +1,8 @@
 import { Queue, Worker } from 'bullmq';
 import 'dotenv/config';
 import { prove } from './prover';
+import { getDeploymentData } from './contract/getDeploymentData';
+import { closeDealWithSuccess } from './contract/caller';
 const emlformat = require('eml-format');
 const REFERENCE_LINK_PATTERN = "transferDetails&lin=\nk="
 const BASE_LINK_PATTERN = "transferDetails&lin="
@@ -107,12 +109,14 @@ const worker = new Worker('proveReceipt', async job => {
         }
 
     }
+    await closeDealWithSuccess(+orderId)
     console.log("Attempting to prove receipt...")
     const isvalidProof = await prove(receipt)
     if (!isvalidProof) {
         throw new Error("Invalid receipt! Proof is not valid")
     }
     console.log("Receipt is valid")
+    
     return isvalidProof
 
 }, {
