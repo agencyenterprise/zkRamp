@@ -22,7 +22,7 @@ export default function OrdersPage() {
 
   const Title = () => {
     return (
-      <div className="mt-16 flex w-full items-end justify-between gap-1 md:mt-0">
+      <div className="mt-16 flex w-full items-end justify-between gap-1">
         <h1 className="text-2xl font-extrabold leading-loose text-white">Orders</h1>
         <Button onClick={() => setShowPlaceOrderForm(true)}>Place An Order</Button>
       </div>
