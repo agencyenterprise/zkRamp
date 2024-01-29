@@ -25,7 +25,7 @@ export const closeDealWithSuccess = async (orderId: number) => {
 
   // Deploy zkramp contract
   const { abi, wasm } = await getDeploymentData('zkramp')
-  const contract = new ContractPromise(api, abi, "5CrrpsFrfDNaFZCQcUJUqJjxUYpDzQm2gnm6j9XrHGMbHqsb")
+  const contract = new ContractPromise(api, abi, '5DkLDqiYkGNGk5Xa4WxtPcf9EWtmteUdV1VrNJ749PTQaH9z')
 
   // Update message
   try {

@@ -15,9 +15,9 @@ import {
 import { CIRCOM_FIELD_MODULUS, MAX_BODY_PADDED_BYTES, MAX_HEADER_PADDED_BYTES, STRING_PRESELECTOR } from "@zk-email/helpers/dist/constants";
 import { dkimVerify } from "@zk-email/helpers/dist/dkim";
 import { partialSha, sha256Pad, shaHash } from "@zk-email/helpers/dist/shaHash";
-import * as nf from "node-forge";
+import nf from "node-forge";
 
-const pki = nf.pki
+const pki = nf.pki.publicKeyFromPem
 export interface ICircuitInputs {
   modulus?: string[];
   signature?: string[];
@@ -484,7 +484,7 @@ async function generate_inputs(
   let body_hash = result.results[0].bodyHash;
 
   let pubkey = result.results[0].publicKey;
-  const pubKeyData = pki.publicKeyFromPem(pubkey.toString());
+  const pubKeyData = pki(pubkey.toString());
   // const pubKeyData = CryptoJS.parseKey(pubkey.toString(), 'pem');
   let modulus = BigInt(pubKeyData.n.toString());
   let fin_result = await getCircuitInputs(sig, modulus, message, body, body_hash, intent_hash, type);
@@ -511,7 +511,7 @@ export async function prove(eml: string): Promise<boolean> {
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(input, "./build/wise_send_js/wise_send.wasm", "./build/wise_send.zkey");
     console.log("Proof: ");
     console.log(JSON.stringify(proof, null, 1));
-    const vKey = JSON.parse(fs.readFileSync("./build/wise_send_vkey.json"));
+    const vKey = JSON.parse(fs.readFileSync("./build/wise_send_vkey.json", "utf8"));
 
     return await snarkjs.groth16.verify(vKey, publicSignals, proof);
   } catch (err) {
