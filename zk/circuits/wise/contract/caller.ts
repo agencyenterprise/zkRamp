@@ -3,6 +3,8 @@ import { initPolkadotJs } from './initPolkadotJs'
 import { ContractPromise } from '@polkadot/api-contract'
 import {
   contractTx,
+  contractQuery,
+  decodeOutput,
   // @ts-ignore
 } from '@scio-labs/use-inkathon/helpers'
 
@@ -28,4 +30,14 @@ export const closeDealWithSuccess = async (orderId: number) => {
   await contractTx(api, account, contract, 'update_claim_order_status', {}, [orderId, "Filled", expiration])
   console.log('\nClosed deal with success')
 
+}
+
+
+export const getOrderData = async (orderId: number) => {
+  const { api, account } = await initPolkadotJs()
+  const { abi, wasm } = await getDeploymentData('zkramp')
+  const contract = new ContractPromise(api, abi, '5DkLDqiYkGNGk5Xa4WxtPcf9EWtmteUdV1VrNJ749PTQaH9z')
+  const result = await contractQuery(api, '', contract, 'get_order', {}, [orderId])
+  const { decodedOutput } = decodeOutput(result, contract, 'get_order')
+  return decodedOutput
 }

@@ -1,13 +1,13 @@
-import { Queue, Worker } from 'bullmq';
+import { Worker } from 'bullmq';
 import 'dotenv/config';
 import { prove } from './prover';
-import { closeDealWithSuccess } from './contract/caller';
+import { closeDealWithSuccess, getOrderData } from './contract/caller';
 import emlformat from 'eml-format'
+import { decrypt } from './contract/secret'
 const REFERENCE_LINK_PATTERN = "transferDetails&lin=\nk="
 const BASE_LINK_PATTERN = "transferDetails&lin="
-
+const QUEUE_NAME = 'proveReceipt'
 interface IRequestPayload {
-    isBuyer: boolean
     receipt: string
     orderId: string
 }
@@ -21,22 +21,10 @@ interface IOrder {
     reiceiptId: string | undefined
 }
 
-const DKIM_INFO = {
-    "domain": "wise.com", "s": "mriizrjk76ccxll4j6ckckpevf5xpb2j"
-}
-emlformat.un
-
-async function hasDKIMSignature(receipt: string): Promise<boolean> {
-    return receipt.search(DKIM_INFO.s) > -1
+async function hasCorrectSendAmount(receipt: string, amount: string, currency: string): Promise<boolean> {
+    return receipt.search(`${amount} ${currency}`) > -1 || receipt.search(`${parseInt(amount)} ${currency}`) > -1 || receipt.search(`${parseFloat(amount)} ${currency}`) > -1
 }
 
-
-async function getOrderInfo(orderId: string): Promise<IOrder> {
-    return { value: "100", currency: "USD", buyerName: "Glaicon Jose", sellerName: "Letícia Pires", sellerAddress: "0x123", buyerAddress: "0x456" } as IOrder
-}
-async function updateOrderInfo(orderId: string, receiptId): Promise<IOrder> {
-    return { value: "100", currency: "USD", buyerName: "Glaicon Jose", sellerName: "Letícia Pires", sellerAddress: "0x123", buyerAddress: "0x456", reiceiptId: '925055335' } as IOrder
-}
 async function hasNameInReceipt(receipt: string, userName: string): Promise<boolean> {
     return emlformat.unquotePrintable(receipt).search(userName) > -1
 }
@@ -60,27 +48,30 @@ async function parseReceiptId(receipt: string): Promise<string> {
     return receiptId.join("")
 }
 
-const receiptQueue = new Queue('proveReceipt', {
-    connection: {
-        host: process.env.REDIS_URI!,
-        port: +process.env.REDIS_PORT!,
-        username: process.env.REDIS_USER!,
-        password: process.env.REDIS_PASSWORD!
-    }
-});
 
-
-const worker = new Worker('proveReceipt', async job => {
+const worker = new Worker(QUEUE_NAME, async job => {
     try {
-        const { isBuyer, receipt, orderId } = job.data as IRequestPayload;
-    const { value, currency, buyerName, sellerName, sellerAddress, buyerAddress } = await getOrderInfo(orderId)
-    const hasDKIM = await hasDKIMSignature(receipt)
-    if (!hasDKIM) {
-        throw new Error("Invalid receipt Signature")
-    }
-    console.log("DKIM Signature is valid")
-    console.log(`Attempting to prove receipt for order ${orderId} with value ${value} ${currency} for ${buyerName} from ${sellerName}`)
-    if (isBuyer) {
+        const { receipt, orderId } = job.data as IRequestPayload;
+        const order = await getOrderData(+orderId)
+        if (!order) {
+            throw new Error("Order not found")
+        }
+        const { amountToReceive, status, hashName } = JSON.parse(order)
+        if (status === "Filled") {
+            throw new Error("Order already filled")
+        }
+        if (!hashName) {
+            throw new Error("No hash name found")
+        }
+        const sellerName = await decrypt(hashName)
+        const currency = "USD"
+        const hasCorrectAmount = await hasCorrectSendAmount(receipt, amountToReceive, currency)
+        if (!hasCorrectAmount) {
+            throw new Error("Invalid receipt amount")
+        }
+        console.log("Amount is valid")
+        console.log(`Attempting to prove receipt for order ${orderId} with value ${amountToReceive} ${currency} from ${sellerName}`)
+
         const hasSellerName = await hasNameInReceipt(receipt, sellerName)
         if (!hasSellerName) {
             console.log("Seller name not found in receipt")
@@ -89,40 +80,19 @@ const worker = new Worker('proveReceipt', async job => {
         console.log("Seller name is valid")
         const receiptId = await parseReceiptId(receipt)
         console.log("Receipt ID: ", receiptId)
-        await updateOrderInfo(orderId, receiptId)
-        console.log("Receipt ID updated")
-    } else {
-        const { reiceiptId } = await getOrderInfo(orderId)
-        if (!reiceiptId) {
-            throw new Error("Invalid receipt! Waiting buyer to prove receipt")
+        console.log("Attempting to prove receipt...")
+        const isvalidProof = await prove(receipt)
+        if (!isvalidProof) {
+            throw new Error("Invalid receipt! Proof is not valid")
         }
-        const hasBuyerName = await hasNameInReceipt(receipt, buyerName)
-        if (!hasBuyerName) {
-            throw new Error("Invalid receipt! No buyer found")
-        }
-        const hasSellerName = await hasNameInReceipt(receipt, sellerName)
-        if (!hasSellerName) {
-            throw new Error("Invalid receipt! No seller found")
-        }
-        const receivedReceiptId = await parseReceiptId(receipt)
-        if (receivedReceiptId !== reiceiptId) {
-            throw new Error("Invalid receipt! Receipt ID mismatch")
-        }
-
-    }
-    console.log("Attempting to prove receipt...")
-    const isvalidProof = await prove(receipt)
-    if (!isvalidProof) {
-        throw new Error("Invalid receipt! Proof is not valid")
-    }
-    console.log("Receipt is valid")
-    await closeDealWithSuccess(+orderId)
-    return isvalidProof
+        console.log("Receipt is valid")
+        await closeDealWithSuccess(+orderId)
+        return isvalidProof
     } catch (error) {
         console.error("Error while proving receipt: ", error)
         return false
     }
-    
+
 
 }, {
     connection: {
