@@ -28,7 +28,7 @@
     "scripts": {
         "test": "jest",
         "build": "tsc",
-        "worker:wise:start": "npx ts-node-dev worker.ts --respawn --transpile-only --no-notify --no-deps --prefer-ts-exts --watch ",
+        "worker:wise:start": "npx tsx worker.ts",
         "gen-input:wise:send": "npx tsx ../../package/generate_input.ts --email_file=./emls/wise_send.eml --payment_type=wise --circuit_type=send",
         "gen-input:wise:registration": "npx tsx ../../package/generate_input.ts --email_file=./emls/wise_send.eml --payment_type=wise --circuit_type=registration",
         "gen-input:wise:send:receive": "npx tsx ../../package/generate_input.ts --email_file=./emls/wise_receive.eml --payment_type=wise --circuit_type=send --output_file=input_wise_send_receive",
