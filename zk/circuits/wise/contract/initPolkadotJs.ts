@@ -1,7 +1,9 @@
 import { ApiPromise, Keyring } from '@polkadot/api'
 import { IKeyringPair } from '@polkadot/types/types/interfaces'
 import { BN } from '@polkadot/util'
+// @ts-ignore
 import { getBalance, initPolkadotJs as initApi } from '@scio-labs/use-inkathon/helpers'
+// @ts-ignore
 import { SubstrateChain } from '@scio-labs/use-inkathon/types'
 import * as dotenv from 'dotenv'
 

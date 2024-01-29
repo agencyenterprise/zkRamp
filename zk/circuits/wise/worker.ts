@@ -71,7 +71,8 @@ const receiptQueue = new Queue('proveReceipt', {
 
 
 const worker = new Worker('proveReceipt', async job => {
-    const { isBuyer, receipt, orderId } = job.data as IRequestPayload;
+    try {
+        const { isBuyer, receipt, orderId } = job.data as IRequestPayload;
     const { value, currency, buyerName, sellerName, sellerAddress, buyerAddress } = await getOrderInfo(orderId)
     const hasDKIM = await hasDKIMSignature(receipt)
     if (!hasDKIM) {
@@ -109,15 +110,19 @@ const worker = new Worker('proveReceipt', async job => {
         }
 
     }
-    await closeDealWithSuccess(+orderId)
     console.log("Attempting to prove receipt...")
     const isvalidProof = await prove(receipt)
     if (!isvalidProof) {
         throw new Error("Invalid receipt! Proof is not valid")
     }
     console.log("Receipt is valid")
-    
+    await closeDealWithSuccess(+orderId)
     return isvalidProof
+    } catch (error) {
+        console.error("Error while proving receipt: ", error)
+        return false
+    }
+    
 
 }, {
     connection: {

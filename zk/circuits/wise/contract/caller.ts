@@ -2,10 +2,8 @@ import { getDeploymentData } from './getDeploymentData'
 import { initPolkadotJs } from './initPolkadotJs'
 import { ContractPromise } from '@polkadot/api-contract'
 import {
-  contractQuery,
   contractTx,
-  decodeOutput,
-  deployContract,
+  // @ts-ignore
 } from '@scio-labs/use-inkathon/helpers'
 
 /**
@@ -26,21 +24,8 @@ export const closeDealWithSuccess = async (orderId: number) => {
   // Deploy zkramp contract
   const { abi, wasm } = await getDeploymentData('zkramp')
   const contract = new ContractPromise(api, abi, '5DkLDqiYkGNGk5Xa4WxtPcf9EWtmteUdV1VrNJ749PTQaH9z')
+  const expiration = new Date().getTime() + 1000 * 60 * 60
+  await contractTx(api, account, contract, 'update_claim_order_status', {}, [orderId, "Filled", expiration])
+  console.log('\nClosed deal with success')
 
-  // Update message
-  try {
-    // index_claim_order: u32,
-    // status: ClaimStatus,
-    // claim_expiration_time: Option<u128>,
-    const expiration = new Date().getTime() + 1000 * 60 * 60
-    await contractTx(api, account, contract, 'update_claim_order_status', {}, [orderId, "Filled", expiration])
-    console.log('\nClosed deal with success')
-  } catch (error) {
-    console.error('Error while closing deal: ', error)
-  }
-
-  // // Read message
-  // const result = await contractQuery(api, '', contract, 'greet')
-  // const { decodedOutput } = decodeOutput(result, contract, 'greet')
-  // console.log('\nQueried greeting:', decodedOutput)
 }

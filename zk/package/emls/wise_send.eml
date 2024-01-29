@@ -6,7 +6,10 @@ X-Received: by 2002:adf:ce0a:0:b0:336:5ea5:2743 with SMTP id p10-20020adfce0a000
         Sun, 07 Jan 2024 06:08:13 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; t=1704636493; cv=none;
         d=google.com; s=arc-20160816;
-        
+        b=wck3yh4za1GZ4Ir1IaYTw3ELCN4aDphAcmUBV86ET4KG2w2ioH3kG6EooPM3XkI5pi
+         U8NBVVSu07Ve94ZJaaj0EE9kp+i1hter0GvFU5YIpdbSdfy3oMnqoQoTGH4gu6m7vktb
+         In4elIfR1RgqcpBqEcW3mqvpXi9LXjvxLUN8Kh8U3Ly+Ns8Eeq8oa7D08VXeKArP04Be
+         MCt3Gaz2lKjMaUvHHEMQoOM/hONE35qxY+hyxNytoc5lrvhVyXv3sIdyGBHhSqQZIwfJ
          XslEI4u3xwTUnboRpfgjFEXvtBpftwB6CfkijhJAhQJ+cZ2udGm14wYByUf4OtBSfB1p
          +1/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
@@ -1008,7 +1011,11 @@ xt-slimmer">contratos do cliente</a>. <mj-raw> </mj-raw>
 g-left: 0px; padding-right: 0px;">
                                 <div style=3D"font-family: Inter, Averta, H=
 elvetica, Arial; text-align: center; color: #fff; font-size: 10px; line-hei=
-m Ativos, qualquer comunica=C3=A7=C3=A3o s=
+ght: 18px;"><mj-raw> </mj-raw>
+                                  Todos os servi=C3=A7os de investimento s=
+=C3=A3o fornecidos pelas subsidi=C3=A1rias da Wise, que est=C3=A3o autoriza=
+das e regulamentadas para fornecer esses servi=C3=A7os. Se voc=C3=AA possui=
+ um reserva ou um saldo mantido em Ativos, qualquer comunica=C3=A7=C3=A3o s=
 obre o assunto dever=C3=A1 ser feita por <a href=3D"https://api.transferwis=
 e.com/v1/notification-flow/messages/428af0b7-ecdc-3e50-830d-f5ebe414ede1/de=
 liveries/94d5fa68-ca15-4c0c-866a-f217c35efd5e/linkClicks?name=3DcomplianceL=
@@ -1118,7 +1125,12 @@ transparent;width:100%;">
           <tr>
             <td style=3D"direction:ltr;font-size:0px;padding:0;text-align:c=
 enter;">
-              
+              <!--[if mso | IE]><table role=3D"presentation" border=3D"0" c=
+ellpadding=3D"0" cellspacing=3D"0"><tr><td class=3D"" style=3D"vertical-ali=
+gn:top;width:600px;" ><![endif]-->
+              <div class=3D"mj-column-per-100 mj-outlook-group-fix" style=
+=3D"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertic=
+al-align:top;width:100%;">
                 <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" rol=
 e=3D"presentation" width=3D"100%">
                   <tbody>
