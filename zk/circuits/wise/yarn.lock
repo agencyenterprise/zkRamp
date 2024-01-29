@@ -3050,21 +3050,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scio-labs/use-inkathon@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@scio-labs/use-inkathon@npm:0.7.0"
+"@scio-labs/use-inkathon@npm:0.6.3":
+  version: 0.6.3
+  resolution: "@scio-labs/use-inkathon@npm:0.6.3"
   peerDependencies:
     "@nightlylabs/wallet-selector-polkadot": ">=0.1.10"
     "@polkadot/api": ">=10"
     "@polkadot/api-contract": ">=10"
     "@polkadot/extension-inject": ">=0.46"
-    "@polkadot/keyring": ">=10"
     "@polkadot/types": ">=10"
     "@polkadot/util": ">=10"
     "@polkadot/util-crypto": ">=10"
     react: ">=18"
     react-dom: ">=18"
-  checksum: 5c1011766c5928627594f1764fab48483766e689e4784dc34846ca0a4e992a7d3c300db72ef023ac2fd2f618cdad3ae89f2f8d01137c797790e18f31c2d0808f
+  checksum: 33b87611fab5621f353c596b7b5bad614c7202a67817c4e64ff55d4bbccc06ada80c34f77f824ed8e146da5f5ab98387c1c99d0ddc16eae24bd77d5e0969cca2
   languageName: node
   linkType: hard
 
@@ -3730,7 +3729,7 @@ __metadata:
     "@polkadot/types": ^10.11.2
     "@polkadot/util": ^12.6.2
     "@polkadot/util-crypto": ^12.6.2
-    "@scio-labs/use-inkathon": ^0.7.0
+    "@scio-labs/use-inkathon": 0.6.3
     "@types/atob": ^2.1.2
     "@types/jest": ^29.5.1
     "@types/mocha": ^10.0.1

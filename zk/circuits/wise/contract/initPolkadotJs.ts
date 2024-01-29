@@ -1,13 +1,12 @@
 import { ApiPromise, Keyring } from '@polkadot/api'
 import { IKeyringPair } from '@polkadot/types/types/interfaces'
 import { BN } from '@polkadot/util'
-import { getSubstrateChain } from '@scio-labs/use-inkathon/dist/chains'
 import { getBalance, initPolkadotJs as initApi } from '@scio-labs/use-inkathon/dist/helpers'
 import { SubstrateChain } from '@scio-labs/use-inkathon/dist/types'
 import * as dotenv from 'dotenv'
 
 // Dynamically load environment from `.env.{chainId}`
-const chainId = process.env.CHAIN || 'development'
+const chainId = process.env.CHAIN || 'alephzero-testnet'
 dotenv.config({ path: `.env.${chainId}` })
 
 /**
@@ -22,9 +21,9 @@ export type InitParams = {
   prefix: number
   toBNWithDecimals: (_: number | string) => BN
 }
+//
 export const initPolkadotJs = async (): Promise<InitParams> => {
-  const accountUti = process.env.ACCOUNT_URI || '//Alice'
-  const chain = getSubstrateChain(chainId)
+  const chain = { network: "alephzero-testnet", name: "Aleph Zero Testnet", ss58Prefix: 42, rpcUrls: ["wss://ws.test.azero.dev"], explorerUrls: { polkadotjs: `https://test.azero.dev/?rpc=${encodeURIComponent("wss://ws.test.azero.dev")}/#/explorer` }, testnet: !0, faucetUrls: ["https://faucet.test.azero.dev"] } as SubstrateChain
   if (!chain) throw new Error(`Chain '${chainId}' not found`)
 
   // Initialize api
