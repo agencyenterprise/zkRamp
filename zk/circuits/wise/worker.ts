@@ -1,11 +1,11 @@
 import { Queue, Worker } from 'bullmq';
 import 'dotenv/config';
 import { prove } from './prover';
-import { getDeploymentData } from './contract/getDeploymentData';
 import { closeDealWithSuccess } from './contract/caller';
-const emlformat = require('eml-format');
+import emlformat from 'eml-format'
 const REFERENCE_LINK_PATTERN = "transferDetails&lin=\nk="
 const BASE_LINK_PATTERN = "transferDetails&lin="
+
 interface IRequestPayload {
     isBuyer: boolean
     receipt: string

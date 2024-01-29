@@ -1,6 +1,6 @@
-const snarkjs = require("snarkjs");
-const { readFileSync, writeFile } = require("fs");
-const fs = require("fs");
+import * as snarkjs from "snarkjs"
+import { readFileSync, writeFile } from "fs";
+import fs from "fs"
 import {
   Uint8ArrayToCharArray,
   Uint8ArrayToString,
@@ -15,9 +15,9 @@ import {
 import { CIRCOM_FIELD_MODULUS, MAX_BODY_PADDED_BYTES, MAX_HEADER_PADDED_BYTES, STRING_PRESELECTOR } from "@zk-email/helpers/dist/constants";
 import { dkimVerify } from "@zk-email/helpers/dist/dkim";
 import { partialSha, sha256Pad, shaHash } from "@zk-email/helpers/dist/shaHash";
-import { pki } from "node-forge";
+import * as nf from "node-forge";
 
-
+const pki = nf.pki
 export interface ICircuitInputs {
   modulus?: string[];
   signature?: string[];

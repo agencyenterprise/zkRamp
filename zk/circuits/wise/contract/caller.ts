@@ -6,7 +6,7 @@ import {
   contractTx,
   decodeOutput,
   deployContract,
-} from '@scio-labs/use-inkathon/dist/helpers'
+} from '@scio-labs/use-inkathon/helpers'
 
 /**
  * Example script that updates & reads a message from a zkramp contract.
@@ -25,8 +25,7 @@ export const closeDealWithSuccess = async (orderId: number) => {
 
   // Deploy zkramp contract
   const { abi, wasm } = await getDeploymentData('zkramp')
-  const { address } = await deployContract(api, account, abi, wasm, 'default', [])
-  const contract = new ContractPromise(api, abi, address)
+  const contract = new ContractPromise(api, abi, "5CrrpsFrfDNaFZCQcUJUqJjxUYpDzQm2gnm6j9XrHGMbHqsb")
 
   // Update message
   try {

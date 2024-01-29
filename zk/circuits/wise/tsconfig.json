@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "declaration": true,
     "outDir": "./dist",
     "target": "es2020",
@@ -7,7 +8,6 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
@@ -20,6 +20,6 @@
     "types": ["node", "jest"],
     "incremental": true
   },
-  "include": ["test/*.ts",  "test/regexes/*.ts"],
+  "include": ["*",  "/contracts/*"],
   "exclude": ["node_modules"]
 }
