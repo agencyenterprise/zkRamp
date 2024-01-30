@@ -128,6 +128,9 @@ importers:
       '@polkadot/util-crypto':
         specifier: ^12.6.2
         version: 12.6.2(@polkadot/util@12.6.2)
+      '@pusher/push-notifications-web':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.0.6
         version: 2.0.6(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
@@ -191,6 +194,9 @@ importers:
       pusher:
         specifier: ^5.2.0
         version: 5.2.0
+      pusher-js:
+        specifier: 8.4.0-rc2
+        version: 8.4.0-rc2
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2269,6 +2275,10 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  /@pusher/push-notifications-web@1.1.0:
+    resolution: {integrity: sha512-qR9RZNpH9E54GEpn9uqag9VbLG3kk13DPtf0v4ScsbIZhLFrc1vVWoylzh9zPKiJx3LLwnSxZQA/DkF13OBYXw==}
+    dev: false
 
   /@radix-ui/primitive@1.0.1:
     resolution: {integrity: sha512-yQ8oGX2GVsEYMWGxcovu1uGWPCxV5BFfeeYxqPmuAzUyLT9qmaMXSAhXpb0WrspIeqYzdJpkh2vHModJPgRIaw==}
@@ -6688,6 +6698,12 @@ packages:
     dependencies:
       '@types/express-serve-static-core': 4.17.28
       '@types/node': 14.18.63
+      tweetnacl: 1.0.3
+    dev: false
+
+  /pusher-js@8.4.0-rc2:
+    resolution: {integrity: sha512-d87GjOEEl9QgO5BWmViSqW0LOzPvybvX6WA9zLUstNdB57jVJuR27zHkRnrav2a3+zAMlHbP2Og8wug+rG8T+g==}
+    dependencies:
       tweetnacl: 1.0.3
     dev: false
 

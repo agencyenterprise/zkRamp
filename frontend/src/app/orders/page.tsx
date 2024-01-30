@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useInkathon, useRegisteredContract } from '@scio-labs/use-inkathon'
+import Pusher from 'pusher-js'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
@@ -56,7 +58,37 @@ export default function OrdersPage() {
     setShowPlaceOrderForm(false)
     setHackyWayToForceRerender((prev) => prev + 1)
   }
+  const customToast = (message: string, status: boolean) => {
+    toast(
+      (t) => (
+        <span>
+          {message}
+          <XMarkIcon width={20} title="close" onClick={() => toast.dismiss(t.id)}></XMarkIcon>
+        </span>
+      ),
+      {
+        icon: status ? '🧡' : '🔥',
+      },
+    )
+  }
+  useEffect(() => {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_CLIENT_ID!, {
+      cluster: process.env.NEXT_PUBLIC_CLUSTER!,
+    })
 
+    const channel = pusher.subscribe(process.env.NEXT_PUBLIC_CHANNEL!)
+    channel.bind(process.env.NEXT_PUBLIC_EVENT!, function (message: any) {
+      console.log(message)
+      if (message.status) {
+        customToast(message.message, message.status)
+      } else {
+        customToast(message.message, message.status)
+      }
+    })
+    return () => {
+      pusher.unsubscribe(process.env.NEXT_PUBLIC_CHANNEL!)
+    }
+  }, [])
   return (
     <>
       <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">

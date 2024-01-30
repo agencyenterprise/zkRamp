@@ -4,12 +4,15 @@
 import Link from 'next/link'
 import { useEffect } from 'react'
 
-import { PusherProvider, useChannel, useEvent } from '@harelpls/use-pusher'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useInkathon } from '@scio-labs/use-inkathon'
+import Pusher from 'pusher-js'
 import { toast } from 'react-hot-toast'
 
 import { Button } from '../components/ui/button'
 import { HeroHexagons } from './components/hero-hexagons'
+
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -26,7 +29,7 @@ interface IMessage {
   metadata?: { user_id: string } | undefined
 }
 export default function HomePage() {
-  const channel = useChannel(`public`)
+  //const channel = useChannel(process.env.NEXT_PUBLIC_CHANNEL!)
   const { error } = useInkathon()
   useEffect(() => {
     if (!error) return
@@ -37,12 +40,12 @@ export default function HomePage() {
     clientKey: process.env.NEXT_PUBLIC_CLIENT_ID!,
     cluster: process.env.NEXT_PUBLIC_CLUSTER!,
   }
-  const customToast = (message: any, status: boolean) => {
+  const customToast = (message: string, status: boolean) => {
     toast(
       (t) => (
         <span>
           {message}
-          <button onClick={() => toast.dismiss(t.id)}>Dismiss</button>
+          <XMarkIcon width={20} title="close" onClick={() => toast.dismiss(t.id)}></XMarkIcon>
         </span>
       ),
       {
@@ -50,14 +53,24 @@ export default function HomePage() {
       },
     )
   }
-  useEvent(channel, process.env.NEXT_PUBLIC_EVENT!, (message: any) => {
-    console.log(message)
-    if (message.status) {
-      customToast(message.text, message.status)
-    } else {
-      customToast(message.text, message.status)
+  useEffect(() => {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_CLIENT_ID!, {
+      cluster: process.env.NEXT_PUBLIC_CLUSTER!,
+    })
+
+    const channel = pusher.subscribe(process.env.NEXT_PUBLIC_CHANNEL!)
+    channel.bind(process.env.NEXT_PUBLIC_EVENT!, function (message: any) {
+      console.log(message)
+      if (message.status) {
+        customToast(message.message, message.status)
+      } else {
+        customToast(message.message, message.status)
+      }
+    })
+    return () => {
+      pusher.unsubscribe(process.env.NEXT_PUBLIC_CHANNEL!)
     }
-  })
+  }, [])
   const HeroText = () => {
     return (
       <div className="mt-16 flex flex-col items-center gap-6">
@@ -74,23 +87,21 @@ export default function HomePage() {
 
   return (
     <>
-      <PusherProvider {...config}>
-        <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">
-          <main className="flex flex-col gap-8">
-            <HeroText />
-            <div className="mb-6 flex items-center justify-center gap-6 px-2 md:mb-0">
-              <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="outline">
-                <Link href="orders">Add Liquidity</Link>
-              </Button>
-              <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="default">
-                <Link href="liquidity">Buy AZERO</Link>
-              </Button>
-            </div>
-            <HeroHexagons />
-            {/* <ZKRampContractInteractions /> */}
-          </main>
-        </div>
-      </PusherProvider>
+      <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">
+        <main className="flex flex-col gap-8">
+          <HeroText />
+          <div className="mb-6 flex items-center justify-center gap-6 px-2 md:mb-0">
+            <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="outline">
+              <Link href="orders">Add Liquidity</Link>
+            </Button>
+            <Button className="h-12 w-1/2 md:h-auto md:w-auto" variant="default">
+              <Link href="liquidity">Buy AZERO</Link>
+            </Button>
+          </div>
+          <HeroHexagons />
+          {/* <ZKRampContractInteractions /> */}
+        </main>
+      </div>
     </>
   )
 }
