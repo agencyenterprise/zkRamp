@@ -160,14 +160,14 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
             <div className="self-stretch text-center font-azaretMono text-base font-normal leading-normal text-zinc-300">
               Do you want to block and buy this order?
             </div>
-            <div className="grid m-auto w-2/3 self-center text-center font-azaretMono text-sm font-normal leading-normal text-zinc-300">
+            <div className="m-auto grid w-2/3 self-center text-center font-azaretMono text-sm font-normal leading-normal text-zinc-300">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="h-12 w-12 center m-auto"
+                className="center m-auto h-12 w-12"
               >
                 <path
                   strokeLinecap="round"

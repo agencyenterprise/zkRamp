@@ -20,7 +20,7 @@ const FormInput = ({
   setValue: (value: string) => void
 }) => {
   return (
-    <div className="inline-flex w-full flex-col items-start justify-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-4 py-4 max-w-lg">
+    <div className="inline-flex w-full max-w-lg flex-col items-start justify-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-4 py-4">
       <div className="inline-flex items-center justify-between gap-3 self-stretch">
         <div className="shrink grow basis-0 font-manrope text-base font-medium leading-normal text-zinc-400">
           {title}

@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
     receipt: await files[0].text(),
     orderId: orderId,
   }
-  console.log(payload)
   await receiptQueue.add(QUEUE_NAME, payload)
   return NextResponse.json({ message: 'Proof sent! :)' })
 }

@@ -1,21 +1,76 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client'
 
 import Link from 'next/link'
 import { useEffect } from 'react'
 
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useInkathon } from '@scio-labs/use-inkathon'
+import Pusher from 'pusher-js'
 import { toast } from 'react-hot-toast'
 
 import { Button } from '../components/ui/button'
 import { HeroHexagons } from './components/hero-hexagons'
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+interface IMessage {
+  status: boolean
+  message: string
+  user_id: string
+  data?: any
+  medata?: any
+  metadata?: { user_id: string } | undefined
+}
 export default function HomePage() {
+  //const channel = useChannel(process.env.NEXT_PUBLIC_CHANNEL!)
   const { error } = useInkathon()
   useEffect(() => {
     if (!error) return
     toast.error(error.message)
   }, [error])
+  const config = {
+    // required config props
+    clientKey: process.env.NEXT_PUBLIC_CLIENT_ID!,
+    cluster: process.env.NEXT_PUBLIC_CLUSTER!,
+  }
+  const customToast = (message: string, status: boolean) => {
+    toast(
+      (t) => (
+        <span>
+          {message}
+          <XMarkIcon width={20} title="close" onClick={() => toast.dismiss(t.id)}></XMarkIcon>
+        </span>
+      ),
+      {
+        icon: status ? '🧡' : '🔥',
+      },
+    )
+  }
+  useEffect(() => {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_CLIENT_ID!, {
+      cluster: process.env.NEXT_PUBLIC_CLUSTER!,
+    })
 
+    const channel = pusher.subscribe(process.env.NEXT_PUBLIC_CHANNEL!)
+    channel.bind(process.env.NEXT_PUBLIC_EVENT!, function (message: any) {
+      console.log(message)
+      if (message.status) {
+        customToast(message.message, message.status)
+      } else {
+        customToast(message.message, message.status)
+      }
+    })
+    return () => {
+      pusher.unsubscribe(process.env.NEXT_PUBLIC_CHANNEL!)
+    }
+  }, [])
   const HeroText = () => {
     return (
       <div className="mt-16 flex flex-col items-center gap-6">
