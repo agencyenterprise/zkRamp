@@ -68,6 +68,7 @@ const worker = new Worker(QUEUE_NAME, async job => {
         const hasCorrectAmountUSD = await hasCorrectSendAmount(receipt, amountToReceive, currency_usd)
         const currency_cad = "CAD"
         const hasCorrectAmountCAD = await hasCorrectSendAmount(receipt, amountToReceive, currency_cad)
+        console.log(amountToReceive)
         if (!hasCorrectAmountUSD || !hasCorrectAmountCAD) {
             throw new Error("Invalid receipt amount")
         }
