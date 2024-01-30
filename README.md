@@ -39,6 +39,7 @@ ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment conf
 > - [X] `ℹ️  Implement ZKEmail circuit`
 > - [X] `ℹ️  Implement AlephZero smart contract`
 > - [X] `ℹ️  Implement front-end UI`
+> - [X] `ℹ️  Implement support to Wise`
 > - []  `ℹ️  Implement support to Brazil PIX`
 > - []  `ℹ️  Implement support to Vemno`
 > - []  `ℹ️  Implement support to Canada Interac`
