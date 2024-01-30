@@ -11,6 +11,7 @@
 - [🛣 Roadmap](#-roadmap)
 - [🚀 Getting started](#-getting-started)
 - [ Contract Deployment](#contract-deployment)
+- [ Acknowledgments](#acknowledgments)
 
 
 ## 📍 Overview
@@ -130,3 +131,6 @@ When running the same script again, this deployer account defined there will be 
 > [!WARNING]  
 > These files are gitignored by default, but you should still be extra cautious when adding sensitive information to them.
 
+
+## Acknowledgments
+This project was inspired by the idea from [ZKP2P](https://github.com/zkp2p).
