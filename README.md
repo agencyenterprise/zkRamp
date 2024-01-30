@@ -24,7 +24,7 @@ The goal is to create a liquidity marketplace where users can directly transfer 
 - The funds are transferred to the buyer.
 
 ### Architecture
-ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment confirmation emails. Therefore, users must have notification emails enabled in their payment providers. This technology is powered by ZK-Email, a new technology that utilizes regex and other email features to create ZK proofs.
+ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment confirmation emails. Therefore, users must have notification emails enabled in their payment providers. This technology is powered by ZK-Email, a new technology that utilizes regex and other email features to create ZK proofs. Currently, we do not store the ZK proof on-chain. The entire ZK process is conducted through an API.
 
 **Tech Stack:**
 - Circuits: Circuits are essential for verifying transaction details while maintaining the privacy of sensitive information.
@@ -40,6 +40,7 @@ ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment conf
 > - [X] `ℹ️  Implement AlephZero smart contract`
 > - [X] `ℹ️  Implement front-end UI`
 > - [X] `ℹ️  Implement support to Wise`
+> - []  `ℹ️  Implement ZK validator on-chain`
 > - []  `ℹ️  Implement support to Brazil PIX`
 > - []  `ℹ️  Implement support to Vemno`
 > - []  `ℹ️  Implement support to Canada Interac`
