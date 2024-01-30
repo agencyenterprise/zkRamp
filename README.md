@@ -10,7 +10,7 @@
 - [📍 Overview](#-overview)
 - [🛣 Roadmap](#-roadmap)
 - [🚀 Getting started](#-getting-started)
-- [ Contract Deployment](#-contract-deployment)
+- [ Contract Deployment](#contract-deployment)
 
 
 ## 📍 Overview
