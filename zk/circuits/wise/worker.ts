@@ -66,6 +66,7 @@ const worker = new Worker(QUEUE_NAME, async job => {
         if (!hashName) {
             throw new Error("No hash name found")
         }
+        console.log(receipt.search("0,50 CAD"))
         const sellerName = await decrypt(hashName)
         const currency_usd = "USD"
         const hasCorrectAmountUSD = await hasCorrectSendAmount(receipt, amountToReceive, currency_usd)
