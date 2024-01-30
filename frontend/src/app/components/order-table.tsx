@@ -273,28 +273,28 @@ export default function OrderTable({
                       {order.amountToReceive} BRL
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <div className="flex items-center justify-start">
+                      <div className="flex items-center justify-start gap-2">
                         <Badge>{convertStatus(getStatus(order))}</Badge>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <div className="flex items-center justify-start">
                         {getClaimOrder(order) &&
                           (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
                             getClaimOrder(order).status == 'WaitingForSellerProof') && (
-                            <div className="mr-2 flex justify-start py-1">
+                            <div className="flex justify-start py-1">
                               <TimerAction
                                 claimOrder={getClaimOrder(order)}
                                 releaseFunds={releaseFunds}
                               ></TimerAction>
                             </div>
                           )}
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex items-center justify-start gap-2">
                         {order && getStatus(order) == 'Open' && (
                           <>
                             <XCircleIcon
                               title="Cancel Order"
                               onClick={() => cancelOrder(order)}
-                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                              className="h-6 w-6 cursor-pointer text-red-400"
                             />
                           </>
                         )}
@@ -388,28 +388,28 @@ export default function OrderTable({
                     </td>
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <div className="flex flex-col justify-center space-y-2">
+                      <div className="flex items-center justify-start gap-2">
                         <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <div className="flex items-center justify-start">
                         {(claimOrder.status == 'WaitingForBuyerProof' ||
                           claimOrder.status == 'WaitingForSellerProof') &&
                           claimOrder.claimExpirationTime && (
-                            <div className="mr-2 flex justify-start py-1">
+                            <div className="flex justify-start py-1">
                               <TimerAction
                                 claimOrder={claimOrder}
                                 releaseFunds={releaseFunds}
                               ></TimerAction>
                             </div>
                           )}
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex items-center justify-start gap-2">
                         {claimOrder.status == 'WaitingForBuyerProof' && (
                           <>
                             <XCircleIcon
                               title="Cancel Order"
                               onClick={() => cancelClaimOrder(claimOrder)}
-                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                              className="h-6 w-6 cursor-pointer text-red-400"
                             />
                           </>
                         )}
