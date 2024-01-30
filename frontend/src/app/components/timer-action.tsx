@@ -69,7 +69,9 @@ export default function TimerAction({
       <div className="cursor-pointer" onClick={() => setShowBuyerModal(true)}>
         {timeLeft && timeLeft < 0 && (
           <>
-            <Button onClick={() => releaseFunds!(claimOrder)}>Release Funds</Button>
+            <Button className="w-full" onClick={() => releaseFunds!(claimOrder)}>
+              Release Funds
+            </Button>
           </>
         )}
         {timeLeft && timeLeft > 0 && `${timeLeft} mins`}

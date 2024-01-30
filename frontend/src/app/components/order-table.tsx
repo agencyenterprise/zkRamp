@@ -260,35 +260,41 @@ export default function OrderTable({
                       {order.amountToReceive} BRL
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <Badge>{convertStatus(getStatus(order))}</Badge>
-                      {getClaimOrder(order) &&
-                        (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
-                          getClaimOrder(order).status == 'WaitingForSellerProof') && (
-                          <div className="ml-2 mr-2 inline">
-                            <TimerAction
-                              claimOrder={getClaimOrder(order)}
-                              releaseFunds={releaseFunds}
-                            ></TimerAction>
-                          </div>
+                      <div className="flex justify-center">
+                        <Badge>{convertStatus(getStatus(order))}</Badge>
+                        {getClaimOrder(order) &&
+                          (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
+                            getClaimOrder(order).status == 'WaitingForSellerProof') && (
+                            <div className="ml-2 mr-2 flex justify-center py-1">
+                              <TimerAction
+                                claimOrder={getClaimOrder(order)}
+                                releaseFunds={releaseFunds}
+                              ></TimerAction>
+                            </div>
+                          )}
+                      </div>
+                      <div className="flex justify-center">
+                        {order && getStatus(order) == 'Open' && (
+                          <>
+                            <button
+                              className="cursor-pointer p-2"
+                              onClick={() => cancelOrder(order)}
+                            >
+                              cancel
+                            </button>
+                          </>
                         )}
-
-                      {order && getStatus(order) == 'Open' && (
-                        <>
-                          <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
-                            cancel
-                          </button>
-                        </>
-                      )}
-                      {order && getStatus(order) == 'WaitingForSellerProof' && (
-                        <>
-                          <button
-                            className="cursor-pointer p-2"
-                            onClick={() => onOpenUploadReceiptModal(order)}
-                          >
-                            upload
-                          </button>
-                        </>
-                      )}
+                        {order && getStatus(order) == 'WaitingForSellerProof' && (
+                          <>
+                            <button
+                              className="cursor-pointer p-2"
+                              onClick={() => onOpenUploadReceiptModal(order)}
+                            >
+                              upload
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -363,34 +369,37 @@ export default function OrderTable({
                     </td>
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
-                      {(claimOrder.status == 'WaitingForBuyerProof' ||
-                        claimOrder.status == 'WaitingForSellerProof') &&
-                        claimOrder.claimExpirationTime && (
-                          <div className="ml-2 mr-2 inline">
-                            <TimerAction
-                              claimOrder={claimOrder}
-                              releaseFunds={releaseFunds}
-                            ></TimerAction>
-                          </div>
+                      <div className="flex flex-col justify-center space-y-2">
+                        <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
+                        {(claimOrder.status == 'WaitingForBuyerProof' ||
+                          claimOrder.status == 'WaitingForSellerProof') &&
+                          claimOrder.claimExpirationTime && (
+                            <div className="ml-2 mr-2 flex justify-center py-1">
+                              <TimerAction
+                                claimOrder={claimOrder}
+                                releaseFunds={releaseFunds}
+                              ></TimerAction>
+                            </div>
+                          )}
+                      </div>
+                      <div className="flex justify-center">
+                        {claimOrder.status == 'WaitingForBuyerProof' && (
+                          <>
+                            <button
+                              className="cursor-pointer p-2"
+                              onClick={() => cancelClaimOrder(claimOrder)}
+                            >
+                              cancel
+                            </button>
+                            <button
+                              className="cursor-pointer p-2"
+                              onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
+                            >
+                              upload
+                            </button>
+                          </>
                         )}
-
-                      {claimOrder.status == 'WaitingForBuyerProof' && (
-                        <>
-                          <button
-                            className="cursor-pointer p-2"
-                            onClick={() => cancelClaimOrder(claimOrder)}
-                          >
-                            cancel
-                          </button>
-                          <button
-                            className="cursor-pointer p-2"
-                            onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
-                          >
-                            upload
-                          </button>
-                        </>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))}
