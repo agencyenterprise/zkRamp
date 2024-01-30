@@ -15,10 +15,22 @@
 
 ## 📍 Overview
 
-ZKRamp is a protocol that aims to quickly and efficiently provide onramp/offramp solutions using zero-knowledge proofs. The project's main goal is to implement a liquidity marketplace where there’s no need to worry about KYC. Users can transfer funds directly without having the ramp as the middleman. 
+The goal is to create a liquidity marketplace where users can directly transfer funds without the requirement of KYC, based on ZK-Email technology. This eliminates the need for the ramp to function as an intermediary.
+
+**The steps are simple:**
+- The seller escrows funds to the smart contract, sets a price, and adds their payment key (Wise). A collateral is collected to ensure the token transfer to the buyer.
+- The buyer selects a liquidity pool to make a purchase. An intermediate state is established, and the buyer has 1 hour to make the off-chain payment.
+- Upon receiving the email notification, the buyer creates a ZK proof and submits it on-chain.
+- The seller creates a ZK proof with the funds received an email notification and submits it on-chain.
+- The funds are transferred to the buyer.
 
 ### Architecture
 ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment confirmation emails. Therefore, users must have notification emails enabled in their payment providers. This technology is powered by ZK-Email, a new technology that utilizes regex and other email features to create ZK proofs.
+
+**Tech Stack:**
+- Circuits: Circuits are essential for verifying transaction details while maintaining the privacy of sensitive information.
+- Smart Contracts: Smart contracts facilitate trustless transactions and manage the protocol's logic.
+- User Interface (UI): The UI is the front-end through which users interact with the protocol.
 
 
 
