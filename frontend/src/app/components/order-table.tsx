@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { useEffect, useState } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
@@ -270,21 +271,11 @@ export default function OrderTable({
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive} BRL
+                      {order.amountToReceive} CAD
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <div className="flex items-center justify-start gap-2">
                         <Badge>{convertStatus(getStatus(order))}</Badge>
-                        {getClaimOrder(order) &&
-                          (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
-                            getClaimOrder(order).status == 'WaitingForSellerProof') && (
-                            <div className="flex justify-start py-1">
-                              <TimerAction
-                                claimOrder={getClaimOrder(order)}
-                                releaseFunds={releaseFunds}
-                              ></TimerAction>
-                            </div>
-                          )}
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
@@ -295,15 +286,6 @@ export default function OrderTable({
                               title="Cancel Order"
                               onClick={() => cancelOrder(order)}
                               className="h-6 w-6 cursor-pointer text-red-400"
-                            />
-                          </>
-                        )}
-                        {order && getStatus(order) == 'WaitingForSellerProof' && (
-                          <>
-                            <ArrowUpTrayIcon
-                              title="Submit Proof"
-                              onClick={() => onOpenUploadReceiptModal(order)}
-                              className="h-6 w-6 cursor-pointer text-zinc-100"
                             />
                           </>
                         )}
@@ -384,7 +366,7 @@ export default function OrderTable({
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {claimOrder.order?.amountToReceive} BRL
+                      {claimOrder.order?.amountToReceive} CAD
                     </td>
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
@@ -410,6 +392,11 @@ export default function OrderTable({
                               title="Cancel Order"
                               onClick={() => cancelClaimOrder(claimOrder)}
                               className="h-6 w-6 cursor-pointer text-red-400"
+                            />
+                            <ArrowUpTrayIcon
+                              title="Submit Proof"
+                              onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
+                              className="h-6 w-6 cursor-pointer text-zinc-100"
                             />
                           </>
                         )}

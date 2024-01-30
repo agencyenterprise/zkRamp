@@ -191,7 +191,7 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
               </div>
               <div className="flex w-11 items-center justify-center gap-2.5 self-stretch rounded-sm border border-zinc-600 bg-zinc-900 px-1.5">
                 <div className="font-azaretMono text-base font-normal leading-normal text-zinc-500">
-                  BRL
+                  CAD
                 </div>
               </div>
             </div>
