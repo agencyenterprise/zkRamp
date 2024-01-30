@@ -245,6 +245,12 @@ export default function OrderTable({
                   >
                     Status
                   </th>
+                  <th
+                    scope="col"
+                    className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
@@ -267,36 +273,41 @@ export default function OrderTable({
                       {order.amountToReceive} BRL
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <Badge>{convertStatus(getStatus(order))}</Badge>
-                      {getClaimOrder(order) &&
-                        (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
-                          getClaimOrder(order).status == 'WaitingForSellerProof') && (
-                          <div className="ml-2 mr-2 inline">
-                            <TimerAction
-                              claimOrder={getClaimOrder(order)}
-                              releaseFunds={releaseFunds}
-                            ></TimerAction>
-                          </div>
+                      <div className="flex items-center justify-start">
+                        <Badge>{convertStatus(getStatus(order))}</Badge>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex items-center justify-start">
+                        {getClaimOrder(order) &&
+                          (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
+                            getClaimOrder(order).status == 'WaitingForSellerProof') && (
+                            <div className="ml-2 mr-2 flex justify-center py-1">
+                              <TimerAction
+                                claimOrder={getClaimOrder(order)}
+                                releaseFunds={releaseFunds}
+                              ></TimerAction>
+                            </div>
+                          )}
+                        {order && getStatus(order) == 'Open' && (
+                          <>
+                            <XCircleIcon
+                              title="Cancel Order"
+                              onClick={() => cancelOrder(order)}
+                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                            />
+                          </>
                         )}
-
-                      {order && getStatus(order) == 'Open' && (
-                        <>
-                          <XCircleIcon
-                            title="Cancel Order"
-                            onClick={() => cancelOrder(order)}
-                            className="h-3 w-3 cursor-pointer text-zinc-100"
-                          />
-                        </>
-                      )}
-                      {order && getStatus(order) == 'WaitingForSellerProof' && (
-                        <>
-                          <ArrowUpTrayIcon
-                            title="Submit Proof"
-                            onClick={() => onOpenUploadReceiptModal(order)}
-                            className="h-3 w-3 cursor-pointer text-zinc-100"
-                          />
-                        </>
-                      )}
+                        {order && getStatus(order) == 'WaitingForSellerProof' && (
+                          <>
+                            <ArrowUpTrayIcon
+                              title="Submit Proof"
+                              onClick={() => onOpenUploadReceiptModal(order)}
+                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                            />
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -345,6 +356,12 @@ export default function OrderTable({
                   >
                     Status
                   </th>
+                  <th
+                    scope="col"
+                    className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
@@ -371,31 +388,46 @@ export default function OrderTable({
                     </td>
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
-                      {(claimOrder.status == 'WaitingForBuyerProof' ||
-                        claimOrder.status == 'WaitingForSellerProof') &&
-                        claimOrder.claimExpirationTime && (
-                          <div className="ml-2 mr-2 inline">
-                            <TimerAction
-                              claimOrder={claimOrder}
-                              releaseFunds={releaseFunds}
-                            ></TimerAction>
-                          </div>
+                      <div className="flex flex-col justify-center space-y-2">
+                        <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex items-center justify-start">
+                        {(claimOrder.status == 'WaitingForBuyerProof' ||
+                          claimOrder.status == 'WaitingForSellerProof') &&
+                          claimOrder.claimExpirationTime && (
+                            <div className="ml-2 mr-2 flex justify-center py-1">
+                              <TimerAction
+                                claimOrder={claimOrder}
+                                releaseFunds={releaseFunds}
+                              ></TimerAction>
+                            </div>
+                          )}
+                        {claimOrder.status == 'WaitingForBuyerProof' && (
+                          <>
+                            <XCircleIcon
+                              title="Cancel Order"
+                              onClick={() => cancelClaimOrder(claimOrder)}
+                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                            />
+                            <ArrowUpTrayIcon
+                              title="Submit Proof"
+                              onClick={() => onOpenUploadReceiptModal(claimOrder)}
+                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                            />
+                          </>
                         )}
-
-                      {claimOrder.status == 'WaitingForBuyerProof' && (
-                        <>
-                          <XCircleIcon
-                            title="Cancel Order"
-                            onClick={() => cancelClaimOrder(claimOrder)}
-                            className="h-3 w-3 cursor-pointer text-zinc-100"
-                          />
-                          <ArrowUpTrayIcon
-                            onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
-                            className="h-3 w-3 cursor-pointer text-zinc-100"
-                          />
-                        </>
-                      )}
+                        {claimOrder.status == 'WaitingForBuyerProof' && (
+                          <>
+                            <XCircleIcon
+                              title="Cancel Order"
+                              onClick={() => cancelClaimOrder(claimOrder)}
+                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                            />
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -73,7 +73,7 @@ export default function TimerAction({
             <BanknotesIcon
               title="Release Funds"
               onClick={() => releaseFunds!(claimOrder)}
-              className="h-3 w-3 cursor-pointer text-zinc-100"
+              className="h-6 w-6 cursor-pointer text-zinc-100"
             />
           </>
         )}
