@@ -41,3 +41,9 @@ coverage.json
 
 # VSCode
 .history/
+*.ptau
+build
+.yarn
+zk/circuits/wise/client.ts
+instructions.txt
+.vscode
