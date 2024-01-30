@@ -282,7 +282,7 @@ export default function OrderTable({
                         {getClaimOrder(order) &&
                           (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
                             getClaimOrder(order).status == 'WaitingForSellerProof') && (
-                            <div className="ml-2 mr-2 flex justify-center py-1">
+                            <div className="mr-2 flex justify-start py-1">
                               <TimerAction
                                 claimOrder={getClaimOrder(order)}
                                 releaseFunds={releaseFunds}
@@ -397,27 +397,13 @@ export default function OrderTable({
                         {(claimOrder.status == 'WaitingForBuyerProof' ||
                           claimOrder.status == 'WaitingForSellerProof') &&
                           claimOrder.claimExpirationTime && (
-                            <div className="ml-2 mr-2 flex justify-center py-1">
+                            <div className="mr-2 flex justify-start py-1">
                               <TimerAction
                                 claimOrder={claimOrder}
                                 releaseFunds={releaseFunds}
                               ></TimerAction>
                             </div>
                           )}
-                        {claimOrder.status == 'WaitingForBuyerProof' && (
-                          <>
-                            <XCircleIcon
-                              title="Cancel Order"
-                              onClick={() => cancelClaimOrder(claimOrder)}
-                              className="h-6 w-6 cursor-pointer text-zinc-100"
-                            />
-                            <ArrowUpTrayIcon
-                              title="Submit Proof"
-                              onClick={() => onOpenUploadReceiptModal(claimOrder)}
-                              className="h-6 w-6 cursor-pointer text-zinc-100"
-                            />
-                          </>
-                        )}
                         {claimOrder.status == 'WaitingForBuyerProof' && (
                           <>
                             <XCircleIcon
