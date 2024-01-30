@@ -38,6 +38,7 @@
     "autoprefixer": "^10.4.16",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "crypto": "^1.0.1",
     "dayjs": "^1.11.10",
     "evm-bn": "^1.1.2",
     "geist": "^1.2.0",
