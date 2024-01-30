@@ -32,7 +32,7 @@ export default function UploadReceiptModal({
     },
   })
   const onUpload = async () => {
-    toast.success('Uploading proof of payment...')
+    const toasId = toast.loading('Uploading proof of payment...')
     const formData = new FormData()
     selectedEmls.forEach((image) => {
       console.log(selectedOrder)
@@ -43,11 +43,15 @@ export default function UploadReceiptModal({
       const response = await axios.post('/api/prove', formData)
       console.log(response.data)
       setUploadStatus('upload successful')
+
+      toast.dismiss(toasId)
       toast.success('Proof of payment uploaded successfully!')
     } catch (error) {
       console.log('imageUpload' + error)
+      toast.dismiss(toasId)
       toast.error('Upload failed!')
     }
+
     onClose()
   }
   useEffect(() => {

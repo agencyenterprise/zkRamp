@@ -23,6 +23,7 @@
         "dotenv": "^16.4.1",
         "eml-format": "^0.6.1",
         "process": "^0.11.10",
+        "pusher": "^5.2.0",
         "snarkjs": "latest"
     },
     "scripts": {
