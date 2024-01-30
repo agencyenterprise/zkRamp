@@ -19,13 +19,14 @@ const pusher = new Pusher({
     cluster: process.env.CLUSTER!,
     useTLS: true
 });
-async function notification(message: string, status: boolean) {
+async function notification(message: string, status: boolean, orderId?: string) {
 
     try {
 
+        const orderIdMsg = `for order ${orderId}`
 
         pusher.trigger(process.env.CHANNEL!, process.env.EVENT, {
-            message: message,
+            message: `${message} ${orderId ? orderIdMsg : ""}`,
             status: status,
         });
     }
@@ -45,7 +46,7 @@ interface IOrder {
 
 async function hasCorrectSendAmount(receipt: string, amount: string, currency: string): Promise<boolean> {
     amount = amount.replace(",", ".")
-    const rgx = `${amount}([0-9]*)\\s*${currency}`
+    const rgx = `${amount}([0 - 9] *) \\s * ${currency}`
     receipt = receipt.replaceAll(",", ".")
     return receipt.search(new RegExp(rgx)) > -1
 }
@@ -54,11 +55,11 @@ async function hasNameInReceipt(receipt: string, userName: string): Promise<bool
     return emlformat.unquotePrintable(receipt).search(userName) > -1
 }
 
-async function parseReceiptId(receipt: string): Promise<string> {
+async function parseReceiptId(receipt: string, orderId?: string): Promise<string> {
     const referenceIndex = receipt.search(BASE_LINK_PATTERN)
     if (referenceIndex < 0) {
         console.log("Invalid receipt! No reference Index")
-        await notification("Invalid receipt! No reference Index", false)
+        await notification("Invalid receipt! No reference Index", false, orderId)
         throw new Error("Invalid receipt")
     }
     console.log("Reference Index: ", referenceIndex)
@@ -68,7 +69,7 @@ async function parseReceiptId(receipt: string): Promise<string> {
     const receiptId = Buffer.from(b64Link, "base64").toString("utf-8").split("/").slice(-1)[0].match(/^[0-9]+/g)
     if (!receiptId) {
         console.log("Invalid receipt! No receipt ID found")
-        await notification("Invalid receipt! No receipt ID found", false)
+        await notification("Invalid receipt! No receipt ID found", false, orderId)
         throw new Error("Invalid receipt! No receipt ID found")
     }
     console.log("Receipt ID: ", receiptId)
@@ -81,16 +82,16 @@ const worker = new Worker(QUEUE_NAME, async job => {
         const { receipt, orderId } = job.data as IRequestPayload;
         const order = await getOrderData(+orderId)
         if (!order) {
-            await notification("Order not found", false)
+            await notification("Order not found", false, orderId)
             throw new Error("Order not found")
         }
         const { amountToReceive, status, hashName } = JSON.parse(order)
         if (status === "Filled") {
-            await notification("Order already filled", false)
+            await notification("Order already filled", false, orderId)
             throw new Error("Order already filled")
         }
         if (!hashName) {
-            await notification("No hash name found", false)
+            await notification("No hash name found", false, orderId)
             throw new Error("No hash name found")
         }
         console.log(receipt.search("0,50 CAD"))
@@ -101,33 +102,33 @@ const worker = new Worker(QUEUE_NAME, async job => {
         const hasCorrectAmountCAD = await hasCorrectSendAmount(receipt, amountToReceive, currency_cad)
         console.log(amountToReceive)
         if (!hasCorrectAmountUSD && !hasCorrectAmountCAD) {
-            await notification("Invalid receipt amount", false)
+            await notification("Invalid receipt amount", false, orderId)
             throw new Error("Invalid receipt amount")
         }
         console.log("Amount is valid")
-        console.log(`Attempting to prove receipt for order ${orderId} with value ${amountToReceive} from ${sellerName}`)
+        console.log(`Attempting to prove receipt for order ${orderId} with value ${amountToReceive} from ${sellerName} `)
 
         const hasSellerName = await hasNameInReceipt(receipt, sellerName)
         if (!hasSellerName) {
-            await notification("Seller name not found in receipt", false)
+            await notification("Seller name not found in receipt", false, orderId)
             console.log("Seller name not found in receipt")
             throw new Error("Invalid receipt")
         }
         console.log("Seller name is valid")
-        const receiptId = await parseReceiptId(receipt)
+        const receiptId = await parseReceiptId(receipt, orderId)
         console.log("Receipt ID: ", receiptId)
         console.log("Attempting to prove receipt...")
         const isvalidProof = await prove(receipt)
         if (!isvalidProof) {
-            await notification("Invalid receipt! Proof is not valid", false)
+            await notification("Invalid receipt! Proof is not valid", false, orderId)
             throw new Error("Invalid receipt! Proof is not valid")
         }
         console.log("Receipt is valid")
         await closeDealWithSuccess(+orderId)
-        await notification("Deal closed with success", true)
+        await notification("Deal closed with success", true, orderId)
         return isvalidProof
     } catch (error) {
-        await notification("Error while proving receipt", false)
+        //await notification("Error while proving receipt", false)
         console.error("Error while proving receipt: ", error)
         return false
     }
