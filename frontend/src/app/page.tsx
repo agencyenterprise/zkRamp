@@ -59,7 +59,7 @@ export default function HomePage() {
     return (
       <div className="mt-16 flex flex-col items-center gap-6">
         <h1 className="max-w-2xl text-center text-3xl font-extrabold leading-9 text-white md:text-5xl md:leading-[60px]">
-          Lightning-fast BRL to AZERO Transaction with the highest level of security
+          Lightning-fast USD to AZERO Transaction with the highest level of security
         </h1>
         <h2 className="max-w-2xl text-center text-xl font-normal leading-normal text-zinc-300 md:leading-7">
           ZKRamp leverages zero-knowledge proofs to ensure your transactions remain private while

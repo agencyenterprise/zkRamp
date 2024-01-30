@@ -20,7 +20,7 @@ const FormInput = ({
   setValue: (value: string) => void
 }) => {
   return (
-    <div className="inline-flex w-full flex-col items-start justify-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-4 py-2">
+    <div className="inline-flex w-full flex-col items-start justify-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-4 py-4 max-w-lg">
       <div className="inline-flex items-center justify-between gap-3 self-stretch">
         <div className="shrink grow basis-0 font-manrope text-base font-medium leading-normal text-zinc-400">
           {title}
@@ -78,7 +78,10 @@ export default function PlaceOrderForm({
         </div>
         <XCircleIcon onClick={onClose} className="h-6 w-6 cursor-pointer text-zinc-100" />
       </div>
-      <div className="inline-flex flex-col items-start justify-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-4 py-5">
+      <div className="self-stretch font-azaretMono text-base font-normal leading-normal text-zinc-300">
+        We will charge a 5% fee on the deposit amount.
+      </div>
+      <div className="inline-flex w-full flex-col items-start justify-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-4 py-5">
         <div className="inline-flex items-center justify-between gap-3 self-stretch">
           <div className="shrink grow basis-0 font-manrope text-base font-medium leading-normal text-zinc-400">
             Select your transfer identifier
@@ -111,7 +114,7 @@ export default function PlaceOrderForm({
         title="Deposit Amount"
         value={depositAmount}
         setValue={setDepositAmount}
-        subtitle="Colateral description here"
+        subtitle="Please indicate the amount you wish to sell in AZERO. Keep in mind that we will require a collateral equal to 100% of the amount."
         placeholder="0"
       />
       <FormInput

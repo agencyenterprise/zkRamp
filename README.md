@@ -20,18 +20,16 @@ The goal is to create a liquidity marketplace where users can directly transfer 
 **The steps are simple:**
 - The seller escrows funds to the smart contract, sets a price, and adds their payment key (Wise). A collateral is collected to ensure the token transfer to the buyer.
 - The buyer selects a liquidity pool to make a purchase. An intermediate state is established, and the buyer has 1 hour to make the off-chain payment.
-- Upon receiving the email notification, the buyer creates a ZK proof and submits it on-chain.
-- The funds are transferred to the buyer.
+- Upon receiving the email notification, the buyer uploads the email notification, creates the ZK proof, and submits it via our ZK API process.
+- The ZK API verifies the proof and the funds are transferred to the buyer.
 
 ### Architecture
-ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment confirmation emails. Therefore, users must have notification emails enabled in their payment providers. This technology is powered by ZK-Email, a new technology that utilizes regex and other email features to create ZK proofs.
+ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment confirmation emails. Therefore, users must have notification emails enabled in their payment providers. This technology is powered by ZK-Email, a new technology that utilizes regex and other email features to create ZK proofs. Currently, we do not store the ZK proof on-chain. The entire ZK process is conducted through an API.
 
 **Tech Stack:**
-- Circuits: Circuits are essential for verifying transaction details while maintaining the privacy of sensitive information.
-- Smart Contracts: Smart contracts facilitate trustless transactions and manage the protocol's logic.
-- User Interface (UI): The UI is the front-end through which users interact with the protocol.
-
-
+- Circuits: Responsible for verifying transaction details, and preserving the confidentiality of confidential information.
+- Smart Contracts: Smart contracts enable trustless transactions and handle the protocol's logic.
+- Front-end: The UI serves as the front end that enables users to interact with the protocol.
 
 
 ## 🛣 Roadmap
@@ -39,6 +37,8 @@ ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment conf
 > - [X] `ℹ️  Implement ZKEmail circuit`
 > - [X] `ℹ️  Implement AlephZero smart contract`
 > - [X] `ℹ️  Implement front-end UI`
+> - [X] `ℹ️  Implement support to Wise`
+> - []  `ℹ️  Implement ZK validator on-chain`
 > - []  `ℹ️  Implement support to Brazil PIX`
 > - []  `ℹ️  Implement support to Vemno`
 > - []  `ℹ️  Implement support to Canada Interac`
