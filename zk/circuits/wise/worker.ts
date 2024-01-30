@@ -64,13 +64,15 @@ const worker = new Worker(QUEUE_NAME, async job => {
             throw new Error("No hash name found")
         }
         const sellerName = await decrypt(hashName)
-        const currency = "USD"
-        const hasCorrectAmount = await hasCorrectSendAmount(receipt, amountToReceive, currency)
-        if (!hasCorrectAmount) {
+        const currency_usd = "USD"
+        const hasCorrectAmountUSD = await hasCorrectSendAmount(receipt, amountToReceive, currency_usd)
+        const currency_cad = "CAD"
+        const hasCorrectAmountCAD = await hasCorrectSendAmount(receipt, amountToReceive, currency_cad)
+        if (!hasCorrectAmountUSD || !hasCorrectAmountCAD) {
             throw new Error("Invalid receipt amount")
         }
         console.log("Amount is valid")
-        console.log(`Attempting to prove receipt for order ${orderId} with value ${amountToReceive} ${currency} from ${sellerName}`)
+        console.log(`Attempting to prove receipt for order ${orderId} with value ${amountToReceive} from ${sellerName}`)
 
         const hasSellerName = await hasNameInReceipt(receipt, sellerName)
         if (!hasSellerName) {
