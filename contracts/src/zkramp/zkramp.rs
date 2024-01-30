@@ -83,7 +83,7 @@ mod zkramp {
         /// Create new instance of ZKRamp contract.
         #[ink(constructor)]
         pub fn default() -> Self {
-            let mut instance = ZKRamp {
+            let instance = ZKRamp {
                 orders: Mapping::default(),
                 orders_claim: Mapping::default(),
                 next_order_nonce: 0,
@@ -316,6 +316,7 @@ mod zkramp {
             }
 
             if self.orders_claim.get(&index_claim_order).unwrap().status
+                != ClaimStatus::WaitingForBuyerProof && self.orders_claim.get(&index_claim_order).unwrap().status
                 != ClaimStatus::WaitingForSellerProof
             {
                 return Err(EscrowError::StatusCanNotBeChanged);
@@ -379,10 +380,10 @@ mod zkramp {
 
         // === HELPERS ===
         fn init() -> (DefaultAccounts<DefaultEnvironment>, ZKRamp) {
-            let accounts = test_utils::accounts();
-            test_utils::change_caller(accounts.bob);
+            let _accounts = test_utils::accounts();
+            test_utils::change_caller(_accounts.bob);
             let zkramp = ZKRamp::default();
-            (accounts, zkramp)
+            (_accounts, zkramp)
         }
 
         #[ink::test]
@@ -393,7 +394,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_create_order() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -401,12 +402,12 @@ mod zkramp {
                 .unwrap();
 
             // didn't work on test env
-            // assert_eq!(get_balance(accounts.bob), 0);
+            // assert_eq!(get_balance(_accounts.bob), 0);
 
             let mut orders = Vec::<Order>::new();
             orders.push(Order {
                 id: 0,
-                owner: accounts.bob,
+                owner: _accounts.bob,
                 total: 100,
                 amount_to_send: 50,
                 collateral: 50,
@@ -421,7 +422,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_cancel_order() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -432,7 +433,7 @@ mod zkramp {
             let mut orders = Vec::<Order>::new();
             orders.push(Order {
                 id: 0,
-                owner: accounts.bob,
+                owner: _accounts.bob,
                 total: 100,
                 amount_to_send: 50,
                 collateral: 50,
@@ -447,7 +448,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_not_cancel_order() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -457,12 +458,12 @@ mod zkramp {
             assert!(!result.is_ok());
 
             // diff order owner
-            test_utils::change_caller(accounts.alice);
+            test_utils::change_caller(_accounts.alice);
             let result = zkramp.cancel_order(0);
             assert!(!result.is_ok());
 
             // order status is not open
-            test_utils::change_caller(accounts.bob);
+            test_utils::change_caller(_accounts.bob);
             zkramp.cancel_order(0).unwrap();
             let result: Result<(), EscrowError> = zkramp.cancel_order(0);
             assert!(!result.is_ok());
@@ -478,7 +479,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_claim_order() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -489,7 +490,7 @@ mod zkramp {
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
                 id: Some(0),
-                buyer: accounts.bob,
+                buyer: _accounts.bob,
                 order_index: 0,
                 status: ClaimStatus::WaitingForBuyerProof,
                 claim_expiration_time: 100,
@@ -498,13 +499,13 @@ mod zkramp {
 
             zkramp.cancel_claim_order(0).unwrap();
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.alice);
             zkramp.claim_order(0, 1000).unwrap();
 
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
                 id: Some(0),
-                buyer: accounts.alice,
+                buyer: _accounts.alice,
                 order_index: 0,
                 status: ClaimStatus::WaitingForBuyerProof,
                 claim_expiration_time: 1000,
@@ -514,7 +515,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_not_claim_order() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
 
@@ -523,7 +524,7 @@ mod zkramp {
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.alice);
             let error = zkramp.claim_order(0, 100);
 
             assert_eq!(error, Err(EscrowError::OrderClaimed));
@@ -543,7 +544,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_cancel_claim_order() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -552,13 +553,13 @@ mod zkramp {
             zkramp.claim_order(0, 100).unwrap();
             zkramp.cancel_claim_order(0).unwrap();
 
-            let mut orders_claim = Vec::<OrderClaim>::new();
+            let orders_claim = Vec::<OrderClaim>::new();
             assert_eq!(zkramp.get_all_orders_claim(), orders_claim);
         }
 
         #[ink::test]
         fn should_not_cancel_claim_order() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
 
@@ -571,12 +572,12 @@ mod zkramp {
 
             assert_eq!(error, Err(EscrowError::OrderNotFound));
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.alice);
             let error = zkramp.cancel_claim_order(0);
 
             assert_eq!(error, Err(EscrowError::Unauthorised));
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.bob);
             zkramp
                 .create_order(100.to_string(), String::from(""), String::from(""), 0)
                 .unwrap();
@@ -591,7 +592,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_update_claim_order_status() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -605,7 +606,7 @@ mod zkramp {
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
                 id: Some(0),
-                buyer: accounts.bob,
+                buyer: _accounts.bob,
                 order_index: 0,
                 status: ClaimStatus::WaitingForSellerProof,
                 claim_expiration_time: 1000,
@@ -622,7 +623,7 @@ mod zkramp {
 
             orders_claim.push(OrderClaim {
                 id: Some(1),
-                buyer: accounts.bob,
+                buyer: _accounts.bob,
                 order_index: 1,
                 status: ClaimStatus::Filled,
                 claim_expiration_time: 100,
@@ -632,7 +633,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_not_update_claim_order_status() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
 
@@ -641,12 +642,12 @@ mod zkramp {
                 .unwrap();
             zkramp.claim_order(0, 100).unwrap();
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.alice);
             let error = zkramp.update_claim_order_status(0, ClaimStatus::Filled, None);
 
             assert_eq!(error, Err(EscrowError::Unauthorised));
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.bob);
             let error =
                 zkramp.update_claim_order_status(1, ClaimStatus::WaitingForSellerProof, Some(1000));
             assert_eq!(error, Err(EscrowError::OrderNotFound));
@@ -665,7 +666,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_buyer_claim_order_funds() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -680,7 +681,7 @@ mod zkramp {
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
                 id: Some(0),
-                buyer: accounts.bob,
+                buyer: _accounts.bob,
                 order_index: 0,
                 status: ClaimStatus::Filled,
                 claim_expiration_time: 0,
@@ -690,7 +691,7 @@ mod zkramp {
 
         #[ink::test]
         fn should_not_buyer_claim_order_funds() {
-            let (accounts, mut zkramp) = init();
+            let (_accounts, mut zkramp) = init();
 
             ink::env::test::set_value_transferred::<ink::env::DefaultEnvironment>(100);
             zkramp
@@ -699,17 +700,17 @@ mod zkramp {
             zkramp.claim_order(0, 100).unwrap();
             let error = zkramp.buyer_claim_order_funds(0);
 
-            assert_eq!(error, Err(EscrowError::StatusCanNotBeChanged));
+            assert_eq!(error, Err(EscrowError::OrderClaimed));
 
             let error = zkramp.buyer_claim_order_funds(1);
 
             assert_eq!(error, Err(EscrowError::OrderNotFound));
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.alice);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.alice);
             let error = zkramp.buyer_claim_order_funds(0);
             assert_eq!(error, Err(EscrowError::Unauthorised));
 
-            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(accounts.bob);
+            ink::env::test::set_caller::<ink::env::DefaultEnvironment>(_accounts.bob);
             zkramp
                 .update_claim_order_status(0, ClaimStatus::WaitingForSellerProof, Some(10))
                 .unwrap();
