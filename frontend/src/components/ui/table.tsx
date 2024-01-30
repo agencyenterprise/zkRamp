@@ -213,7 +213,7 @@ export default function Table() {
                         {fromBn(order.amountToSend.replaceAll(',', ''), 12)} AZERO
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                        {order.amountToReceive} CAD
+                        {order.amountToReceive} USD
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                         <Badge>{convertStatus(getStatus(order))}</Badge>

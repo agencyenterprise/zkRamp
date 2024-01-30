@@ -271,7 +271,7 @@ export default function OrderTable({
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive} CAD
+                      {order.amountToReceive} USD
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
                       <div className="flex items-center justify-start gap-2">
@@ -366,7 +366,7 @@ export default function OrderTable({
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {claimOrder.order?.amountToReceive} CAD
+                      {claimOrder.order?.amountToReceive} USD
                     </td>
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">

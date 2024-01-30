@@ -152,17 +152,34 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
   return (
     <div className="absolute inset-0 z-50 flex h-full w-full items-center justify-center bg-opacity-50 transition-all">
       <div className="inline-flex flex-col items-center justify-start gap-6 rounded bg-zinc-950 p-6 shadow">
-        <div className="flex h-16 flex-col items-center justify-start gap-6 self-stretch">
-          <div className="flex h-16 flex-col items-center justify-start gap-2 self-stretch">
+        <div className="flex flex-col items-center justify-start gap-6 self-stretch">
+          <div className="flex h-full flex-col items-center justify-start gap-2 self-stretch">
             <div className="self-stretch text-center font-manrope text-2xl font-bold leading-loose text-white">
               Buy Order
             </div>
             <div className="self-stretch text-center font-azaretMono text-base font-normal leading-normal text-zinc-300">
               Do you want to block and buy this order?
             </div>
+            <div className="grid m-auto w-2/3 self-center text-center font-azaretMono text-sm font-normal leading-normal text-zinc-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-12 w-12 center m-auto"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                />
+              </svg>
+              Enable your have email notifications from Wise to receive the proof of payment.
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-start gap-6 self-stretch rounded bg-zinc-900 p-6">
+        <div className="flex flex-col items-center justify-start gap-6 self-stretch rounded bg-zinc-900 p-12">
           <div className="self-stretch font-manrope text-lg font-bold leading-7 text-white">
             Summary
           </div>
@@ -191,7 +208,7 @@ export default function BuyOrderModal({ order, claimedOrder, onClaimCreated, onC
               </div>
               <div className="flex w-11 items-center justify-center gap-2.5 self-stretch rounded-sm border border-zinc-600 bg-zinc-900 px-1.5">
                 <div className="font-azaretMono text-base font-normal leading-normal text-zinc-500">
-                  CAD
+                  USD
                 </div>
               </div>
             </div>
