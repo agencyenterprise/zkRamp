@@ -182,7 +182,7 @@ export default function OrderTable({
     }
 
     await contractTxWithToast(api, activeAccount.address, contract, 'buyer_claim_order_funds', {}, [
-      claimOrder.orderIndex,
+      claimOrder.id,
     ])
 
     toast.success('Funds released')
