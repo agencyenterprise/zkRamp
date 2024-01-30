@@ -46,7 +46,7 @@ interface IOrder {
 
 async function hasCorrectSendAmount(receipt: string, amount: string, currency: string): Promise<boolean> {
     amount = amount.replace(",", ".")
-    const rgx = `${amount}([0 - 9] *) \\s * ${currency}`
+    const rgx = `${amount}([0-9]*)\\s*${currency}`
     receipt = receipt.replaceAll(",", ".")
     return receipt.search(new RegExp(rgx)) > -1
 }
