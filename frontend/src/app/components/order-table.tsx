@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
+import { XCircleIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import {
   contractQuery,
   decodeOutput,
@@ -193,6 +194,10 @@ export default function OrderTable({
     })[0]
   }
 
+  useEffect(() => {
+    refresh()
+  }, [])
+
   return (
     <div className="w-full">
       <div className="flow-root">
@@ -276,19 +281,20 @@ export default function OrderTable({
 
                       {order && getStatus(order) == 'Open' && (
                         <>
-                          <button className="cursor-pointer p-2" onClick={() => cancelOrder(order)}>
-                            cancel
-                          </button>
+                          <XCircleIcon
+                            title="Cancel Order"
+                            onClick={() => cancelOrder(order)}
+                            className="h-3 w-3 cursor-pointer text-zinc-100"
+                          />
                         </>
                       )}
                       {order && getStatus(order) == 'WaitingForSellerProof' && (
                         <>
-                          <button
-                            className="cursor-pointer p-2"
+                          <ArrowUpTrayIcon
+                            title="Submit Proof"
                             onClick={() => onOpenUploadReceiptModal(order)}
-                          >
-                            upload
-                          </button>
+                            className="h-3 w-3 cursor-pointer text-zinc-100"
+                          />
                         </>
                       )}
                     </td>
@@ -379,18 +385,15 @@ export default function OrderTable({
 
                       {claimOrder.status == 'WaitingForBuyerProof' && (
                         <>
-                          <button
-                            className="cursor-pointer p-2"
+                          <XCircleIcon
+                            title="Cancel Order"
                             onClick={() => cancelClaimOrder(claimOrder)}
-                          >
-                            cancel
-                          </button>
-                          <button
-                            className="cursor-pointer p-2"
+                            className="h-3 w-3 cursor-pointer text-zinc-100"
+                          />
+                          <ArrowUpTrayIcon
                             onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
-                          >
-                            upload
-                          </button>
+                            className="h-3 w-3 cursor-pointer text-zinc-100"
+                          />
                         </>
                       )}
                     </td>

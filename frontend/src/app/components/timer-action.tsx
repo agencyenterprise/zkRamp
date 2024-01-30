@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { BanknotesIcon } from '@heroicons/react/24/outline'
 import dayjs from 'dayjs'
 import { CircularProgressbar } from 'react-circular-progressbar'
 
@@ -69,7 +70,11 @@ export default function TimerAction({
       <div className="cursor-pointer" onClick={() => setShowBuyerModal(true)}>
         {timeLeft && timeLeft < 0 && (
           <>
-            <Button onClick={() => releaseFunds!(claimOrder)}>Release Funds</Button>
+            <BanknotesIcon
+              title="Release Funds"
+              onClick={() => releaseFunds!(claimOrder)}
+              className="h-3 w-3 cursor-pointer text-zinc-100"
+            />
           </>
         )}
         {timeLeft && timeLeft > 0 && `${timeLeft} mins`}
