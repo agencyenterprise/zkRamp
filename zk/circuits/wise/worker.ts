@@ -23,7 +23,7 @@ async function notification(message: string, status: boolean, orderId?: string) 
 
     try {
 
-        const orderIdMsg = `for order ${orderId}`
+        const orderIdMsg = `for order #${orderId}`
 
         pusher.trigger(process.env.CHANNEL!, process.env.EVENT, {
             message: `${message} ${orderId ? orderIdMsg : ""}`,
