@@ -17,7 +17,7 @@
 
 ZKRamp is a protocol that aims to quickly and efficiently provide onramp/offramp solutions using zero-knowledge proofs. The project's main goal is to implement a liquidity marketplace where there’s no need to worry about KYC. Users can transfer funds directly without having the ramp as the middleman. 
 
-Architecture
+### Architecture
 ZKRamp uses Zero-Knowledge (ZK) proofs to verify DKIM signatures in payment confirmation emails. Therefore, users must have notification emails enabled in their payment providers. This technology is powered by ZK-Email, a new technology that utilizes regex and other email features to create ZK proofs.
 
 
