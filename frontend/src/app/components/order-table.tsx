@@ -17,8 +17,10 @@ import TimerAction from './timer-action'
 
 export default function OrderTable({
   onOpenUploadReceiptModal,
+  hackyWayToForceRerender,
 }: {
   onOpenUploadReceiptModal: (order: any) => void
+  hackyWayToForceRerender: number
 }) {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
@@ -71,7 +73,7 @@ export default function OrderTable({
 
   useEffect(() => {
     refresh()
-  }, [contract, api])
+  }, [contract, api, hackyWayToForceRerender, activeAccount])
 
   const refresh = async () => {
     fetchAllOrders()
