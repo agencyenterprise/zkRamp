@@ -12,17 +12,17 @@ interface IRequestPayload {
     receipt: string
     orderId: string
 }
-
+const pusher = new Pusher({
+    appId: process.env.APP_ID!,
+    key: process.env.KEY!,
+    secret: process.env.SECRET!,
+    cluster: process.env.CLUSTER!,
+    useTLS: true
+});
 async function notification(message: string, status: boolean) {
 
     try {
-        const pusher = new Pusher({
-            appId: process.env.APP_ID!,
-            key: process.env.KEY!,
-            secret: process.env.SECRET!,
-            cluster: process.env.CLUSTER!,
-            useTLS: true
-        });
+
 
         await pusher.trigger(process.env.CHANNEL!, process.env.EVENT, {
             message: message,
