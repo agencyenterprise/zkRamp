@@ -18,11 +18,13 @@ export default function OrdersPage() {
   const [showPlaceOrderForm, setShowPlaceOrderForm] = useState(false)
   const [selectedOrderUploadReceipt, setSelectedOrderUploadReceipt] = useState<any>(null)
   const { api, activeAccount, activeSigner } = useInkathon()
+  const [hackyWayToForceRerender, setHackyWayToForceRerender] = useState(0)
+
   const { contract } = useRegisteredContract(ContractIds.zkramp)
 
   const Title = () => {
     return (
-      <div className="mt-16 flex w-full items-end justify-between gap-1 md:mt-0">
+      <div className="mt-16 flex w-full items-end justify-between gap-1">
         <h1 className="text-2xl font-extrabold leading-loose text-white">Orders</h1>
         <Button onClick={() => setShowPlaceOrderForm(true)}>Place An Order</Button>
       </div>
@@ -51,6 +53,8 @@ export default function OrdersPage() {
       },
       [order.receiveAmount, order.paymentKey, order.name, 0],
     )
+    setShowPlaceOrderForm(false)
+    setHackyWayToForceRerender((prev) => prev + 1)
   }
 
   return (
@@ -58,7 +62,10 @@ export default function OrdersPage() {
       <div className="container relative flex grow flex-col items-center justify-center px-4 py-10 md:px-8">
         <main className="flex flex-col gap-8">
           <Title />
-          <OrderTable onOpenUploadReceiptModal={setSelectedOrderUploadReceipt} />
+          <OrderTable
+            hackyWayToForceRerender={hackyWayToForceRerender}
+            onOpenUploadReceiptModal={setSelectedOrderUploadReceipt}
+          />
 
           {selectedOrderUploadReceipt && (
             <UploadReceiptModal

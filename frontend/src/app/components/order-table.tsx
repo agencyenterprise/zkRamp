@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { useEffect, useState } from 'react'
 
 import { ContractIds } from '@/deployments/deployments'
+import { XCircleIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import {
   contractQuery,
   decodeOutput,
@@ -17,8 +19,10 @@ import TimerAction from './timer-action'
 
 export default function OrderTable({
   onOpenUploadReceiptModal,
+  hackyWayToForceRerender,
 }: {
   onOpenUploadReceiptModal: (order: any) => void
+  hackyWayToForceRerender: number
 }) {
   const { api, activeAccount, activeSigner } = useInkathon()
   const { contract } = useRegisteredContract(ContractIds.zkramp)
@@ -71,7 +75,7 @@ export default function OrderTable({
 
   useEffect(() => {
     refresh()
-  }, [contract, api])
+  }, [contract, api, hackyWayToForceRerender, activeAccount])
 
   const refresh = async () => {
     fetchAllOrders()
@@ -191,6 +195,10 @@ export default function OrderTable({
     })[0]
   }
 
+  useEffect(() => {
+    refresh()
+  }, [])
+
   return (
     <div className="w-full">
       <div className="flow-root">
@@ -238,6 +246,12 @@ export default function OrderTable({
                   >
                     Status
                   </th>
+                  <th
+                    scope="col"
+                    className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
@@ -257,41 +271,22 @@ export default function OrderTable({
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {order.amountToReceive} BRL
+                      {order.amountToReceive} CAD
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <div className="flex justify-center">
+                      <div className="flex items-center justify-start gap-2">
                         <Badge>{convertStatus(getStatus(order))}</Badge>
-                        {getClaimOrder(order) &&
-                          (getClaimOrder(order).status == 'WaitingForBuyerProof' ||
-                            getClaimOrder(order).status == 'WaitingForSellerProof') && (
-                            <div className="ml-2 mr-2 flex justify-center py-1">
-                              <TimerAction
-                                claimOrder={getClaimOrder(order)}
-                                releaseFunds={releaseFunds}
-                              ></TimerAction>
-                            </div>
-                          )}
                       </div>
-                      <div className="flex justify-center">
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex items-center justify-start gap-2">
                         {order && getStatus(order) == 'Open' && (
                           <>
-                            <button
-                              className="cursor-pointer p-2"
+                            <XCircleIcon
+                              title="Cancel Order"
                               onClick={() => cancelOrder(order)}
-                            >
-                              cancel
-                            </button>
-                          </>
-                        )}
-                        {order && getStatus(order) == 'WaitingForSellerProof' && (
-                          <>
-                            <button
-                              className="cursor-pointer p-2"
-                              onClick={() => onOpenUploadReceiptModal(order)}
-                            >
-                              upload
-                            </button>
+                              className="h-6 w-6 cursor-pointer text-red-400"
+                            />
                           </>
                         )}
                       </div>
@@ -343,6 +338,12 @@ export default function OrderTable({
                   >
                     Status
                   </th>
+                  <th
+                    scope="col"
+                    className="whitespace-pre px-6 py-3 text-left text-sm font-medium text-subtlest"
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-surface2">
@@ -365,16 +366,16 @@ export default function OrderTable({
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      {claimOrder.order?.amountToReceive} BRL
+                      {claimOrder.order?.amountToReceive} CAD
                     </td>
 
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
-                      <div className="flex flex-col justify-center space-y-2">
+                      <div className="flex items-center justify-start gap-2">
                         <Badge>{convertStatus(getStatus(claimOrder.order ?? ''))}</Badge>
                         {(claimOrder.status == 'WaitingForBuyerProof' ||
                           claimOrder.status == 'WaitingForSellerProof') &&
                           claimOrder.claimExpirationTime && (
-                            <div className="ml-2 mr-2 flex justify-center py-1">
+                            <div className="flex justify-start py-1">
                               <TimerAction
                                 claimOrder={claimOrder}
                                 releaseFunds={releaseFunds}
@@ -382,21 +383,21 @@ export default function OrderTable({
                             </div>
                           )}
                       </div>
-                      <div className="flex justify-center">
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-subtlest">
+                      <div className="flex items-center justify-start gap-2">
                         {claimOrder.status == 'WaitingForBuyerProof' && (
                           <>
-                            <button
-                              className="cursor-pointer p-2"
+                            <XCircleIcon
+                              title="Cancel Order"
                               onClick={() => cancelClaimOrder(claimOrder)}
-                            >
-                              cancel
-                            </button>
-                            <button
-                              className="cursor-pointer p-2"
+                              className="h-6 w-6 cursor-pointer text-red-400"
+                            />
+                            <ArrowUpTrayIcon
+                              title="Submit Proof"
                               onClick={() => onOpenUploadReceiptModal(claimOrder.order)}
-                            >
-                              upload
-                            </button>
+                              className="h-6 w-6 cursor-pointer text-zinc-100"
+                            />
                           </>
                         )}
                       </div>
