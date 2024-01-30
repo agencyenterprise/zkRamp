@@ -77,7 +77,7 @@ export default function TimerAction({
             />
           </>
         )}
-        {timeLeft && timeLeft > 0 && `${timeLeft} mins`}
+        {timeLeft && timeLeft > 0 && `${timeLeft} mins left`}
       </div>
       <>
         {showBuyerModal && (
