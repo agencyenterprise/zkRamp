@@ -24,7 +24,7 @@ async function notification(message: string, status: boolean) {
     try {
 
 
-        await pusher.trigger(process.env.CHANNEL!, process.env.EVENT, {
+        pusher.trigger(process.env.CHANNEL!, process.env.EVENT, {
             message: message,
             status: status,
         });

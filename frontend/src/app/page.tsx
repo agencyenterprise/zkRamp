@@ -15,6 +15,8 @@ import { HeroHexagons } from './components/hero-hexagons'
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 interface IMessage {
   status: boolean
   message: string
@@ -48,7 +50,8 @@ export default function HomePage() {
       },
     )
   }
-  useEvent(channel, 'proof_result', (message: any) => {
+  useEvent(channel, process.env.NEXT_PUBLIC_EVENT!, (message: any) => {
+    console.log(message)
     if (message.status) {
       customToast(message.text, message.status)
     } else {
