@@ -23,10 +23,9 @@ interface IOrder {
 
 async function hasCorrectSendAmount(receipt: string, amount: string, currency: string): Promise<boolean> {
     amount = amount.replace(",", ".")
+    const rgx = `${amount}([0-9]*)\\s*${currency}`
     receipt = receipt.replaceAll(",", ".")
-    const wtrailling = receipt.search(`${amount}\s${currency}`) > -1 || receipt.search(`${parseInt(amount)}\s${currency}`) > -1 || receipt.search(`${parseFloat(amount)}\s${currency}`) > -1
-    const trailling = receipt.search(`${amount}0\s${currency}`) > -1 || receipt.search(`${parseInt(amount)}0\s${currency}`) > -1 || receipt.search(`${parseFloat(amount)}0\s${currency}`) > -1
-    return wtrailling || trailling
+    return receipt.search(new RegExp(rgx)) > -1
 }
 
 async function hasNameInReceipt(receipt: string, userName: string): Promise<boolean> {
