@@ -1,8 +1,10 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ArrowUpOnSquareIcon } from '@heroicons/react/24/outline'
+import axios from 'axios'
 import { useDropzone } from 'react-dropzone'
+import toast from 'react-hot-toast'
 
 import Modal from '../../components/ui/modal'
 
@@ -13,8 +15,15 @@ export default function UploadReceiptModal({
   selectedOrder: any
   onClose: any
 }) {
+  const [selectedEmls, setSelectedEmls] = useState([])
+  // Add this
+  const [uploadStatus, setUploadStatus] = useState('')
   const onDrop = useCallback((acceptedFiles: any) => {
-    console.log('Files dragged and dropped ', acceptedFiles)
+    //console.log('Files dragged and dropped ', acceptedFiles)
+    acceptedFiles.forEach((file: any) => {
+      console.log(file)
+      setSelectedEmls((prevState): any => [...prevState, file])
+    })
   }, [])
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -22,7 +31,25 @@ export default function UploadReceiptModal({
       'message/rfc822': ['.eml'],
     },
   })
-
+  const onUpload = async () => {
+    toast.success('Uploading proof of payment...')
+    const formData = new FormData()
+    selectedEmls.forEach((image) => {
+      console.log(selectedOrder)
+      formData.append('orderId', selectedOrder.id)
+      formData.append('file', image)
+    })
+    try {
+      const response = await axios.post('/api/prove', formData)
+      console.log(response.data)
+      setUploadStatus('upload successful')
+      toast.success('Proof of payment uploaded successfully!')
+    } catch (error) {
+      console.log('imageUpload' + error)
+      toast.error('Upload failed!')
+    }
+    onClose()
+  }
   useEffect(() => {
     const handlePaste = (event: any) => {
       const items = (event.clipboardData || event.originalEvent.clipboardData).items
@@ -72,6 +99,7 @@ export default function UploadReceiptModal({
         <div className="self-stretch text-center font-manrope text-base font-normal leading-normal text-zinc-300">
           Upload your receipt to prove an payment
         </div>
+
         <div
           {...getRootProps()}
           className="flex cursor-pointer flex-col items-center justify-start gap-1 self-stretch rounded-md border-2 border-dashed border-zinc-600 px-[26px] pb-[26px] pt-[22px]"
@@ -99,8 +127,27 @@ export default function UploadReceiptModal({
               </div>
             </>
           )}
+          <div></div>
         </div>
-        <div className="self-stretch text-center font-manrope text-base font-normal leading-normal text-zinc-300">
+
+        {selectedEmls.length > 0 && (
+          <>
+            {selectedEmls.map((file: any, index) => (
+              <div key={index}>
+                <p className="font-inter text-xl font-medium leading-tight text-lime-300">
+                  {file.path}
+                </p>
+              </div>
+            ))}
+            <button
+              className="h-10 rounded bg-primary px-4 py-2 font-bold text-primary-foreground hover:bg-primary/90"
+              onClick={onUpload}
+            >
+              Upload
+            </button>
+          </>
+        )}
+        {/* <div className="self-stretch text-center font-manrope text-base font-normal leading-normal text-zinc-300">
           Or
         </div>
         <div className="self-stretch text-center font-manrope text-base font-normal leading-normal text-zinc-300">
@@ -115,7 +162,7 @@ export default function UploadReceiptModal({
               Paste content of the email that prove your payment here...
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </Modal>
   )

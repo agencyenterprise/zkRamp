@@ -25,7 +25,7 @@ export const closeDealWithSuccess = async (orderId: number) => {
 
   // Deploy zkramp contract
   const { abi, wasm } = await getDeploymentData('zkramp')
-  const contract = new ContractPromise(api, abi, '5DkLDqiYkGNGk5Xa4WxtPcf9EWtmteUdV1VrNJ749PTQaH9z')
+  const contract = new ContractPromise(api, abi, process.env.CONTRACT_ADDRESS)
   const expiration = new Date().getTime() + 1000 * 60 * 60
   await contractTx(api, account, contract, 'update_claim_order_status', {}, [orderId, "Filled", expiration])
   console.log('\nClosed deal with success')
@@ -36,7 +36,7 @@ export const closeDealWithSuccess = async (orderId: number) => {
 export const getOrderData = async (orderId: number) => {
   const { api, account } = await initPolkadotJs()
   const { abi, wasm } = await getDeploymentData('zkramp')
-  const contract = new ContractPromise(api, abi, '5DkLDqiYkGNGk5Xa4WxtPcf9EWtmteUdV1VrNJ749PTQaH9z')
+  const contract = new ContractPromise(api, abi, process.env.CONTRACT_ADDRESS)
   const result = await contractQuery(api, '', contract, 'get_order', {}, [orderId])
   const { decodedOutput } = decodeOutput(result, contract, 'get_order')
   return decodedOutput

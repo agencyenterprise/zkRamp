@@ -22,7 +22,10 @@ interface IOrder {
 }
 
 async function hasCorrectSendAmount(receipt: string, amount: string, currency: string): Promise<boolean> {
-    return receipt.search(`${amount} ${currency}`) > -1 || receipt.search(`${parseInt(amount)} ${currency}`) > -1 || receipt.search(`${parseFloat(amount)} ${currency}`) > -1
+    amount = amount.replace(",", ".")
+    const rgx = `${amount}([0-9]*)\\s*${currency}`
+    receipt = receipt.replaceAll(",", ".")
+    return receipt.search(new RegExp(rgx)) > -1
 }
 
 async function hasNameInReceipt(receipt: string, userName: string): Promise<boolean> {
@@ -63,14 +66,18 @@ const worker = new Worker(QUEUE_NAME, async job => {
         if (!hashName) {
             throw new Error("No hash name found")
         }
+        console.log(receipt.search("0,50 CAD"))
         const sellerName = await decrypt(hashName)
-        const currency = "USD"
-        const hasCorrectAmount = await hasCorrectSendAmount(receipt, amountToReceive, currency)
-        if (!hasCorrectAmount) {
+        const currency_usd = "USD"
+        const hasCorrectAmountUSD = await hasCorrectSendAmount(receipt, amountToReceive, currency_usd)
+        const currency_cad = "CAD"
+        const hasCorrectAmountCAD = await hasCorrectSendAmount(receipt, amountToReceive, currency_cad)
+        console.log(amountToReceive)
+        if (!hasCorrectAmountUSD && !hasCorrectAmountCAD) {
             throw new Error("Invalid receipt amount")
         }
         console.log("Amount is valid")
-        console.log(`Attempting to prove receipt for order ${orderId} with value ${amountToReceive} ${currency} from ${sellerName}`)
+        console.log(`Attempting to prove receipt for order ${orderId} with value ${amountToReceive} from ${sellerName}`)
 
         const hasSellerName = await hasNameInReceipt(receipt, sellerName)
         if (!hasSellerName) {
