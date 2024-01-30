@@ -21,7 +21,6 @@ The goal is to create a liquidity marketplace where users can directly transfer 
 - The seller escrows funds to the smart contract, sets a price, and adds their payment key (Wise). A collateral is collected to ensure the token transfer to the buyer.
 - The buyer selects a liquidity pool to make a purchase. An intermediate state is established, and the buyer has 1 hour to make the off-chain payment.
 - Upon receiving the email notification, the buyer creates a ZK proof and submits it on-chain.
-- The seller creates a ZK proof with the funds received an email notification and submits it on-chain.
 - The funds are transferred to the buyer.
 
 ### Architecture
