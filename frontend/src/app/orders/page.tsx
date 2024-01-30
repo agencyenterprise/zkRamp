@@ -51,7 +51,7 @@ export default function OrdersPage() {
       {
         value: amountToTransfer * 2,
       },
-      [order.receiveAmount, order.paymentKey, '', 0],
+      [order.receiveAmount, order.paymentKey, order.name, 0],
     )
     setShowPlaceOrderForm(false)
     setHackyWayToForceRerender((prev) => prev + 1)
