@@ -67,16 +67,16 @@ export default function TimerAction({
 
   return (
     <>
+      {timeLeft && timeLeft < 0 && (
+        <>
+          <BanknotesIcon
+            title="Release Funds"
+            onClick={() => releaseFunds!(claimOrder)}
+            className="h-6 w-6 cursor-pointer text-zinc-100"
+          />
+        </>
+      )}
       <div className="cursor-pointer" onClick={() => setShowBuyerModal(true)}>
-        {timeLeft && timeLeft < 0 && (
-          <>
-            <BanknotesIcon
-              title="Release Funds"
-              onClick={() => releaseFunds!(claimOrder)}
-              className="h-6 w-6 cursor-pointer text-zinc-100"
-            />
-          </>
-        )}
         {timeLeft && timeLeft > 0 && `${timeLeft} mins left`}
       </div>
       <>
