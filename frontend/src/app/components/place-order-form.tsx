@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { XCircleIcon } from '@heroicons/react/24/outline'
+import axios from 'axios'
 
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
@@ -54,6 +55,20 @@ export default function PlaceOrderForm({
   const [paymentKey, setPaymentKey] = useState('')
   const [depositAmount, setDepositAmount] = useState('')
   const [receiveAmount, setReceiveAmount] = useState('')
+  const [name, setName] = useState('')
+
+  async function submitPlaceOrder() {
+    const data: any = await axios.post('/api/encrypt', {
+      name,
+    })
+
+    onSubmit({
+      paymentKey,
+      depositAmount,
+      receiveAmount,
+      name: data.data.encryptedName,
+    })
+  }
 
   return (
     <div className="inline-flex flex-col items-start justify-center gap-4 rounded border border-zinc-800 bg-zinc-950 p-4">
@@ -86,6 +101,13 @@ export default function PlaceOrderForm({
         </div>
       </div>
       <FormInput
+        title="Wise Name"
+        subtitle="Don't worry, this information is private"
+        placeholder="Your name"
+        value={name}
+        setValue={setName}
+      />
+      <FormInput
         title="Deposit Amount"
         value={depositAmount}
         setValue={setDepositAmount}
@@ -98,16 +120,7 @@ export default function PlaceOrderForm({
         setValue={setReceiveAmount}
         placeholder="0"
       />
-      <Button
-        className="w-full"
-        onClick={() =>
-          onSubmit({
-            paymentKey,
-            depositAmount,
-            receiveAmount,
-          })
-        }
-      >
+      <Button className="w-full" onClick={() => submitPlaceOrder()}>
         Place Order
       </Button>
     </div>

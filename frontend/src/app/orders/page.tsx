@@ -49,7 +49,7 @@ export default function OrdersPage() {
       {
         value: amountToTransfer * 2,
       },
-      [order.receiveAmount, order.paymentKey, '', 0],
+      [order.receiveAmount, order.paymentKey, order.name, 0],
     )
   }
 

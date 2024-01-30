@@ -64,6 +64,7 @@ mod zkramp {
         derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
     )]
     pub struct OrderClaim {
+        id: Option<u32>,
         buyer: AccountId,
         order_index: u32,
         status: ClaimStatus,
@@ -109,7 +110,8 @@ mod zkramp {
             for i in 0..self.next_order_nonce {
                 let order_claim = self.orders_claim.get(&i);
                 if let Some(claim) = order_claim {
-                    orders_claim.push(claim);
+                    let order_claim_return = OrderClaim { id: Some(i), ..claim };
+                    orders_claim.push(order_claim_return);
                 }
             }
             orders_claim
@@ -217,6 +219,7 @@ mod zkramp {
             self.orders_claim.insert(
                 index,
                 &OrderClaim {
+                    id: None,
                     buyer: caller,
                     order_index: index,
                     status: ClaimStatus::WaitingForBuyerProof,
@@ -485,6 +488,7 @@ mod zkramp {
 
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
+                id: Some(0),
                 buyer: accounts.bob,
                 order_index: 0,
                 status: ClaimStatus::WaitingForBuyerProof,
@@ -499,6 +503,7 @@ mod zkramp {
 
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
+                id: Some(0),
                 buyer: accounts.alice,
                 order_index: 0,
                 status: ClaimStatus::WaitingForBuyerProof,
@@ -599,6 +604,7 @@ mod zkramp {
 
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
+                id: Some(0),
                 buyer: accounts.bob,
                 order_index: 0,
                 status: ClaimStatus::WaitingForSellerProof,
@@ -615,6 +621,7 @@ mod zkramp {
                 .unwrap();
 
             orders_claim.push(OrderClaim {
+                id: Some(1),
                 buyer: accounts.bob,
                 order_index: 1,
                 status: ClaimStatus::Filled,
@@ -672,6 +679,7 @@ mod zkramp {
 
             let mut orders_claim = Vec::<OrderClaim>::new();
             orders_claim.push(OrderClaim {
+                id: Some(0),
                 buyer: accounts.bob,
                 order_index: 0,
                 status: ClaimStatus::Filled,
